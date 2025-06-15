@@ -19,7 +19,7 @@ export default function TeamTable() {
   return (
     <section className="py-8 px-4 bg-[#fdfaf3] min-h-[300px]">
       <h3 className="text-2xl font-bold text-center text-[#2d1f0f] mb-8">
-        Times Inscritos
+        Times Pré-Inscritos
       </h3>
 
       <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-8">

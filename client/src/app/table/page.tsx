@@ -27,9 +27,8 @@ const StandingsPage = () => {
 
   const groups = ["A", "B"];
 
-  const getPositionColor = (position) => {
+  const getPositionColor = (position: number) => {
     if (position <= 4) return "text-green-600 bg-green-50"; // Classificados
-    if (position <= 4) return "text-yellow-600 bg-yellow-50"; // Zona de classificação
     return "text-red-600 bg-red-50"; // Zona de rebaixamento
   };
 
@@ -82,7 +81,7 @@ const StandingsPage = () => {
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Table */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 max-w-[28em] md:max-w-full">
             <div className="overflow-hidden bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#708c9a]">
                 <h2 className="text-xl font-bold">
@@ -206,22 +205,31 @@ const StandingsPage = () => {
 
               {/* Legend */}
               <div className="px-6 py-4 bg-gray-500 border-t">
-                <div className="flex flex-wrap gap-4 text-sm">
+                {selectedGroup === "all" ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
-                    <span>Classificados (1º-4º)</span>
+                    <span>
+                      Times com a melhor campanha durante a fase de grupos!
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-red-200 rounded-full bg-red-50"></div>
-                    <span>Eliminados (5º-6º)</span>
+                ) : (
+                  <div className="flex flex-wrap gap-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
+                      <span>Classificados (1º-4º)</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-red-200 rounded-full bg-red-50"></div>
+                      <span>Eliminados (5º-6º)</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
           {/* Statistics Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 max-w-[28em] md:max-w-full">
             {/* Top Scorers */}
             <div className="bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#5e5035]">

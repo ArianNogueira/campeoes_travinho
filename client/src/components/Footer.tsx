@@ -15,21 +15,18 @@ export default function Footer() {
             Home
           </Link>
           <Link
-            href="/tabela"
+            href="/table"
             className="hover:text-[#855b21] transition-colors"
           >
             Tabela
           </Link>
           <Link
-            href="/partidas"
+            href="/notMatches"
             className="hover:text-[#855b21] transition-colors"
           >
             Partidas
           </Link>
-          <Link
-            href="/noticias"
-            className="hover:text-[#855b21] transition-colors"
-          >
+          <Link href="/news" className="hover:text-[#855b21] transition-colors">
             Notícias
           </Link>
         </nav>

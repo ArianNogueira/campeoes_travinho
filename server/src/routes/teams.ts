@@ -6,7 +6,6 @@ import { Captain } from "../entity/Captain";
 const router = Router();
 
 import { Player } from "../entity/Player"; // não esqueça de importar
-import { serialize } from "v8";
 
 router.get("/", async (req, res) => {
   try {
@@ -23,104 +22,90 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req: Request, res: Response): Promise<void> => {
-  const { name, group, captain, players } = req.body;
-  
-  if (!name || !group || !captain || !players || players.length !== 5) {
-    res.status(400).send("Dados incompletos. O time deve ter um capitão e 5 jogadores.");
+router.post("/criar-inicial", async (req: Request, res: Response) => {
+  const { name, group } = req.body;
+
+  if (!name || !group) {
+    res.status(400).send("Nome e grupo são obrigatórios.");
     return;
   }
-  
+
   const teamRepository = AppDataSource.getRepository(Team);
-  const existingTeam = await teamRepository.findOne({ where: { name }, relations: ["captain"] });
-  
+  const existingTeam = await teamRepository.findOne({ where: { name } });
+
   if (existingTeam) {
-    res.status(400).send("Time já cadastrado.");
+    res.status(400).send("Time já existe.");
     return;
   }
-  
-  const newCaptain = new Captain();
-  newCaptain.name = captain.name;
-  newCaptain.playerNumber = captain.playerNumber;
-  newCaptain.position = captain.position;
-  
-  const team = new Team();
-  team.name = name;
-  team.group = group;
-  team.captain = newCaptain;
-  
-  // Criar jogadores
-  team.players = players.map((p: any) => {
-    const player = new Player();
-    player.name = p.name;
-    player.playerNumber = p.playerNumber;
-    player.position = p.position;
-    player.team = team; // <- associação explícita aqui
-    return player;
-  });
-  
-  await teamRepository.save(team);
-  
-  res.status(201).json(serialize(team));
+
+  const newTeam = new Team();
+  newTeam.name = name;
+  newTeam.group = group;
+
+  await teamRepository.save(newTeam);
+
+  res.status(201).json({ message: "Time cadastrado com sucesso." });
 });
 
-router.put("/:id", async (req: Request, res: Response): Promise<void> => {
-  const teamId = parseInt(req.params.id);
-  const { name, group, captain, players } = req.body;
-  
-  if (!name || !group || !captain || !players || players.length !== 5) {
+
+router.put("/:dados", async (req: Request, res: Response): Promise<void> => {
+  const { name, captain, players } = req.body;
+
+  if (!captain || !players || players.length !== 5) {
     res.status(400).send("Dados incompletos. O time deve ter um capitão e 5 jogadores.");
     return;
   }
-  
+
   const teamRepository = AppDataSource.getRepository(Team);
   const captainRepository = AppDataSource.getRepository(Captain);
   const playerRepository = AppDataSource.getRepository(Player);
-  
+
   try {
     const team = await teamRepository.findOne({
-      where: { id: teamId },
+      where: { name },
       relations: ["captain", "players"],
     });
-    
+
     if (!team) {
       res.status(404).send("Time não encontrado.");
       return;
     }
-    
-    // Atualizar informações do time
-    team.name = name;
-    team.group = group;
-    
-    // Atualizar capitão
-    if (team.captain) {
-      team.captain.name = captain.name;
-      team.captain.playerNumber = captain.playerNumber;
-      team.captain.position = captain.position;
-      await captainRepository.save(team.captain);
-    } 
-    
-    for (let i = 0; i < players.length; i++) {
-      const incoming = players[i];
-      const existing = team.players.find(p => p.id === incoming.id);
-      
-      if(existing) {
-        // Atualizar jogador existente
-        existing.name = incoming.name;
-        existing.playerNumber = incoming.playerNumber;
-        existing.position = incoming.position;
-        await playerRepository.save(existing);
-      }
+
+    if (team.captain || team.players.length > 0) {
+      res.status(403).send("Este time já foi preenchido.");
+      return;
     }
-    
+
+    // Criar e salvar o capitão
+    const newCaptain = new Captain();
+    newCaptain.name = captain.Nome;
+    newCaptain.playerNumber = captain.Numero;
+    newCaptain.position = captain.Posicao;
+    await captainRepository.save(newCaptain);
+    team.captain = newCaptain;
+
+    // Criar e salvar jogadores
+    const newPlayers = players.map((p: any) => {
+      const player = new Player();
+      player.name = p.Nome;
+      player.playerNumber = p.Numero;
+      player.position = p.Posicao;
+      player.team = team;
+      return player;
+    });
+
+    await playerRepository.save(newPlayers);
+    team.players = newPlayers;
+
     await teamRepository.save(team);
-    
-    res.status(200).json({ message: "Time atualizado com sucesso."});
+
+    res.status(200).json({ message: "Time preenchido com sucesso!" });
   } catch (error) {
-    console.error("Erro ao atualizar time:", error);
-    res.status(500).send("Erro ao atualizar time.");
+    console.error("Erro ao preencher o time:", error);
+    res.status(500).send("Erro ao preencher o time.");
   }
-})
+});
+
 
 router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
   const teamId = parseInt(req.params.id);

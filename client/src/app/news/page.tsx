@@ -1,37 +1,7 @@
 import { NextPage } from "next";
 import Head from "next/head";
 import NewsCard from "@/components/NewsCard";
-
-type NewsItem = {
-  id: number;
-  title: string;
-  date: string;
-  summary: string;
-};
-
-const news: NewsItem[] = [
-  {
-    id: 1,
-    title: "Campeonato começa no próximo sábado!",
-    date: "2025-06-15",
-    summary:
-      "Preparem-se! A primeira rodada do Campeonato de Travinha da Baixada será realizada no estádio municipal com jogos emocionantes.",
-  },
-  {
-    id: 2,
-    title: "Time 'Os Feras' reforça elenco",
-    date: "2025-06-10",
-    summary:
-      "Os Feras anunciam contratações importantes para fortalecer o time na busca pelo título.",
-  },
-  {
-    id: 3,
-    title: "Novas regras aprovadas para as partidas",
-    date: "2025-06-08",
-    summary:
-      "A organização divulgou novas regras para garantir maior competitividade e fair play durante o campeonato.",
-  },
-];
+import { news } from "@/components/mockNews";
 
 const Noticias: NextPage = () => {
   return (
