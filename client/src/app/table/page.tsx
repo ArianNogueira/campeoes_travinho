@@ -247,14 +247,12 @@ const StandingsPage = () => {
                     >
                       <div>
                         <div className="font-semibold text-gray-800">
-                          {scorer.name}
+                          {scorer}
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {scorer.team}
-                        </div>
+                        <div className="text-sm text-gray-500">{scorer}</div>
                       </div>
                       <div className="px-3 py-1 font-bold text-yellow-800 bg-yellow-100 rounded-full">
-                        {scorer.goals}
+                        {scorer}
                       </div>
                     </div>
                   ))}
@@ -279,14 +277,14 @@ const StandingsPage = () => {
                     >
                       <div>
                         <div className="font-semibold text-gray-800">
-                          {defense.team}
+                          {defense}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {defense.cleanSheets} jogos sem sofrer
+                          {defense} jogos sem sofrer
                         </div>
                       </div>
                       <div className="px-3 py-1 font-bold text-blue-800 bg-blue-100 rounded-full">
-                        {defense.goalsAgainst}
+                        {defense}
                       </div>
                     </div>
                   ))}
