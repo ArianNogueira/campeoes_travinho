@@ -81,7 +81,7 @@ const StandingsPage = () => {
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Table */}
-          <div className="lg:col-span-2 max-w-[28em] md:max-w-full">
+          <div className="lg:col-span-2 max-w-[22.5em] md:max-w-full">
             <div className="overflow-hidden bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#708c9a]">
                 <h2 className="text-xl font-bold">
@@ -142,19 +142,18 @@ const StandingsPage = () => {
                             {team.position}
                           </div>
                         </td>
-                        <td className="px-4 py-4">
+                        <td className="px-2 py-4 min-w-44 md:min-w-full">
                           <div className="flex items-center space-x-2">
                             <div className="flex items-center gap-x-3">
                               <div>
                                 <Image
                                   src={team.img}
                                   alt={team.team}
-                                  width={40}
-                                  className="rounded-full"
+                                  className="rounded-full w-12"
                                 />
                               </div>
                               <div>
-                                <div className="font-semibold text-gray-800">
+                                <div className="font-semibold text-gray-800 text-[16px] md:text-[18px]">
                                   {team.team}
                                 </div>
                                 <div className="text-sm text-gray-500">
@@ -229,7 +228,7 @@ const StandingsPage = () => {
           </div>
 
           {/* Statistics Sidebar */}
-          <div className="space-y-6 max-w-[28em] md:max-w-full">
+          <div className="space-y-6 max-w-[25em] md:max-w-full">
             {/* Top Scorers */}
             <div className="bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#5e5035]">
