@@ -47,7 +47,7 @@ export default function Home() {
                   className="text-center p-6 bg-[#fffefb] rounded-lg shadow-sm"
                 >
                   <IconComponent className="h-8 w-8 mx-auto mb-3 text-[#2b4d66]" />
-                  <div className="text-3xl font-bold text-[#2d1f0f] mb-1">
+                  <div className="text-2xl md:text-3xl font-bold text-[#2d1f0f] mb-1">
                     {stat.value}
                   </div>
                   <div className="text-[#557489] text-sm">{stat.label}</div>
