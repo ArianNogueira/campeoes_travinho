@@ -40,13 +40,16 @@ export default function InscriptionPage() {
         players,
       };
 
-      const response = await fetch("http://localhost:3001/teams/dados", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/teams/dados`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
         const erroMsg = await response.text();
