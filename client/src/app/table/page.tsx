@@ -81,7 +81,7 @@ const StandingsPage = () => {
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Table */}
-          <div className="lg:col-span-2 max-w-[22.5em] md:max-w-full">
+          <div className="lg:col-span-2 max-w-[24.5em] md:max-w-full">
             <div className="overflow-hidden bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#708c9a]">
                 <h2 className="text-xl font-bold">
