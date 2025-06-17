@@ -228,7 +228,7 @@ const StandingsPage = () => {
           </div>
 
           {/* Statistics Sidebar */}
-          <div className="space-y-6 max-w-[23em] md:max-w-full">
+          <div className="space-y-6 max-w-[23.5em] md:max-w-full">
             {/* Top Scorers */}
             <div className="bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#5e5035]">

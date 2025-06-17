@@ -41,7 +41,7 @@ export default function InscriptionPage() {
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/teams/${selectedTeam}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/teams/${payload.name}`,
         {
           method: "PUT",
           headers: {
