@@ -41,7 +41,7 @@ export default function InscriptionPage() {
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/teams/${payload.name}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/teams/dados`,
         {
           method: "PUT",
           headers: {
