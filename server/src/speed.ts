@@ -21,6 +21,7 @@ async function seedInitialData() {
     { name: "GOLDEN WARRIOS", group: "Grupo B" },
     { name: "CA NOTTS", group: "Grupo B" },
     { name: "OS LISOS TEAM", group: "Grupo B" },
+    { name: "teste", group: "Grupo B" },
   ];
 
   for (const data of teamsData) {

@@ -48,7 +48,7 @@ router.post("/criar-inicial", async (req: Request, res: Response) => {
 });
 
 
-router.put("/:dados", async (req: Request, res: Response): Promise<void> => {
+router.put("/dados", async (req: Request, res: Response): Promise<void> => {
   const { name, captain, players } = req.body;
 
   if (!captain || !players || players.length !== 5) {

@@ -11,4 +11,5 @@ export const teams = [
   { name: "THUNDER FC", group: "A" },
   { name: "TITANS FC", group: "A" },
   { name: "VILARREAL", group: "B" },
+  { name: "teste", group: "B" },
 ];
