@@ -181,7 +181,7 @@ export default function InscriptionPage() {
 
         <button
           type="submit"
-          className="bg-[#102f4c] text-white px-6 py-2 rounded hover:bg-[#1c3d5a]"
+          className="bg-[#102f4c] text-white px-6 py-2 cursor-pointer rounded hover:bg-[#1c3d5a]"
         >
           Enviar
         </button>

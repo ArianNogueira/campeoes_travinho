@@ -35,4 +35,11 @@ export const news: NewsItem[] = [
     summary:
       "A equipe terá sua 1ª participação no campeonato, trazendo um novo desafio para os adversários.",
   },
+  {
+    id: 5,
+    title: "CM Inter Miami tenta o bicampeonato.",
+    date: "2025-06-17",
+    summary:
+      "A atual campeã vai defender seu título, e para isso, foi ao mercado em busca de jogadores de qualidade.",
+  },
 ];
