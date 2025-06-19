@@ -79,9 +79,9 @@ const StandingsPage = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Main Table */}
-          <div className="lg:col-span-2 max-w-[23.5em] md:max-w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-1 lg:px-0">
+          {/* Tabela principal (ocupa 2 colunas no desktop) */}
+          <div className="lg:col-span-2 w-full">
             <div className="overflow-hidden bg-white rounded-lg shadow-md">
               <div className="px-6 py-4 text-white bg-[#708c9a]">
                 <h2 className="text-xl font-bold">
@@ -92,39 +92,28 @@ const StandingsPage = () => {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[700px]">
                   <thead className="bg-gray-50">
                     <tr className="text-left">
-                      <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                        Pos
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                        Time
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        Pts
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        J
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        V
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        E
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        D
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        GP
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        GC
-                      </th>
-                      <th className="px-4 py-3 text-sm font-semibold text-center text-gray-600">
-                        SG
-                      </th>
+                      {[
+                        "Pos",
+                        "Time",
+                        "Pts",
+                        "J",
+                        "V",
+                        "E",
+                        "D",
+                        "GP",
+                        "GC",
+                        "SG",
+                      ].map((header) => (
+                        <th
+                          key={header}
+                          className="px-4 py-3 text-sm font-semibold text-gray-600 text-center"
+                        >
+                          {header}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -133,7 +122,7 @@ const StandingsPage = () => {
                         key={team.id}
                         className="transition-colors border-b border-gray-200 hover:bg-gray-50"
                       >
-                        <td className="px-4 py-4">
+                        <td className="px-4 py-4 text-center">
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${getPositionColor(
                               team.position
@@ -142,40 +131,38 @@ const StandingsPage = () => {
                             {team.position}
                           </div>
                         </td>
-                        <td className="px-2 py-4 min-w-44 md:min-w-full">
-                          <div className="flex items-center space-x-2">
-                            <div className="flex items-center gap-x-3">
-                              <div>
-                                <Image
-                                  src={team.img}
-                                  alt={team.team}
-                                  className="rounded-full w-12"
-                                />
-                              </div>
-                              <div>
-                                <div className="font-semibold text-gray-800 text-[16px] md:text-[18px]">
-                                  {team.team}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  Grupo {team.group}
-                                </div>
-                              </div>
+                        <td className="px-2 py-4 min-w-44">
+                          <div className="flex items-center gap-3">
+                            <Image
+                              src={team.img}
+                              alt={team.team}
+                              className="rounded-full w-10 h-10 object-cover"
+                              width={40}
+                              height={40}
+                            />
+                            <div>
+                              <p className="font-semibold text-gray-800 text-sm md:text-base">
+                                {team.team}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                Grupo {team.group}
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-lg text-center text-black">
+                        <td className="px-4 py-4 text-center font-bold text-black">
                           {team.points}
                         </td>
                         <td className="px-4 py-4 text-center text-gray-600">
                           {team.played}
                         </td>
-                        <td className="px-4 py-4 font-medium text-center text-green-600">
+                        <td className="px-4 py-4 text-center text-green-600">
                           {team.won}
                         </td>
-                        <td className="px-4 py-4 font-medium text-center text-yellow-600">
+                        <td className="px-4 py-4 text-center text-yellow-600">
                           {team.drawn}
                         </td>
-                        <td className="px-4 py-4 font-medium text-center text-red-600">
+                        <td className="px-4 py-4 text-center text-red-600">
                           {team.lost}
                         </td>
                         <td className="px-4 py-4 text-center text-gray-600">
@@ -184,9 +171,9 @@ const StandingsPage = () => {
                         <td className="px-4 py-4 text-center text-gray-600">
                           {team.goalsAgainst}
                         </td>
-                        <td className="px-4 py-4 text-center">
+                        <td className="px-4 py-4 text-center font-semibold">
                           <span
-                            className={`font-medium ${
+                            className={`${
                               team.goalDifference >= 0
                                 ? "text-green-600"
                                 : "text-red-600"
@@ -202,8 +189,8 @@ const StandingsPage = () => {
                 </table>
               </div>
 
-              {/* Legend */}
-              <div className="px-6 py-4 bg-gray-500 border-t">
+              {/* Legenda */}
+              <div className="px-6 py-4 bg-gray-100 border-t text-sm">
                 {selectedGroup === "all" ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
@@ -212,7 +199,7 @@ const StandingsPage = () => {
                     </span>
                   </div>
                 ) : (
-                  <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="flex flex-wrap gap-4">
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
                       <span>Classificados (1º-4º)</span>
