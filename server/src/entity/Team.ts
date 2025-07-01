@@ -13,6 +13,9 @@ export class Team {
     
     @Column()
     group!: string;
+
+    @Column({ nullable: true })
+    emblem!: string; // URL da imagem ou caminho
     
     @OneToOne(() => Captain, { cascade: true, onDelete: "CASCADE" })
     @JoinColumn()
@@ -21,7 +24,7 @@ export class Team {
     @OneToMany(() => Player, (player) => player.team, { cascade: true, onDelete: "CASCADE" })
     players!: Player[];
     
-    @OneToMany(() => Match, (match) => match.team, { cascade: true })
-    matches!: Match[];
+    // @OneToMany(() => Match, (match) => match.team, { cascade: true })
+    // matches!: Match[];
     
 }

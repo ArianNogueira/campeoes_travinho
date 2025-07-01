@@ -194,7 +194,7 @@ const StandingsPage = () => {
                 {selectedGroup === "all" ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
-                    <span>
+                    <span className="text-black">
                       Times com a melhor campanha durante a fase de grupos!
                     </span>
                   </div>
@@ -202,11 +202,11 @@ const StandingsPage = () => {
                   <div className="flex flex-wrap gap-4">
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
-                      <span>Classificados (1º-4º)</span>
+                      <span className="text-black">Classificados (1º-4º)</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-red-200 rounded-full bg-red-50"></div>
-                      <span>Eliminados (5º-6º)</span>
+                      <span className="text-black">Eliminados (5º-6º)</span>
                     </div>
                   </div>
                 )}

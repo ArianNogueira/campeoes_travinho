@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+// src/entity/Match.ts
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { Team } from "./Team";
 
 @Entity()
@@ -6,12 +7,23 @@ export class Match {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  opponent!: string;
+  @ManyToOne(() => Team)
+  @JoinColumn({ name: "home_team_id" }) // cria coluna personalizada no banco
+  home!: Team;
+
+  @ManyToOne(() => Team)
+  @JoinColumn({ name: "away_team_id" })
+  away!: Team;
 
   @Column()
-  date!: string; // poderia ser Date se for um campo de data real
+  date!: string;
 
-  @ManyToOne(() => Team, (team) => team.matches)
-  team!: Team;
+  @Column()
+  time!: string;
+
+  @Column()
+  round!: number;
+
+  @Column()
+  group!: string;
 }

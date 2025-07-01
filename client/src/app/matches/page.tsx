@@ -1,21 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { emblemMap } from "./emblem";
 import Image from "next/image";
-import { matches } from "./matche";
 
 export default function MatchesPage() {
+  const [matches, setMatches] = useState<any[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
+  const [selectedRound, setSelectedRound] = useState(1);
+
+  useEffect(() => {
+    async function fetchMatches() {
+      try {
+        const res = await fetch(
+          "https://campeoes-travinho.onrender.com/matches"
+        );
+        const data = await res.json();
+        setMatches(data);
+      } catch (error) {
+        console.error("Erro ao buscar partidas:", error);
+      }
+    }
+
+    fetchMatches();
+  }, []);
 
   const teamsList = Array.from(
-    new Set(matches.flatMap((m) => [m.teamA.name, m.teamB.name]))
+    new Set(matches.flatMap((m) => [m.home?.name, m.away?.name]))
+  );
+
+  const roundsList = Array.from(new Set(matches.map((m) => m.round))).sort(
+    (a, b) => a - b
   );
 
   const filteredMatches =
     selectedTeam === "all"
-      ? matches
+      ? matches.filter((m) => m.round === selectedRound)
       : matches.filter(
-          (m) => m.teamA.name === selectedTeam || m.teamB.name === selectedTeam
+          (m) => m.home?.name === selectedTeam || m.away?.name === selectedTeam
         );
 
   return (
@@ -24,103 +46,110 @@ export default function MatchesPage() {
         Partidas
       </h1>
 
-      {/* Filtro */}
-      <div className="mb-6 text-center">
-        <label className="mr-2 font-medium text-gray-700">
-          Filtrar por time:
-        </label>
-        <select
-          className="border rounded px-3 py-1 text-gray-700"
-          value={selectedTeam}
-          onChange={(e) => setSelectedTeam(e.target.value)}
-        >
-          <option value="all">Todos</option>
-          {teamsList.map((team) => (
-            <option key={team} value={team}>
-              {team}
-            </option>
-          ))}
-        </select>
+      {/* Filtros */}
+      <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <div>
+          <label className="mr-2 font-medium text-gray-700">
+            Filtrar por time:
+          </label>
+          <select
+            className="border rounded px-3 py-1 text-gray-700"
+            value={selectedTeam}
+            onChange={(e) => setSelectedTeam(e.target.value)}
+          >
+            <option value="all">Todos</option>
+            {teamsList.map((team) => (
+              <option key={team} value={team}>
+                {team}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="mr-2 font-medium text-gray-700">Rodada:</label>
+          <select
+            className="border rounded px-3 py-1 text-gray-700"
+            value={selectedRound}
+            onChange={(e) => setSelectedRound(Number(e.target.value))}
+            disabled={selectedTeam !== "all"}
+          >
+            {roundsList.map((round) => (
+              <option key={round} value={round}>
+                {round}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {filteredMatches.map((match) => (
-        <div
-          key={match.id}
-          className="mx-auto border border-gray-200 rounded-xl p-4 shadow-md bg-white mb-6"
-        >
-          {/* Rodada */}
-          <div className="mb-5 md:mb-2 text-sm text-indigo-600 text-center font-semibold">
-            Rodada {match.round} · Grupo {match.group}
-          </div>
+      {/* Partidas */}
+      {filteredMatches.length === 0 ? (
+        <p className="text-center text-gray-500">Nenhuma partida encontrada.</p>
+      ) : (
+        filteredMatches.map((match) => (
+          <div
+            key={match.id}
+            className="mx-auto border border-gray-200 rounded-xl p-4 shadow-md bg-white mb-6 max-w-xl md:max-w-full"
+          >
+            <div className="mb-2 text-sm text-indigo-600 text-center font-semibold">
+              Rodada {match.round} · Grupo {match.group}
+            </div>
 
-          {/* Infos principais */}
-          <div className="flex justify-around items-center mb-4 text-sm text-gray-600">
-            <div className="flex gap-5">
-              <div>
-                <span className="font-medium">Data:</span>
-                <span className="ml-1">{match.date}</span>
+            <div className="flex justify-around items-center mb-4 text-sm text-gray-600 flex-wrap gap-2 text-center">
+              <div className="flex gap-5">
+                <div>
+                  <span className="font-medium">Data:</span>
+                  <span className="ml-1">{match.date}</span>
+                </div>
+                <div>
+                  <span className="font-medium">Hora:</span>
+                  <span className="ml-1">{match.time}</span>
+                </div>
               </div>
               <div>
-                <span className="font-medium">Hora:</span>
-                <span className="ml-1">{match.time}</span>
+                <span className="font-medium">Local: Stadium das Luses</span>
               </div>
             </div>
-            <div>
-              <span className="font-medium">Local:</span> {match.location}
-            </div>
-          </div>
 
-          {/* Confronto */}
-          <div className="flex items-center justify-around">
-            {/* Time A */}
-            <div className="flex items-center gap-3">
-              <Image
-                src={match.teamA.emblem}
-                alt={match.teamA.name}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-              <div>
-                <p className="text-lg font-semibold text-gray-800">
-                  {match.teamA.name}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Posição: {match.teamA.position}
+            {/* Confronto responsivo e centralizado */}
+            <div className="grid grid-cols-3 items-center text-center gap-2 sm:gap-4">
+              {/* Time A */}
+              <div className="flex flex-col items-center justify-center gap-y-1">
+                <Image
+                  src={emblemMap[match.home?.name] || "/default-emblem.png"}
+                  alt={match.home?.name}
+                  width={50}
+                  height={50}
+                  className="rounded-full mb-1"
+                />
+                <p className="text-sm font-semibold text-gray-800 text-center max-w-[1400px] truncate">
+                  {match.home?.name}
                 </p>
               </div>
-            </div>
 
-            {/* Placar */}
-            <div className=" text-center text-2xl font-bold text-gray-700 w-24">
-              {match.scoreA !== null && match.scoreB !== null ? (
-                `${match.scoreA} - ${match.scoreB}`
-              ) : (
+              {/* VS */}
+              <div className="text-2xl font-bold text-gray-600 flex items-center justify-center h-full">
                 <span className="text-gray-400">vs</span>
-              )}
-            </div>
+              </div>
 
-            {/* Time B */}
-            <div className="flex items-center gap-3 text-right">
-              <div>
-                <p className="text-lg font-semibold text-gray-800">
-                  {match.teamB.name}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Posição: {match.teamB.position}
+              {/* Time B */}
+              <div className="flex flex-col items-center justify-center gap-y-1">
+                <Image
+                  src={emblemMap[match.away?.name] || "/default-emblem.png"}
+                  alt={match.away?.name}
+                  width={50}
+                  height={50}
+                  className="rounded-full mb-1"
+                />
+                <p className="text-sm font-semibold text-gray-800 text-center max-w-[140px] truncate">
+                  {match.away?.name}
                 </p>
               </div>
-              <Image
-                src={match.teamB.emblem}
-                alt={match.teamB.name}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }
