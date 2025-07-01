@@ -1,11 +1,27 @@
 "use client";
 
+type TeamInfo = {
+  name: string;
+};
+
+type Match = {
+  id: number;
+  home: TeamInfo;
+  away: TeamInfo;
+  date: string;
+  time: string;
+  group: string;
+  round: number;
+  scoreHome?: number;
+  scoreAway?: number;
+};
+
 import { useEffect, useState } from "react";
 import { emblemMap } from "./emblem";
 import Image from "next/image";
 
 export default function MatchesPage() {
-  const [matches, setMatches] = useState<any[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
   const [selectedRound, setSelectedRound] = useState(1);
 
