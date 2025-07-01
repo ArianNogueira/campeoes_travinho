@@ -38,7 +38,7 @@ export default function Header() {
               Tabela
             </span>
           </Link>
-          <Link href="/notMatches" passHref>
+          <Link href="/matches" passHref>
             <span className="px-3 py-1 rounded cursor-pointer hover:bg-[#2b4d66] transition">
               Partidas
             </span>

@@ -37,7 +37,7 @@ export default function Footer() {
             Tabela
           </Link>
           <Link
-            href="/notMatches"
+            href="/matches"
             className="hover:text-[#855b21] transition-colors"
           >
             Partidas
