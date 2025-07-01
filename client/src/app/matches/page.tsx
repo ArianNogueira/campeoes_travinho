@@ -24,6 +24,8 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
   const [selectedRound, setSelectedRound] = useState(1);
+  const [editingMatch, setEditingMatch] = useState<Match | null>(null);
+  const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
 
   useEffect(() => {
     async function fetchMatches() {
@@ -55,6 +57,41 @@ export default function MatchesPage() {
       : matches.filter(
           (m) => m.home?.name === selectedTeam || m.away?.name === selectedTeam
         );
+
+  const openEditModal = (match: Match) => {
+    setEditingMatch(match);
+    setEditData({
+      date: match.date,
+      time: match.time,
+      round: match.round,
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingMatch) return;
+    try {
+      const res = await fetch(
+        `https://campeoes-travinho.onrender.com/matches/${editingMatch.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editData),
+        }
+      );
+      if (!res.ok) throw new Error("Erro ao atualizar");
+
+      setEditingMatch(null);
+
+      // Atualiza a lista
+      const updated = await fetch(
+        "https://campeoes-travinho.onrender.com/matches"
+      );
+      const data = await updated.json();
+      setMatches(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="mx-auto py-6 px-5 md:px-20 bg-[#fdfaf3]">
@@ -163,8 +200,85 @@ export default function MatchesPage() {
                 </p>
               </div>
             </div>
+            <button
+              className="text-blue-600 underline text-sm"
+              onClick={() => openEditModal(match)}
+            >
+              Editar
+            </button>
           </div>
         ))
+      )}
+
+      {editingMatch && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
+            <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
+              Editar Partida
+            </h2>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Data
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 w-full border rounded px-3 py-2"
+                  value={editData.date}
+                  onChange={(e) =>
+                    setEditData({ ...editData, date: e.target.value })
+                  }
+                  placeholder="DD/MM/AAAA"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Hora
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 w-full border rounded px-3 py-2"
+                  value={editData.time}
+                  onChange={(e) =>
+                    setEditData({ ...editData, time: e.target.value })
+                  }
+                  placeholder="HH:MM"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Rodada
+                </label>
+                <input
+                  type="number"
+                  className="mt-1 w-full border rounded px-3 py-2"
+                  value={editData.round}
+                  onChange={(e) =>
+                    setEditData({ ...editData, round: Number(e.target.value) })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+                onClick={() => setEditingMatch(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white"
+                onClick={handleSaveEdit}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

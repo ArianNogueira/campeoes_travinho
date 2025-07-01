@@ -22,6 +22,15 @@ AppDataSource.initialize().then(async () => {
 
   // aqui vai sua geração e salvamento:
   const jogos = generateSchedule(teams, allDates, horariosPorDia);
+
+  jogos.sort((a, b) => {
+    const [dayA, monthA, yearA] = a.date.split("/").map(Number);
+    const [dayB, monthB, yearB] = b.date.split("/").map(Number);
+    const dateA = new Date(yearA, monthA - 1, dayA, ...a.time.split(":").map(Number));
+    const dateB = new Date(yearB, monthB - 1, dayB, ...b.time.split(":").map(Number));
+    return dateA.getTime() - dateB.getTime();
+  });
+
   await salvarPartidas(jogos);
 
   console.log("Partidas geradas e salvas.");
@@ -29,7 +38,6 @@ AppDataSource.initialize().then(async () => {
 }).catch((err) => {
   console.error("Erro ao conectar no banco:", err);
 });
-
 
 // Gera rodadas round-robin para um grupo
 function generateRoundRobinMatches(teams: Team[]): Match[][] {
@@ -73,49 +81,61 @@ function generateRoundRobinMatches(teams: Team[]): Match[][] {
   return rounds;
 }
 
-
 function generateSchedule(
   teams: Team[],
   allDates: string[],
   horariosPorDia: Record<string, string[]>
 ): Match[] {
-  // 1. Separar times por grupo
   const groups: Record<string, Team[]> = {};
   teams.forEach(t => {
     if (!groups[t.group]) groups[t.group] = [];
     groups[t.group].push(t);
   });
 
-  // 2. Gerar rodadas round-robin por grupo
   const roundsByGroup: Record<string, Match[][]> = {};
   for (const group in groups) {
     roundsByGroup[group] = generateRoundRobinMatches(groups[group]);
   }
 
-  // 3. Intercalar as rodadas para formar rodadas finais com 6 jogos (2 noites de 3 jogos)
-  // Alternância de jogos por noite: 2A+1B e 1A+2B
-
   const maxRounds = Math.max(roundsByGroup["A"].length, roundsByGroup["B"].length);
   const finalMatches: Match[] = [];
   let dateIndex = 0;
 
+  // Rastrear os horários usados por time
+  const timeUsage: Record<string, Set<string>> = {};
+  teams.forEach(team => {
+    timeUsage[team.name] = new Set();
+  });
+
+  // Função para escolher horário menos usado por ambos os times
+  const pickTimeSlot = (home: string, away: string, available: string[]): string => {
+    const homeUsed = timeUsage[home];
+    const awayUsed = timeUsage[away];
+
+    const unused = available.filter(t => !homeUsed.has(t) && !awayUsed.has(t));
+    const leastUsed = unused.length > 0 ? unused : available;
+
+    const chosen = leastUsed[Math.floor(Math.random() * leastUsed.length)];
+
+    timeUsage[home].add(chosen);
+    timeUsage[away].add(chosen);
+
+    return chosen;
+  };
+
   for (let round = 0; round < maxRounds; round++) {
-    // Cada rodada tem 2 noites
     for (let night = 0; night < 2; night++) {
       if (dateIndex >= allDates.length) break;
       const date = allDates[dateIndex];
-      const horarios = horariosPorDia[date] || [];
+      const horarios = [...(horariosPorDia[date] || [])]; // copia para manipular
 
-      // Distribuição alternada
       const isFirstNight = night === 0;
       const distribA = isFirstNight ? 2 : 1;
       const distribB = isFirstNight ? 1 : 2;
 
-      // Selecionar jogos do grupo A
       const jogosA = roundsByGroup["A"][round] || [];
       const jogosB = roundsByGroup["B"][round] || [];
 
-      // Função para pegar X jogos não usados ainda
       const pickMatches = (matches: Match[], count: number): Match[] => {
         return matches.splice(0, count);
       };
@@ -125,10 +145,21 @@ function generateSchedule(
 
       const jogosDaNoite = [...selectedA, ...selectedB];
 
-      // Atribuir data e horário
+      // Embaralhar ordem dos jogos para diversificar
+      jogosDaNoite.sort(() => Math.random() - 0.5);
+
+      // Embaralhar os horários da noite
+      const shuffledHorarios = horarios.sort(() => Math.random() - 0.5);
+
       jogosDaNoite.forEach((match, idx) => {
+        const horarioDisponivel = shuffledHorarios[idx];
+
+        // Atualiza rastreamento de horários usados
+        timeUsage[match.home].add(horarioDisponivel);
+        timeUsage[match.away].add(horarioDisponivel);
+
         match.date = date;
-        match.time = horarios[idx] || "Horário indefinido";
+        match.time = horarioDisponivel;
       });
 
       finalMatches.push(...jogosDaNoite);
@@ -167,6 +198,16 @@ const horariosPorDia: Record<string, string[]> = Object.fromEntries(
 // console.time("Geração dos jogos");
 
 // const jogos = generateSchedule(teams, allDates, horariosPorDia);
+
+// // Ordenar os jogos por data e horário
+// jogos.sort((a, b) => {
+//   const [dayA, monthA, yearA] = a.date.split("/").map(Number);
+//   const [dayB, monthB, yearB] = b.date.split("/").map(Number);
+//   const dateA = new Date(yearA, monthA - 1, dayA, ...a.time.split(":").map(Number));
+//   const dateB = new Date(yearB, monthB - 1, dayB, ...b.time.split(":").map(Number));
+//   return dateA.getTime() - dateB.getTime();
+// });
+
 // salvarPartidas(jogos);
 
 // console.timeEnd("Geração dos jogos");
