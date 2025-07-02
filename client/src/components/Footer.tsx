@@ -17,7 +17,7 @@ export default function Footer() {
             className="object-contain"
           />
           <a
-            href="/REGULAMENTO_DA_COPA_CAMPEÃES_TRAVINHO_2023.pdf"
+            href="/Regulamento_Travinho_2025.pdf"
             download
             className="text-sm underline hover:text-[#855b21] transition-colors"
           >
