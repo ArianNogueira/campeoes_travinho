@@ -145,16 +145,14 @@ export default function MatchesPage() {
             key={match.id}
             className="mx-auto border border-gray-200 rounded-xl p-4 shadow-md bg-white mb-6 max-w-xl md:max-w-full"
           >
-            <div className="flex justify-between items-center mb-2">
-              {/* Rodada centralizada */}
-              <div className="w-full text-center text-sm text-indigo-600 font-semibold">
+            {/* Cabeçalho da partida: rodada + botão editar */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+              <div className="text-center w-full text-sm text-indigo-600 font-semibold">
                 Rodada {match.round} · Grupo {match.group}
               </div>
-
-              {/* Botão editar alinhado à direita */}
-              <div className="absolute right-4">
+              <div className="text-center sm:text-right">
                 <button
-                  className="bg-blue-600 px-3 py-2 text-sm text-white rounded hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 px-3 py-1.5 text-sm text-white rounded hover:bg-blue-700 transition-colors"
                   onClick={() => openEditModal(match)}
                 >
                   Editar
@@ -162,6 +160,7 @@ export default function MatchesPage() {
               </div>
             </div>
 
+            {/* Informações da partida */}
             <div className="flex justify-around items-center mb-4 text-sm text-gray-600 flex-wrap gap-2 text-center">
               <div className="flex gap-5">
                 <div>
@@ -178,7 +177,7 @@ export default function MatchesPage() {
               </div>
             </div>
 
-            {/* Confronto responsivo e centralizado */}
+            {/* Confronto responsivo */}
             <div className="grid grid-cols-3 items-center text-center gap-2 sm:gap-4">
               {/* Time A */}
               <div className="flex flex-col items-center justify-center gap-y-1">
@@ -189,7 +188,7 @@ export default function MatchesPage() {
                   height={50}
                   className="rounded-full mb-1"
                 />
-                <p className="text-sm font-semibold text-gray-800 text-center max-w-[1400px] truncate">
+                <p className="text-sm font-semibold text-gray-800 text-center max-w-[140px] truncate">
                   {match.home?.name}
                 </p>
               </div>
