@@ -145,8 +145,21 @@ export default function MatchesPage() {
             key={match.id}
             className="mx-auto border border-gray-200 rounded-xl p-4 shadow-md bg-white mb-6 max-w-xl md:max-w-full"
           >
-            <div className="mb-2 text-sm text-indigo-600 text-center font-semibold">
-              Rodada {match.round} · Grupo {match.group}
+            <div className="flex justify-between items-center mb-2">
+              {/* Rodada centralizada */}
+              <div className="w-full text-center text-sm text-indigo-600 font-semibold">
+                Rodada {match.round} · Grupo {match.group}
+              </div>
+
+              {/* Botão editar alinhado à direita */}
+              <div className="absolute right-4">
+                <button
+                  className="bg-blue-600 px-3 py-2 text-sm text-white rounded hover:bg-blue-700 transition-colors"
+                  onClick={() => openEditModal(match)}
+                >
+                  Editar
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-around items-center mb-4 text-sm text-gray-600 flex-wrap gap-2 text-center">
@@ -200,12 +213,6 @@ export default function MatchesPage() {
                 </p>
               </div>
             </div>
-            <button
-              className="text-blue-600 underline text-sm"
-              onClick={() => openEditModal(match)}
-            >
-              Editar
-            </button>
           </div>
         ))
       )}
