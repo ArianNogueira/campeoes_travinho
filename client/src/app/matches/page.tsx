@@ -59,12 +59,18 @@ export default function MatchesPage() {
         );
 
   const openEditModal = (match: Match) => {
-    setEditingMatch(match);
-    setEditData({
-      date: match.date,
-      time: match.time,
-      round: match.round,
-    });
+    const senha = prompt("Digite a senha de administrador:");
+
+    if (senha === "travinho2019") {
+      setEditingMatch(match);
+      setEditData({
+        date: match.date,
+        time: match.time,
+        round: match.round,
+      });
+    } else {
+      alert("Senha incorreta!");
+    }
   };
 
   const handleSaveEdit = async () => {
@@ -230,7 +236,7 @@ export default function MatchesPage() {
                 </label>
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded px-3 py-2"
+                  className="mt-1 w-full border rounded px-3 py-2 placeholder:text-black"
                   value={editData.date}
                   onChange={(e) =>
                     setEditData({ ...editData, date: e.target.value })
@@ -245,7 +251,7 @@ export default function MatchesPage() {
                 </label>
                 <input
                   type="text"
-                  className="mt-1 w-full border rounded px-3 py-2"
+                  className="mt-1 w-full border rounded px-3 py-2 placeholder:text-black"
                   value={editData.time}
                   onChange={(e) =>
                     setEditData({ ...editData, time: e.target.value })
@@ -260,7 +266,7 @@ export default function MatchesPage() {
                 </label>
                 <input
                   type="number"
-                  className="mt-1 w-full border rounded px-3 py-2"
+                  className="mt-1 w-full border rounded px-3 py-2 placeholder:text-black"
                   value={editData.round}
                   onChange={(e) =>
                     setEditData({ ...editData, round: Number(e.target.value) })
@@ -277,7 +283,7 @@ export default function MatchesPage() {
                 Cancelar
               </button>
               <button
-                className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white"
+                className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={handleSaveEdit}
               >
                 Salvar
