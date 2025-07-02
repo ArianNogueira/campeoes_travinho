@@ -16,6 +16,12 @@ type Match = {
   scoreAway?: number;
 };
 
+type Player = {
+  id: number;
+  name: string;
+  number: number;
+};
+
 import { useEffect, useState } from "react";
 import { emblemMap } from "./emblem";
 import Image from "next/image";
@@ -26,6 +32,12 @@ export default function MatchesPage() {
   const [selectedRound, setSelectedRound] = useState(1);
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [players, setPlayers] = useState<{ home: Player[]; away: Player[] }>({
+    home: [],
+    away: [],
+  });
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     async function fetchMatches() {
@@ -73,6 +85,19 @@ export default function MatchesPage() {
     }
   };
 
+  const handleAdminAccess = () => {
+    if (isAdmin) return true;
+
+    const senha = prompt("Digite a senha de administrador:");
+    if (senha === "travinho2019") {
+      setIsAdmin(true);
+      return true;
+    } else {
+      alert("Senha incorreta!");
+      return false;
+    }
+  };
+
   const handleSaveEdit = async () => {
     if (!editingMatch) return;
     try {
@@ -98,6 +123,18 @@ export default function MatchesPage() {
       console.error(err);
     }
   };
+
+  function openDetailsModal(match: Match) {
+    if (!handleAdminAccess()) return;
+
+    setSelectedMatch(match);
+    // Aqui você pode buscar os jogadores no back-end se tiver essa estrutura
+    fetch(`https://campeoes-travinho.onrender.com/players/${match.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setPlayers({ home: data.homePlayers, away: data.awayPlayers });
+      });
+  }
 
   return (
     <div className="mx-auto py-6 px-5 md:px-20 bg-[#fdfaf3]">
@@ -162,6 +199,12 @@ export default function MatchesPage() {
                   onClick={() => openEditModal(match)}
                 >
                   Editar
+                </button>
+                <button
+                  className="bg-green-600 px-3 py-2 text-sm text-white rounded hover:bg-green-700 transition-colors ml-2"
+                  onClick={() => openDetailsModal(match)}
+                >
+                  Partida
                 </button>
               </div>
             </div>
@@ -285,6 +328,84 @@ export default function MatchesPage() {
               <button
                 className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={handleSaveEdit}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedMatch && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-4xl shadow-xl overflow-y-auto max-h-[90vh]">
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
+              Detalhes da Partida
+            </h2>
+
+            <div className="grid grid-cols-2 gap-8">
+              {/* Time da Casa */}
+              <div>
+                <h3 className="text-lg font-semibold text-indigo-600 mb-2 text-center">
+                  {selectedMatch.home.name}
+                </h3>
+                <ul className="space-y-2">
+                  {players.home.map((player) => (
+                    <li key={player.id} className="flex justify-between">
+                      <span>
+                        {player.number} - {player.name}
+                      </span>
+                      {/* Campos de gol, cartão etc */}
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          className="w-12 border rounded px-1"
+                          placeholder="G"
+                        />
+                        <input type="checkbox" title="Cartão Amarelo" />
+                        <input type="checkbox" title="Cartão Vermelho" />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Time Visitante */}
+              <div>
+                <h3 className="text-lg font-semibold text-indigo-600 mb-2 text-center">
+                  {selectedMatch.away.name}
+                </h3>
+                <ul className="space-y-2">
+                  {players.away.map((player) => (
+                    <li key={player.id} className="flex justify-between">
+                      <span>
+                        {player.number} - {player.name}
+                      </span>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          className="w-12 border rounded px-1"
+                          placeholder="G"
+                        />
+                        <input type="checkbox" title="Cartão Amarelo" />
+                        <input type="checkbox" title="Cartão Vermelho" />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+                onClick={() => setSelectedMatch(null)}
+              >
+                Fechar
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => console.log("Salvar dados da partida")}
               >
                 Salvar
               </button>
