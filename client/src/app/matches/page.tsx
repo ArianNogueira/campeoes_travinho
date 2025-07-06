@@ -37,6 +37,21 @@ export default function MatchesPage() {
     home: [],
     away: [],
   });
+  const [goals, setGoals] = useState<{
+    home: Record<number, number>;
+    away: Record<number, number>;
+  }>({
+    home: {},
+    away: {},
+  });
+  const [captains, setCaptains] = useState<{
+    home: string | null;
+    away: string | null;
+  }>({
+    home: null,
+    away: null,
+  });
+
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -124,6 +139,23 @@ export default function MatchesPage() {
     }
   };
 
+  const getTotalGoals = (team: "home" | "away") =>
+    Object.values(goals[team]).reduce((sum, g) => sum + g, 0);
+
+  const handleGoalChange = (
+    team: "home" | "away",
+    playerId: number,
+    value: number
+  ) => {
+    setGoals((prev) => ({
+      ...prev,
+      [team]: {
+        ...prev[team],
+        [playerId]: value,
+      },
+    }));
+  };
+
   function openDetailsModal(match: Match) {
     if (!handleAdminAccess()) return;
 
@@ -136,10 +168,15 @@ export default function MatchesPage() {
           home: data.homePlayers || [],
           away: data.awayPlayers || [],
         });
+        setCaptains({
+          home: data.homeCaptain || null,
+          away: data.awayCaptain || null,
+        });
       })
       .catch((err) => {
         console.error("Erro ao carregar jogadores:", err);
         setPlayers({ home: [], away: [] });
+        setCaptains({ home: null, away: null });
       });
   }
 
@@ -229,7 +266,7 @@ export default function MatchesPage() {
                 </div>
               </div>
               <div>
-                <span className="font-medium">Local: Stadium das Luses</span>
+                <span className="font-medium">Local: Praça Events Stadium</span>
               </div>
             </div>
 
@@ -349,6 +386,9 @@ export default function MatchesPage() {
             <h2 className="text-xl font-bold mb-4 text-center text-gray-800">
               Detalhes da Partida
             </h2>
+            <div className="text-center mb-4 text-xl font-bold text-gray-700">
+              Placar: {getTotalGoals("home")} x {getTotalGoals("away")}
+            </div>
 
             <div className="grid grid-cols-2 gap-8">
               {/* Time da Casa */}
@@ -357,20 +397,44 @@ export default function MatchesPage() {
                   {selectedMatch.home.name}
                 </h3>
                 <ul className="space-y-2">
+                  {captains.home && (
+                    <p className="text-sm text-gray-600 text-center mb-2">
+                      Capitão:{" "}
+                      <span className="font-medium">{captains.home}</span>
+                    </p>
+                  )}
                   {players.home.map((player) => (
-                    <li key={player.id} className="flex justify-between">
-                      <span>
-                        {player.number} - {player.name}
-                      </span>
+                    <li
+                      key={player.id}
+                      className="flex justify-between text-black"
+                    >
+                      <span>{player.name}</span>
                       {/* Campos de gol, cartão etc */}
                       <div className="flex gap-2">
                         <input
                           type="number"
-                          className="w-12 border rounded px-1"
+                          className="w-10 border rounded px-1 text-center"
                           placeholder="G"
+                          value={goals.home[player.id] || ""}
+                          onChange={(e) =>
+                            handleGoalChange(
+                              "home",
+                              player.id,
+                              Number(e.target.value) || 0
+                            )
+                          }
                         />
-                        <input type="checkbox" title="Cartão Amarelo" />
-                        <input type="checkbox" title="Cartão Vermelho" />
+
+                        <div className="flex flex-col items-center gap-1">
+                          <div className="flex gap-4 text-xs text-gray-600 font-medium mb-1">
+                            <span>A</span>
+                            <span>V</span>
+                          </div>
+                          <div className="flex gap-4">
+                            <input type="checkbox" title="Cartão Amarelo" />
+                            <input type="checkbox" title="Cartão Vermelho" />
+                          </div>
+                        </div>
                       </div>
                     </li>
                   ))}
@@ -383,19 +447,42 @@ export default function MatchesPage() {
                   {selectedMatch.away.name}
                 </h3>
                 <ul className="space-y-2">
+                  {captains.away && (
+                    <p className="text-sm text-gray-600 text-center mb-2">
+                      Capitão:{" "}
+                      <span className="font-medium">{captains.away}</span>
+                    </p>
+                  )}
                   {players.away.map((player) => (
-                    <li key={player.id} className="flex justify-between">
-                      <span>
-                        {player.number} - {player.name}
-                      </span>
+                    <li
+                      key={player.id}
+                      className="flex justify-between text-black"
+                    >
+                      <span>{player.name}</span>
                       <div className="flex gap-2">
                         <input
                           type="number"
-                          className="w-12 border rounded px-1"
+                          className="w-10 border rounded px-1 text-center"
                           placeholder="G"
+                          value={goals.away[player.id] || ""}
+                          onChange={(e) =>
+                            handleGoalChange(
+                              "away",
+                              player.id,
+                              Number(e.target.value) || 0
+                            )
+                          }
                         />
-                        <input type="checkbox" title="Cartão Amarelo" />
-                        <input type="checkbox" title="Cartão Vermelho" />
+                        <div className="flex flex-col items-center gap-1">
+                          <div className="flex gap-4 text-xs text-gray-600 font-medium mb-1">
+                            <span>A</span>
+                            <span>V</span>
+                          </div>
+                          <div className="flex gap-4">
+                            <input type="checkbox" title="Cartão Amarelo" />
+                            <input type="checkbox" title="Cartão Vermelho" />
+                          </div>
+                        </div>
                       </div>
                     </li>
                   ))}

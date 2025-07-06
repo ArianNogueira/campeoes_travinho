@@ -30,7 +30,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const match = await AppDataSource.getRepository(Match).findOne({
       where: { id: Number(id) },
-      relations: ['home', 'away'],
+      relations: ['home', 'home.captain', 'away', 'away.captain'],
     });
 
     if (!match) {
@@ -50,7 +50,12 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       // order: { number: 'ASC' }
     });
 
-    res.json({ homePlayers, awayPlayers });
+    res.json({
+      homePlayers,
+      awayPlayers,
+      homeCaptain: match.home.captain?.name || null,
+      awayCaptain: match.away.captain?.name || null,
+    });
     return;
   } catch (error) {
     console.error("Erro ao buscar jogadores da partida:", error);
@@ -58,6 +63,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     return;
   }
 });
+
 
 router.put('/:id', async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
