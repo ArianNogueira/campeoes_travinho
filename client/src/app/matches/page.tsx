@@ -129,10 +129,17 @@ export default function MatchesPage() {
 
     setSelectedMatch(match);
     // Aqui você pode buscar os jogadores no back-end se tiver essa estrutura
-    fetch(`https://campeoes-travinho.onrender.com/players/${match.id}`)
+    fetch(`https://campeoes-travinho.onrender.com/matches/${match.id}`)
       .then((res) => res.json())
       .then((data) => {
-        setPlayers({ home: data.homePlayers, away: data.awayPlayers });
+        setPlayers({
+          home: data.homePlayers || [],
+          away: data.awayPlayers || [],
+        });
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar jogadores:", err);
+        setPlayers({ home: [], away: [] });
       });
   }
 

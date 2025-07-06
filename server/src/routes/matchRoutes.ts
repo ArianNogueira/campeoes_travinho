@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { AppDataSource } from "../data-source";
 import { Match } from "../entity/Match";
+import { Player } from "../entity/Player";
 
 const router = Router();
 
@@ -20,6 +21,41 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error("Erro ao buscar partidas:", error);
     res.status(500).json({ error: "Erro ao buscar partidas" });
+  }
+});
+
+router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const match = await AppDataSource.getRepository(Match).findOne({
+      where: { id: Number(id) },
+      relations: ['home', 'away'],
+    });
+
+    if (!match) {
+      res.status(404).json({ message: 'Partida não encontrada' });
+      return;
+    }
+
+    const playerRepo = AppDataSource.getRepository(Player);
+
+    const homePlayers = await playerRepo.find({
+      where: { team: { id: match.home.id } },
+      // order: { number: 'ASC' }
+    });
+
+    const awayPlayers = await playerRepo.find({
+      where: { team: { id: match.away.id } },
+      // order: { number: 'ASC' }
+    });
+
+    res.json({ homePlayers, awayPlayers });
+    return;
+  } catch (error) {
+    console.error("Erro ao buscar jogadores da partida:", error);
+    res.status(500).json({ error: "Erro ao buscar jogadores" });
+    return;
   }
 });
 
