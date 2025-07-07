@@ -25,6 +25,7 @@ type Player = {
 import { useEffect, useState } from "react";
 import { emblemMap } from "./emblem";
 import Image from "next/image";
+import { scoreboard } from "./matche";
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -285,10 +286,19 @@ export default function MatchesPage() {
                 </p>
               </div>
 
-              {/* VS */}
-              <div className="text-2xl font-bold text-gray-600 flex items-center justify-center h-full">
-                <span className="text-gray-400">vs</span>
-              </div>
+              {/* Placar */}
+              {scoreboard.find((s) => s.id === match.id) ? (
+                <div className="text-2xl font-bold text-gray-400 flex items-center justify-center h-full">
+                  {scoreboard.find((s) => s.id === match.id)?.home} x{" "}
+                  {scoreboard.find((s) => s.id === match.id)?.away}
+                </div>
+              ) : (
+                <div className="text-2xl font-bold text-gray-400 flex items-center justify-center h-full">
+                  vs
+                </div>
+              )}
+
+              {/* Placar */}
 
               {/* Time B */}
               <div className="flex flex-col items-center justify-center gap-y-1">

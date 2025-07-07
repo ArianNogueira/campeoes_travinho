@@ -133,3 +133,21 @@ export const matches = [
     scoreB: null,
   },
 ];
+
+export const scoreboard = [
+  {
+    id: 4,
+    home: "2",
+    away: "3",
+  },
+  {
+    id: 2,
+    home: "3",
+    away: "2",
+  },
+  {
+    id: 3,
+    home: "6",
+    away: "1",
+  },
+];
