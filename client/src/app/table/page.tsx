@@ -233,12 +233,14 @@ const StandingsPage = () => {
                     >
                       <div>
                         <div className="font-semibold text-gray-800">
-                          {scorer}
+                          {scorer.name}
                         </div>
-                        <div className="text-sm text-gray-500">{scorer}</div>
+                        <div className="text-sm text-gray-500">
+                          {scorer.team}
+                        </div>
                       </div>
                       <div className="px-3 py-1 font-bold text-yellow-800 bg-yellow-100 rounded-full">
-                        {scorer}
+                        {scorer.goals}
                       </div>
                     </div>
                   ))}
@@ -263,14 +265,14 @@ const StandingsPage = () => {
                     >
                       <div>
                         <div className="font-semibold text-gray-800">
-                          {defense}
+                          {defense.team}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {defense} jogos sem sofrer
+                          {defense.cleanSheets} jogos sem sofrer
                         </div>
                       </div>
                       <div className="px-3 py-1 font-bold text-blue-800 bg-blue-100 rounded-full">
-                        {defense}
+                        {defense.goalsAgainst}
                       </div>
                     </div>
                   ))}
@@ -290,24 +292,24 @@ const StandingsPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Jogos Realizados</span>
-                    <span className="font-bold">0/72</span>
+                    <span className="font-bold">3/72</span>
                   </div>
                   <div className="w-full h-2 bg-gray-200 rounded-full">
                     <div
                       className="h-2 bg-purple-500 rounded-full"
-                      style={{ width: "0%" }}
+                      style={{ width: "2%" }}
                     ></div>
                   </div>
-                  <div className="text-sm text-gray-500">0% concluído</div>
+                  <div className="text-sm text-gray-500">1% concluído</div>
 
                   <div className="pt-4 space-y-2 border-t">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Total de Gols</span>
-                      <span className="font-bold">0</span>
+                      <span className="font-bold">17</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Média por Jogo</span>
-                      <span className="font-bold">0</span>
+                      <span className="font-bold">5,6</span>
                     </div>
                   </div>
                 </div>

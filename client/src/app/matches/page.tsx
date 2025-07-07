@@ -176,7 +176,6 @@ export default function MatchesPage() {
       .catch((err) => {
         console.error("Erro ao carregar jogadores:", err);
         setPlayers({ home: [], away: [] });
-        setCaptains({ home: null, away: null });
       });
   }
 
