@@ -1,6 +1,7 @@
 // src/entity/Match.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { Team } from "./Team";
+import { MatchEvent } from "./MatchEvent";
 
 @Entity()
 export class Match {
@@ -26,4 +27,8 @@ export class Match {
 
   @Column()
   group!: string;
+
+  @OneToMany(() => MatchEvent, (event) => event.match)
+  events!: MatchEvent[];
+
 }

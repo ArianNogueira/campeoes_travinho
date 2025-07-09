@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { AppDataSource } from "../data-source";
 import { Match } from "../entity/Match";
 import { Player } from "../entity/Player";
+import { MatchEvent } from "../entity/MatchEvent";
 
 const router = Router();
 
@@ -21,6 +22,39 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error("Erro ao buscar partidas:", error);
     res.status(500).json({ error: "Erro ao buscar partidas" });
+  }
+});
+
+router.post("/salvar", async (req, res): Promise<void> => {
+  const { matchId, goals, cards } = req.body;
+
+  try {
+    const match = await AppDataSource.getRepository(Match).findOneBy({ id: matchId });
+    if (!match) { 
+      res.status(404).json({ error: "Partida não encontrada" });
+      return;
+    }
+
+    const eventRepo = AppDataSource.getRepository(MatchEvent);
+
+    for (const playerId of Object.keys(goals)) {
+      const player = await AppDataSource.getRepository(Player).findOneBy({ id: Number(playerId) });
+      if (!player) continue;
+
+      const event = new MatchEvent();
+      event.match = match;
+      event.player = player;
+      event.goals = goals[playerId] || 0;
+      event.yellowCard = cards[playerId]?.yellow || false;
+      event.redCard = cards[playerId]?.red || false;
+
+      await eventRepo.save(event);
+    }
+
+    res.json({ message: "Resultado salvo com sucesso" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao salvar resultado" });
   }
 });
 
