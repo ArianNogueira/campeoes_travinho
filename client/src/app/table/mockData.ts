@@ -178,8 +178,8 @@ export const standings = [
     drawn: 0,
     lost: 1,
     goalsFor: 1,
-    goalsAgainst: 2,
-    goalDifference: -1,
+    goalsAgainst: 3,
+    goalDifference: -2,
     img: notts
   },
   {
