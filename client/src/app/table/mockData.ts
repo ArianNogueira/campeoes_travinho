@@ -204,8 +204,8 @@ export const topScorers = [
   { name: "Robinho", team: "THUNDER FC", goals: 3 },
   { name: "Renan", team: "TITANS FC", goals: 2 },
   { name: "Joanderson", team: "TITANS FC", goals: 2 },
-  { name: "Gustavo", team: "TITANS FC", goals: 2 },
-  { name: "Willian. G", team: "ATLÉTICO", goals: 2 },
+  { name: "Gustavo", team: "ATLÉTICO", goals: 2 },
+  { name: "Willian. G", team: "THUNDER FC", goals: 2 },
   { name: "David", team: "GOLDEN WARRIOS", goals: 2 },
 ];
 
