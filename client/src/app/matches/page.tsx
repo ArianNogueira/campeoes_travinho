@@ -22,6 +22,16 @@ type Player = {
   number: number;
 };
 
+type CardStatus = {
+  yellow: boolean;
+  red: boolean;
+};
+
+type CardsState = {
+  home: { [playerId: number]: CardStatus };
+  away: { [playerId: number]: CardStatus };
+};
+
 import { useEffect, useState } from "react";
 import { emblemMap } from "./emblem";
 import Image from "next/image";
@@ -34,6 +44,11 @@ export default function MatchesPage() {
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [cards, setCards] = useState<CardsState>({
+    home: {}, // { [playerId]: { yellow: boolean, red: boolean } }
+    away: {},
+  });
+
   const [players, setPlayers] = useState<{ home: Player[]; away: Player[] }>({
     home: [],
     away: [],
@@ -54,6 +69,24 @@ export default function MatchesPage() {
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
+
+  function handleCardChange(
+    side: "home" | "away",
+    playerId: number,
+    cardType: "yellow" | "red",
+    checked: boolean
+  ) {
+    setCards((prev) => ({
+      ...prev,
+      [side]: {
+        ...prev[side],
+        [playerId]: {
+          ...prev[side][playerId],
+          [cardType]: checked,
+        },
+      },
+    }));
+  }
 
   useEffect(() => {
     async function fetchMatches() {
@@ -178,6 +211,39 @@ export default function MatchesPage() {
         console.error("Erro ao carregar jogadores:", err);
         setPlayers({ home: [], away: [] });
       });
+  }
+
+  async function handleSaveMatch() {
+    const payload = {
+      matchId: selectedMatch!.id,
+      goals: {
+        ...goals.home,
+        ...goals.away,
+      },
+      cards: {
+        ...cards.home,
+        ...cards.away,
+      },
+    };
+
+    try {
+      const res = await fetch(
+        "https://campeoes-travinho.onrender.com/matches/salvar",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) throw new Error("Erro ao salvar");
+
+      alert("Resultado salvo com sucesso!");
+      setSelectedMatch(null);
+    } catch (error) {
+      alert("Erro ao salvar resultado");
+      console.error(error);
+    }
   }
 
   return (
@@ -440,8 +506,32 @@ export default function MatchesPage() {
                             <span>V</span>
                           </div>
                           <div className="flex gap-4">
-                            <input type="checkbox" title="Cartão Amarelo" />
-                            <input type="checkbox" title="Cartão Vermelho" />
+                            <input
+                              type="checkbox"
+                              title="Cartão Amarelo"
+                              checked={cards.home[player.id]?.yellow || false}
+                              onChange={(e) =>
+                                handleCardChange(
+                                  "home",
+                                  player.id,
+                                  "yellow",
+                                  e.target.checked
+                                )
+                              }
+                            />
+                            <input
+                              type="checkbox"
+                              title="Cartão Vermelho"
+                              checked={cards.home[player.id]?.red || false}
+                              onChange={(e) =>
+                                handleCardChange(
+                                  "home",
+                                  player.id,
+                                  "red",
+                                  e.target.checked
+                                )
+                              }
+                            />
                           </div>
                         </div>
                       </div>
@@ -488,8 +578,32 @@ export default function MatchesPage() {
                             <span>V</span>
                           </div>
                           <div className="flex gap-4">
-                            <input type="checkbox" title="Cartão Amarelo" />
-                            <input type="checkbox" title="Cartão Vermelho" />
+                            <input
+                              type="checkbox"
+                              title="Cartão Amarelo"
+                              checked={cards.away[player.id]?.yellow || false}
+                              onChange={(e) =>
+                                handleCardChange(
+                                  "away",
+                                  player.id,
+                                  "yellow",
+                                  e.target.checked
+                                )
+                              }
+                            />
+                            <input
+                              type="checkbox"
+                              title="Cartão Vermelho"
+                              checked={cards.away[player.id]?.red || false}
+                              onChange={(e) =>
+                                handleCardChange(
+                                  "away",
+                                  player.id,
+                                  "red",
+                                  e.target.checked
+                                )
+                              }
+                            />
                           </div>
                         </div>
                       </div>
@@ -508,7 +622,7 @@ export default function MatchesPage() {
               </button>
               <button
                 className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white"
-                onClick={() => console.log("Salvar dados da partida")}
+                onClick={handleSaveMatch}
               >
                 Salvar
               </button>

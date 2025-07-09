@@ -4,7 +4,7 @@ export const teams = [
   { name: "CM INTER MIAMI", group: "A" },
   { name: "FALCON FC", group: "A" },
   { name: "FC DALLAS", group: "A" },
-  { name: "GODEN WARRIOS", group: "B" },
+  { name: "GOLDEN WARRIOS", group: "B" },
   { name: "LIONS FC", group: "B" },
   { name: "OS LISOS TEAM", group: "B" },
   { name: "TG FC", group: "A" },
