@@ -305,11 +305,11 @@ const StandingsPage = () => {
                   <div className="pt-4 space-y-2 border-t">
                     <div className="flex justify-between text-gray-600">
                       <span>Total de Gols</span>
-                      <span className="font-bold">29</span>
+                      <span className="font-bold">30</span>
                     </div>
                     <div className="flex justify-between text-gray-600">
                       <span>Média por Jogo</span>
-                      <span className="font-bold">4,8</span>
+                      <span className="font-bold">5</span>
                     </div>
                   </div>
                 </div>
