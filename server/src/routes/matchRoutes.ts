@@ -37,13 +37,28 @@ router.post("/salvar", async (req, res): Promise<void> => {
 
     const eventRepo = AppDataSource.getRepository(MatchEvent);
 
+    // Verifica se já existem eventos para essa partida
     for (const playerId of Object.keys(goals)) {
       const player = await AppDataSource.getRepository(Player).findOneBy({ id: Number(playerId) });
       if (!player) continue;
 
-      const event = new MatchEvent();
-      event.match = match;
-      event.player = player;
+      // Verifica se já existe evento para esse jogador na partida
+      let event = await eventRepo.findOne({
+        where: {
+          match: { id: match.id },
+          player: { id: player.id },
+        },
+        relations: ["match", "player"],
+      });
+
+      if (!event) {
+        // Se não existir, cria um novo
+        event = new MatchEvent();
+        event.match = match;
+        event.player = player;
+      }
+
+      // Atualiza ou preenche os dados
       event.goals = goals[playerId] || 0;
       event.yellowCard = cards[playerId]?.yellow || false;
       event.redCard = cards[playerId]?.red || false;
@@ -52,6 +67,7 @@ router.post("/salvar", async (req, res): Promise<void> => {
     }
 
     res.json({ message: "Resultado salvo com sucesso" });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao salvar resultado" });
