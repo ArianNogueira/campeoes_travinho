@@ -132,9 +132,9 @@ export const standings = [
     won: 1,
     drawn: 0,
     lost: 0,
-    goalsFor: 2,
+    goalsFor: 3,
     goalsAgainst: 1,
-    goalDifference: 1,
+    goalDifference: 2,
     img: atletico
   },
   {
@@ -202,10 +202,11 @@ export const standings = [
 
 export const topScorers = [
   { name: "Robinho", team: "THUNDER FC", goals: 3 },
-  { name: "Willian. G", team: "THUNDER FC", goals: 2 },
+  { name: "Renan", team: "TITANS FC", goals: 2 },
+  { name: "Joanderson", team: "TITANS FC", goals: 2 },
+  { name: "Gustavo", team: "TITANS FC", goals: 2 },
+  { name: "Willian. G", team: "ATLÉTICO", goals: 2 },
   { name: "David", team: "GOLDEN WARRIOS", goals: 2 },
-  { name: "Diniz", team: "LIONS FC", goals: 1 },
-  { name: "Evanuel", team: "LIONS FC", goals: 1 },
 ];
 
 export const bestDefenses = [
