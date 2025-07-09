@@ -162,7 +162,7 @@ export const scoreboard = [
   },
   {
     id: 6,
-    home: "2",
+    home: "3",
     away: "1",
   },
 ];
