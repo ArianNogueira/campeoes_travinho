@@ -143,7 +143,7 @@ export const standings = [
     group: "B",
     position: 3,
     points: 3,
-    played: 1,
+    played: 2,
     won: 1,
     drawn: 0,
     lost: 1,
