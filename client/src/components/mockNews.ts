@@ -9,37 +9,37 @@ type NewsItem = {
 export const news: NewsItem[] = [
   {
     id: 1,
-    title: "Campeonato começa em 02 de Julho!",
-    date: "2025-06-15",
+    title: "🏆 Campeonato em Alta Voltagem: Gols e X1 de Alto Nível!",
+    date: "10/07/2025",
     summary:
-      "Preparem-se! A primeira rodada do Campeonato de Travinha será realizada no estádio das luzes com jogos emocionantes.",
+      "O campeonato está pegando fogo! Com jogos recheados de gols e confrontos individuais eletrizantes, o nível técnico surpreende a cada rodada. Os duelos 'mano a mano' têm decidido partidas e garantido espetáculo para os torcedores.",
   },
   {
     id: 2,
-    title: "Time 'Thunder FC' reforça elenco",
-    date: "2025-06-10",
+    title: "⚡ THUNDER FC Embala com Segunda Vitória no Campeonato!",
+    date: "10/07/2025",
     summary:
-      "Os Thunder FC anunciam contratações importantes para fortalecer o time na busca pelo título.",
+      "O THUNDER FC mostrou força mais uma vez e conquistou sua segunda vitória consecutiva na competição. Com um time entrosado e ofensivo, a equipe vem se firmando como uma das favoritas, mantendo o alto nível e empolgando a torcida.",
   },
   {
     id: 3,
-    title: "Novas regras aprovadas para as partidas",
-    date: "2025-06-08",
+    title: "🔥 VILARREAL Se Recupera em Grande Estilo: Goleada de 5 a 0!",
+    date: "10/07/2025",
     summary:
-      "A organização divulgou novas regras para garantir maior competitividade e fair play durante o campeonato.",
+      "Depois de uma estreia com derrota, o VILARREAL deu a volta por cima com uma atuação de gala. A equipe venceu o LIONS FC por 5 a 0, mostrando poder ofensivo e controle total da partida. A primeira vitória veio com autoridade e colocou o time de volta na disputa!",
   },
   {
     id: 4,
-    title: "Equipe do Villareal irá fazer sua estreia no campeonato",
-    date: "2025-06-14",
+    title: "⚠️ FC DALLAS Sofre Segunda Derrota e Liga o Alerta no Campeonato",
+    date: "10/07/2025",
     summary:
-      "A equipe terá sua 1ª participação no campeonato, trazendo um novo desafio para os adversários.",
+      "A experiente equipe do FC DALLAS não vive boa fase. Com a segunda derrota consecutiva, o time veterano vê a pressão aumentar e precisa reagir rápido para não se afastar da briga. A torcida segue confiante na recuperação, mas o sinal de alerta já está ligado.",
   },
   {
     id: 5,
-    title: "CM Inter Miami tenta o bicampeonato.",
-    date: "2025-06-17",
+    title: "🎯 Robson Brilha no THUNDER FC: 5 Gols em Apenas 2 Partidas!.",
+    date: "10/07/2025",
     summary:
-      "A atual campeã vai defender seu título, e para isso, foi ao mercado em busca de jogadores de qualidade.",
+      "O atacante Robson está imparável! Com 5 gols marcados em apenas 2 jogos, ele é o grande destaque do THUNDER FC e um dos artilheiros do campeonato. Mostrando faro de gol e muita frieza nas finalizações, Robson vem sendo decisivo na excelente campanha da equipe.",
   },
 ];
