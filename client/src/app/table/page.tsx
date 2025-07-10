@@ -292,7 +292,7 @@ const StandingsPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-gray-600">
                     <span>Jogos Realizados</span>
-                    <span className="font-bold">6/38</span>
+                    <span className="font-bold">9/38</span>
                   </div>
                   <div className="w-full h-2 bg-gray-200 rounded-full">
                     <div
@@ -300,16 +300,16 @@ const StandingsPage = () => {
                       style={{ width: "5%" }}
                     ></div>
                   </div>
-                  <div className="text-sm text-gray-500">1% concluído</div>
+                  <div className="text-sm text-gray-500">3% concluído</div>
 
                   <div className="pt-4 space-y-2 border-t">
                     <div className="flex justify-between text-gray-600">
                       <span>Total de Gols</span>
-                      <span className="font-bold">29</span>
+                      <span className="font-bold">51</span>
                     </div>
                     <div className="flex justify-between text-gray-600">
                       <span>Média por Jogo</span>
-                      <span className="font-bold">4,8</span>
+                      <span className="font-bold">5,6</span>
                     </div>
                   </div>
                 </div>

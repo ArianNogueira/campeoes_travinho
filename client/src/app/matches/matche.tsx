@@ -162,7 +162,22 @@ export const scoreboard = [
   },
   {
     id: 6,
-    home: "2",
+    home: "3",
     away: "1",
+  },
+  {
+    id: 7,
+    home: "3",
+    away: "5",
+  },
+  {
+    id: 11,
+    home: "5",
+    away: "0",
+  },
+  {
+    id: 9,
+    home: "5",
+    away: "3",
   },
 ];

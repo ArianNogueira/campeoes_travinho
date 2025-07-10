@@ -77,7 +77,7 @@ export default function Header() {
               Tabela
             </div>
           </Link>
-          <Link href="/notMatches" passHref onClick={() => setMenuOpen(false)}>
+          <Link href="/matches" passHref onClick={() => setMenuOpen(false)}>
             <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
               Partidas
             </div>
