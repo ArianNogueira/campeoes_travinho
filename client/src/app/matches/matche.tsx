@@ -180,4 +180,19 @@ export const scoreboard = [
     home: "5",
     away: "3",
   },
+  {
+    id: 12,
+    home: "4",
+    away: "2",
+  },
+  {
+    id: 8,
+    home: "2",
+    away: "3",
+  },
+  {
+    id: 10,
+    home: "(W.O) 3",
+    away: "0",
+  },
 ];

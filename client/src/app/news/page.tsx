@@ -2,6 +2,8 @@ import { NextPage } from "next";
 import Head from "next/head";
 import NewsCard from "@/components/NewsCard";
 import { news } from "@/components/mockNews";
+import imageUrl from "@/assets/WhatsApp Image 2025-07-11 at 21.29.08.jpeg";
+import Image from "next/image";
 
 const Noticias: NextPage = () => {
   return (
@@ -35,6 +37,24 @@ const Noticias: NextPage = () => {
                 date={item.date}
               />
             ))}
+            <div className="rounded-2xl overflow-hidden shadow-lg bg-[#f8f6f2] border border-[#d0bb94] transition-transform hover:scale-[1.01]">
+              <Image
+                src={imageUrl}
+                alt="jogador bebendo"
+                className="object-cover w-full h-48"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-[#2d1f0f] mb-2">
+                  🔥 Crise no CA NOTTS se aprofunda
+                </h3>
+                <p className="text-sm text-[#5e5035] mb-3">
+                  Em meio à má fase e derrotas, um jogador do CA NOTTS foi
+                  flagrado curtindo em um bar 🍻. Ao ser questionado, afirmou
+                  que o clima no elenco está tenso e há atraso de pagamento.
+                </p>
+                <span className="text-xs text-[#718c99]">11/07/2025</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
