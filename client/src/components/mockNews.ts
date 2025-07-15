@@ -63,4 +63,25 @@ export const news: NewsItem[] = [
     summary:
       "Na sua 2ª partida, o time estreante voltou a ser superado, mesmo contando com jogadores conhecidos. Agora são duas derrotas seguidas — é hora de ligar o alerta e reagir nos próximos confrontos!",
   },
+  {
+    id: 9,
+    title: "⚡ Noite inspirada de Robson! Thunder aplica a maior goleada do campeonato: 12x4 🔥",
+    date: "15/07/2025",
+    summary:
+      "Com uma atuação de gala de Robson, o Thunder atropelou o adversário e registrou a maior goleada da história do campeonato. O time chegou a 3 jogos e 3 vitórias, embalado e com o ataque mais letal até aqui. A pergunta que fica no ar: quem poderá parar essa equipe?",
+  },
+  {
+    id: 10,
+    title: "🛡️ Titans vencem e seguem firmes na disputa",
+    date: "15/07/2025",
+    summary:
+      "Em mais uma boa atuação, o Titans superou o Dallas e se mantém forte na briga pelas primeiras posições. Do outro lado, o Dallas ainda busca pontuar no campeonato e tenta reagir nas próximas rodadas. ",
+  },
+  {
+    id: 11,
+    title: "⛔ Empate sem gols entre Villareal e Os Lisos Team",
+    date: "15/07/2025",
+    summary:
+    "Em um jogo truncado e de poucas chances, Villareal e Os Lisos Team ficaram no 0 a 0. As duas equipes seguem no meio da tabela, tentando se manter vivas na briga por uma vaga na próxima fase."
+  },
 ];

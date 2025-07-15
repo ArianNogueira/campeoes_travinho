@@ -29,14 +29,6 @@ const Noticias: NextPage = () => {
           </h1>
 
           <div className="grid max-w-6xl gap-8 px-6 py-12 mx-auto md:grid-cols-2 lg:grid-cols-3">
-            {news.map((item) => (
-              <NewsCard
-                key={item.id}
-                title={item.title}
-                description={item.summary}
-                date={item.date}
-              />
-            ))}
             <div className="rounded-2xl overflow-hidden shadow-lg bg-[#f8f6f2] border border-[#d0bb94] transition-transform hover:scale-[1.01]">
               <Image
                 src={imageUrl}
@@ -52,9 +44,18 @@ const Noticias: NextPage = () => {
                   flagrado curtindo em um bar 🍻. Ao ser questionado, afirmou
                   que o clima no elenco está tenso e há atraso de pagamento.
                 </p>
-                <span className="text-xs text-[#718c99]">11/07/2025</span>
+                <span className="text-xs text-[#718c99]">DESTAQUE</span>
               </div>
             </div>
+
+            {news.map((item) => (
+              <NewsCard
+                key={item.id}
+                title={item.title}
+                description={item.summary}
+                date={item.date}
+              />
+            ))}
           </div>
         </div>
       </div>
