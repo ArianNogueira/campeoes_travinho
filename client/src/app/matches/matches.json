@@ -1,0 +1,36 @@
+[
+    {"id":4,"date":"04/07/2025","time":"19:00","round":1,"group":"B","home":{"id":9,"name":"VILARREAL","group":"Grupo B", "score": 2, "emblem":null},"away":{"id":10,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": 3, "emblem":null}},
+    {"id":2,"date":"04/07/2025","time":"20:00","round":1,"group":"B","home":{"id":7,"name":"LIONS FC","group":"Grupo B", "score": 3, "emblem":null},"away":{"id":12,"name":"OS LISOS TEAM","group":"Grupo B", "score": 2, "emblem":null}},
+    {"id":3,"date":"04/07/2025","time":"21:00","round":1,"group":"A","home":{"id":2,"name":"THUNDER FC","group":"Grupo A", "score": 6, "emblem":null},"away":{"id":5,"name":"TG FC","group":"Grupo A", "score": 1, "emblem":null}},
+    {"id":1,"date":"07/07/2025","time":"19:00","round":1,"group":"A","home":{"id":1,"name":"CM INTER MIAMI","group":"Grupo A", "score": 3, "emblem":null},"away":{"id":6,"name":"FC DALLAS","group":"Grupo A", "score": 1, "emblem":null}},
+    {"id":5,"date":"07/07/2025","time":"20:00","round":1,"group":"A","home":{"id":3,"name":"TITANS FC","group":"Grupo A", "score": 5, "emblem":null},"away":{"id":4,"name":"FALCON FC","group":"Grupo A", "score": 0, "emblem":null}},
+    {"id":6,"date":"07/07/2025","time":"21:00","round":1,"group":"B","home":{"id":8,"name":"ATLÉTICO RF","group":"Grupo B", "score": 3, "emblem":null},"away":{"id":11,"name":"CA NOTTS","group":"Grupo B", "score": 1, "emblem":null}},
+    
+    {"id":9,"date":"09/07/2025","time":"19:00","round":2,"group":"A","home":{"id":2,"name":"THUNDER FC","group":"Grupo A", "score": 5, "emblem":null},"away":{"id":6,"name":"FC DALLAS","group":"Grupo A", "score": 3, "emblem":null}},
+    {"id":11,"date":"09/07/2025","time":"20:00","round":2,"group":"B","home":{"id":9,"name":"VILARREAL","group":"Grupo B", "score": 5, "emblem":null},"away":{"id":7,"name":"LIONS FC","group":"Grupo B", "score": 0, "emblem":null}},
+    {"id":7,"date":"09/07/2025","time":"21:00","round":2,"group":"B","home":{"id":8,"name":"ATLÉTICO RF","group":"Grupo B", "score": 3, "emblem":null},"away":{"id":12,"name":"OS LISOS TEAM","group":"Grupo B", "score": 5, "emblem":null}},
+    {"id":12,"date":"11/07/2025","time":"19:00","round":2,"group":"A","home":{"id":4,"name":"FALCON FC","group":"Grupo A", "score": 4, "emblem":null},"away":{"id":5,"name":"TG FC","group":"Grupo A", "score": 2, "emblem":null}},
+    {"id":8,"date":"11/07/20255","time":"20:00","round":2,"group":"A","home":{"id":3,"name":"TITANS FC","group":"Grupo A", "score": 2, "emblem":null},"away":{"id":1,"name":"CM INTER MIAMI","group":"Grupo A", "score": 3, "emblem":null}},
+    {"id":10,"date":"11/07/2025","time":"21:00","round":2,"group":"B","home":{"id":10,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": "(W.O) 3", "emblem":null},"away":{"id":11,"name":"CA NOTTS","group":"Grupo B", "score": 0, "emblem":null}},
+    
+    {"id":13,"date":"14/07/2025","time":"19:00","round":3,"group":"A","home":{"id":3,"name":"TITANS FC","group":"Grupo A", "score": 4,  "value": 4, "emblem":null},"away":{"id":6,"name":"FC DALLAS","group":"Grupo A", "score": 2,  "value": 2, "emblem":null}},
+    {"id":14,"date":"14/07/2025","time":"20:00","round":3,"group":"A","home":{"id":4,"name":"FALCON FC","group":"Grupo A", "score": 4, "emblem":null},"away":{"id":2,"name":"THUNDER FC","group":"Grupo A", "score": 12, "emblem":null}},
+    {"id":15,"date":"14/07/2025","time":"21:00","round":3,"group":"B","home":{"id":9,"name":"VILARREAL","group":"Grupo B", "score": 0, "emblem":null},"away":{"id":12,"name":"OS LISOS TEAM","group":"Grupo B", "score": 0, "emblem":null}},
+    {"id":16,"date":"16/07/2025","time":"19:00","round":3,"group":"B","home":{"id":10,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": "", "emblem":null},"away":{"id":8,"name":"ATLÉTICO RF","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":17,"date":"16/07/2025","time":"20:00","round":3,"group":"A","home":{"id":5,"name":"TG FC","group":"Grupo A", "score": "", "emblem":null},"away":{"id":1,"name":"CM INTER MIAMI","group":"Grupo A", "score": "", "emblem":null}},
+    {"id":18,"date":"16/07/2025","time":"21:00","round":3,"group":"B","home":{"id":11,"name":"CA NOTTS","group":"Grupo B", "score": "", "emblem":null},"away":{"id":7,"name":"LIONS FC","group":"Grupo B", "score": "", "emblem":null}},
+    
+    {"id":19,"date":"18/07/2025","time":"19:00","round":4,"group":"A","home":{"id":4,"name":"FALCON FC","group":"Grupo A", "score": "", "emblem":null},"away":{"id":6,"name":"FC DALLAS","group":"Grupo A", "score": "", "emblem":null}},
+    {"id":20,"date":"18/07/2025","time":"20:00","round":4,"group":"A","home":{"id":5,"name":"TG FC","group":"Grupo A", "score": "", "emblem":null},"away":{"id":3,"name":"TITANS FC","group":"Grupo A", "score": "", "emblem":null}},
+    {"id":21,"date":"18/07/2025","time":"21:00","round":4,"group":"B","home":{"id":10,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": "", "emblem":null},"away":{"id":12,"name":"OS LISOS TEAM","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":22,"date":"21/07/2025","time":"19:00","round":4,"group":"A","home":{"id":1,"name":"CM INTER MIAMI","group":"Grupo A", "score": "", "emblem":null},"away":{"id":2,"name":"THUNDER FC","group":"Grupo A", "score": "", "emblem":null}},
+    {"id":23,"date":"21/07/2025","time":"20:00","round":4,"group":"B","home":{"id":11,"name":"CA NOTTS","group":"Grupo B", "score": "", "emblem":null},"away":{"id":9,"name":"VILARREAL","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":24,"date":"21/07/2025","time":"21:00","round":4,"group":"B","home":{"id":7,"name":"LIONS FC","group":"Grupo B", "score": "", "emblem":null},"away":{"id":8,"name":"ATLÉTICO RF","group":"Grupo B", "score": "", "emblem":null}},
+    
+    {"id":25,"date":"23/07/2025","time":"19:00","round":5,"group":"B","home":{"id":11,"name":"CA NOTTS","group":"Grupo B", "score": "", "emblem":null},"away":{"id":12,"name":"OS LISOS TEAM","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":26,"date":"23/07/2025","time":"20:00","round":5,"group":"A","home":{"id":5,"name":"TG FC","group":"Grupo A", "score": "", "emblem":null},"away":{"id":6,"name":"FC DALLAS","group":"Grupo A", "score": "", "emblem":null}},
+    {"id":27,"date":"23/07/2025","time":"21:00","round":5,"group":"A","home":{"id":1,"name":"CM INTER MIAMI","group":"Grupo A", "score": "", "emblem":null},"away":{"id":4,"name":"FALCON FC","group":"Grupo A", "score": "", "emblem":null}},
+    {"id":28,"date":"25/07/2025","time":"19:00","round":5,"group":"B","home":{"id":8,"name":"ATLÉTICO RF","group":"Grupo B", "score": "", "emblem":null},"away":{"id":9,"name":"VILARREAL","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":29,"date":"25/07/2025","time":"20:00","round":5,"group":"B","home":{"id":7,"name":"LIONS FC","group":"Grupo B", "score": "", "emblem":null},"away":{"id":10,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":30,"date":"25/07/2025","time":"21:00","round":5,"group":"A","home":{"id":2,"name":"THUNDER FC","group":"Grupo A", "score": "", "emblem":null},"away":{"id":3,"name":"TITANS FC","group":"Grupo A", "score": "", "emblem":null}}
+]

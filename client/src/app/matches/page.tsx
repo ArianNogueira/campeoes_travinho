@@ -2,6 +2,7 @@
 
 type TeamInfo = {
   name: string;
+  score: number;
 };
 
 type Match = {
@@ -35,7 +36,7 @@ type CardsState = {
 import { useEffect, useState } from "react";
 import { emblemMap } from "./emblem";
 import Image from "next/image";
-import { scoreboard } from "./matche";
+import matchesJson from "./matches.json";
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -88,20 +89,24 @@ export default function MatchesPage() {
     }));
   }
 
-  useEffect(() => {
-    async function fetchMatches() {
-      try {
-        const res = await fetch(
-          "https://campeoes-travinho.onrender.com/matches"
-        );
-        const data = await res.json();
-        setMatches(data);
-      } catch (error) {
-        console.error("Erro ao buscar partidas:", error);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchMatches() {
+  //     try {
+  //       const res = await fetch(
+  //         "https://campeoes-travinho.onrender.com/matches"
+  //       );
+  //       const data = await res.json();
+  //       setMatches(data);
+  //     } catch (error) {
+  //       console.error("Erro ao buscar partidas:", error);
+  //     }
+  //   }
 
-    fetchMatches();
+  //   fetchMatches();
+  // }, []);
+
+  useEffect(() => {
+    setMatches(matchesJson as Match[]);
   }, []);
 
   const teamsList = Array.from(
@@ -353,16 +358,12 @@ export default function MatchesPage() {
               </div>
 
               {/* Placar */}
-              {scoreboard.find((s) => s.id === match.id) ? (
-                <div className="text-2xl font-bold text-gray-400 flex items-center justify-center h-full">
-                  {scoreboard.find((s) => s.id === match.id)?.home} x{" "}
-                  {scoreboard.find((s) => s.id === match.id)?.away}
-                </div>
-              ) : (
-                <div className="text-2xl font-bold text-gray-400 flex items-center justify-center h-full">
-                  vs
-                </div>
-              )}
+              <div className="text-2xl font-bold text-gray-400 flex items-center justify-center h-full">
+                {typeof match.home.score === "number" &&
+                typeof match.away.score === "number"
+                  ? `${match.home.score} x ${match.away.score}`
+                  : "vs"}
+              </div>
 
               {/* Placar */}
 
