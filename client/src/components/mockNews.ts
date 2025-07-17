@@ -84,4 +84,25 @@ export const news: NewsItem[] = [
     summary:
     "Em um jogo truncado e de poucas chances, Villareal e Os Lisos Team ficaram no 0 a 0. As duas equipes seguem no meio da tabela, tentando se manter vivas na briga por uma vaga na próxima fase."
   },
+  {
+    id: 12,
+    title: "💪 CA Notts reage e segue vivo na disputa. Lions FC perde de novo em meio a crise nos bastidores 🦁",
+    date: "17/07/2025",
+    summary:
+    "O CA Notts voltou a vencer e mostrou força na briga por uma vaga na próxima fase. Já o Lions FC vive dias turbulentos — com problemas internos na administração, a equipe sofreu mais uma derrota em um jogo eletrizante e preocupa seus torcedores."
+  },
+  {
+    id: 13,
+    title: "👑 Inter Miami mostra força de campeão. TG FC segue sem se encontrar na competição ❌",
+    date: "17/07/2025",
+    summary:
+    "O atual campeão Inter Miami vem mostrando que quer o bi! Com mais uma boa atuação, a equipe demonstra solidez e foco na defesa do título. Enquanto o TG FC vive fase difícil — ainda sem conseguir encaixar seu estilo de jogo, sofreu mais uma derrota e segue sem reação na tabela."
+  },
+  {
+    id: 14,
+    title: "🔝Golden vence mais uma e segue líder absoluto. Atlético tropeça de novo e acende sinal de alerta! ⚠️",
+    date: "17/07/2025",
+    summary:
+    "O Golden confirmou o favoritismo e manteve os 100% de aproveitamento, isolando-se ainda mais na liderança da competição. Já o Atlético conheceu sua segunda derrota consecutiva e precisa reagir rápido para seguir vivo na briga pela classificação."
+  },
 ];
