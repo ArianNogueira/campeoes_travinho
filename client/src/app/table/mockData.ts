@@ -11,8 +11,6 @@ import goden from "../../assets/emblemas/Golden_Warrios.jpeg"
 import notts from "../../assets/emblemas/CA_Notts.jpeg"
 import lisos from "../../assets/emblemas/Os_Lisos_Team.jpeg"
 
-
-
 export const standings = [
   // Grupo A
   {
@@ -205,7 +203,7 @@ export const topScorers = [
   { name: "Robgol", team: "CM INTER MIAMI", goals: 6 },
   { name: "Ítalo", team: "THUNDER FC", goals: 6 },
   { name: "Joanderson", team: "TITANS FC", goals: 5 },
-  { name: "DAVID", team: "GOLDEN WARRIOS", goals: 4 },
+  { name: "David", team: "GOLDEN WARRIOS", goals: 4 },
   { name: "Renan", team: "TITANS FC", goals: 4 },
   { name: "CL", team: "VILARREAL", goals: 3 },
 ];
