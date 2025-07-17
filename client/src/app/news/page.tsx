@@ -2,8 +2,8 @@ import { NextPage } from "next";
 import Head from "next/head";
 import NewsCard from "@/components/NewsCard";
 import { news } from "@/components/mockNews";
-import imageUrl from "@/assets/WhatsApp Image 2025-07-11 at 21.29.08.jpeg";
-import Image from "next/image";
+// import imageUrl from "@/assets/WhatsApp Image 2025-07-11 at 21.29.08.jpeg";
+// import Image from "next/image";
 
 const Noticias: NextPage = () => {
   return (
@@ -29,7 +29,7 @@ const Noticias: NextPage = () => {
           </h1>
 
           <div className="grid max-w-6xl gap-8 px-6 py-12 mx-auto md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl overflow-hidden shadow-lg bg-[#f8f6f2] border border-[#d0bb94] transition-transform hover:scale-[1.01]">
+            {/* <div className="rounded-2xl overflow-hidden shadow-lg bg-[#f8f6f2] border border-[#d0bb94] transition-transform hover:scale-[1.01]">
               <Image
                 src={imageUrl}
                 alt="jogador bebendo"
@@ -46,16 +46,26 @@ const Noticias: NextPage = () => {
                 </p>
                 <span className="text-xs text-[#718c99]">DESTAQUE</span>
               </div>
-            </div>
+            </div> */}
 
-            {news.map((item) => (
-              <NewsCard
-                key={item.id}
-                title={item.title}
-                description={item.summary}
-                date={item.date}
-              />
-            ))}
+            {[...news]
+              .sort((a, b) => {
+                const [dayA, monthA, yearA] = a.date.split("/");
+                const [dayB, monthB, yearB] = b.date.split("/");
+
+                const dateA = new Date(`${yearA}-${monthA}-${dayA}`);
+                const dateB = new Date(`${yearB}-${monthB}-${dayB}`);
+
+                return dateB.getTime() - dateA.getTime(); // Mais recente primeiro
+              })
+              .map((item) => (
+                <NewsCard
+                  key={item.id}
+                  title={item.title}
+                  description={item.summary}
+                  date={item.date}
+                />
+              ))}
           </div>
         </div>
       </div>
