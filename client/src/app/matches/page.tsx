@@ -41,7 +41,7 @@ import matchesJson from "./matches.json";
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
-  const [selectedRound, setSelectedRound] = useState(3);
+  const [selectedRound, setSelectedRound] = useState(4);
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
@@ -304,7 +304,7 @@ export default function MatchesPage() {
             className="mx-auto border border-gray-200 rounded-xl p-4 shadow-md bg-white mb-6 max-w-xl md:max-w-full"
           >
             {/* Cabeçalho da partida: rodada + botão editar */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+            <div className="flex flex-col  sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
               <div className="text-center w-full text-sm text-indigo-600 font-semibold">
                 Rodada {match.round} · Grupo {match.group}
               </div>
@@ -316,7 +316,7 @@ export default function MatchesPage() {
                   Editar
                 </button>
                 <button
-                  className="bg-green-600 px-3 py-2 text-sm text-white rounded hover:bg-green-700 transition-colors ml-2"
+                  className="bg-green-600 px-2 py-1.5 mt-1 text-sm text-white rounded hover:bg-green-700 transition-colors ml-2 md:ml-0"
                   onClick={() => openDetailsModal(match)}
                 >
                   Partida

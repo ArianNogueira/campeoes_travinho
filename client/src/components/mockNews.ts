@@ -105,4 +105,39 @@ export const news: NewsItem[] = [
     summary:
     "O Golden confirmou o favoritismo e manteve os 100% de aproveitamento, isolando-se ainda mais na liderança da competição. Já o Atlético conheceu sua segunda derrota consecutiva e precisa reagir rápido para seguir vivo na briga pela classificação."
   },
+  {
+    id: 15,
+    title: "🔥 Dallas ressurge com goleada e mantém viva a esperança de classificação!",
+    date: "18/07/2025",
+    summary:
+    "Depois de um início difícil, o Dallas reencontrou o bom futebol e venceu com uma goleada convincente, reacendendo as chances de avançar para a próxima fase. Enquanto isso, o Falcon sofreu mais uma derrota e agora vê sua classificação em sério risco."
+  },
+  {
+    id: 16,
+    title: "🛡️ Titans goleia e deixa o TG FC próximo da eliminação",
+    date: "18/07/2025",
+    summary:
+    "O Titans mostrou força e foco ao vencer o TG FC por 7 a 0, em uma partida dominante do início ao fim. Com esse resultado, as chances de classificação do TG FC ficam em 1%, enquanto o Titans segue firme na briga pela liderança."
+  },
+  {
+    id: 17,
+    title: "⚖️ Golden e Lisos Team ficam no empate",
+    date: "18/07/2025",
+    summary:
+    "Em uma partida equilibrada do início ao fim, Golden e Lisos Team ficaram no empate, mostrando forças iguais em campo. O resultado mantém as duas equipes vivas na disputa por uma vaga na próxima fase."
+  },
+  {
+    id: 18,
+    title: "🎯 Classificados para a próxima fase!",
+    date: "19/07/2025",
+    summary:
+    "Thunder FC, Titans FC, CM Inter Miami e Golden Warrios garantiram vaga antecipada na próxima fase do campeonato. Agora, a disputa segue intensa apenas para definir as posições na tabela e quem chega com mais força para os mata-matas."
+  },
+  {
+    id: 19,
+    title: "🔥 Grupo B em Chamas!",
+    date: "19/07/2025",
+    summary:
+    "Com a classificação do Golden, agora restam apenas 3 vagas em aberto no Grupo B, que segue completamente embolado, com os times praticamente somando a mesma pontuação. A disputa promete fortes emoções nas próximas rodadas para definir quem avança!"
+  },
 ];
