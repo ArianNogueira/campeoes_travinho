@@ -18,14 +18,14 @@ export const standings = [
     team: "CM INTER MIAMI",
     group: "A",
     position: 1,
-    points: 9,
-    played: 3,
-    won: 3,
+    points: 12,
+    played: 4,
+    won: 4,
     drawn: 0,
     lost: 0,
-    goalsFor: 11,
-    goalsAgainst: 6,
-    goalDifference: 5,
+    goalsFor: 14,
+    goalsAgainst: 8,
+    goalDifference: 6,
     img: inter
   },
   {
@@ -34,13 +34,13 @@ export const standings = [
     group: "A",
     position: 2,
     points: 9,
-    played: 3,
+    played: 4,
     won: 3,
     drawn: 0,
-    lost: 0,
-    goalsFor: 23,
-    goalsAgainst: 8,
-    goalDifference: 15,
+    lost: 1,
+    goalsFor: 25,
+    goalsAgainst: 11,
+    goalDifference: 14,
     img: thunder
   },
   {
@@ -110,14 +110,14 @@ export const standings = [
     team: "LIONS FC",
     group: "B",
     position: 1,
-    points: 3,
-    played: 3,
-    won: 1,
+    points: 6,
+    played: 4,
+    won: 2,
     drawn: 0,
     lost: 2,
-    goalsFor: 6,
-    goalsAgainst: 11,
-    goalDifference: -5,
+    goalsFor: 11,
+    goalsAgainst: 14,
+    goalDifference: -3,
     img: lions
   },
   {
@@ -126,13 +126,13 @@ export const standings = [
     group: "B",
     position: 2,
     points: 3,
-    played: 3,
+    played: 4,
     won: 1,
     drawn: 0,
-    lost: 2,
+    lost: 3,
     goalsFor: 10,
-    goalsAgainst: 7,
-    goalDifference: -3,
+    goalsAgainst: 15,
+    goalDifference: -5,
     img: atletico
   },
   {
@@ -141,13 +141,13 @@ export const standings = [
     group: "B",
     position: 3,
     points: 4,
-    played: 3,
+    played: 4,
     won: 1,
     drawn: 1,
-    lost: 1,
+    lost: 2,
     goalsFor: 7,
-    goalsAgainst: 3,
-    goalDifference: 4,
+    goalsAgainst: 4,
+    goalDifference: 3,
     img: vilarreal
   },
   {
@@ -170,14 +170,14 @@ export const standings = [
     team: "CA NOTTS",
     group: "B",
     position: 5,
-    points: 3,
-    played: 3,
-    won: 1,
+    points: 6,
+    played: 4,
+    won: 2,
     drawn: 0,
     lost: 2,
-    goalsFor: 5,
+    goalsFor: 6,
     goalsAgainst: 9,
-    goalDifference: -4,
+    goalDifference: -3,
     img: notts
   },
   {
@@ -199,8 +199,8 @@ export const standings = [
 
 
 export const topScorers = [
-  { name: "Robinho", team: "THUNDER FC", goals: 11 },
-  { name: "Robgol", team: "CM INTER MIAMI", goals: 6 },
+  { name: "Robinho", team: "THUNDER FC", goals: 12 },
+  { name: "Robgol", team: "CM INTER MIAMI", goals: 7 },
   { name: "Ítalo", team: "THUNDER FC", goals: 6 },
   { name: "Gleyvison", team: "TITANS FC", goals: 5 },
   { name: "Alef", team: "FC DALLAS", goals: 5 },
@@ -208,7 +208,7 @@ export const topScorers = [
 ];
 
 export const bestDefenses = [
-  { team: "VILARREAL", goalsAgainst: 3, cleanSheets: 1 },
+  { team: "VILARREAL", goalsAgainst: 4, cleanSheets: 0 },
   { team: "TITANS FC", goalsAgainst: 5, cleanSheets: 1 },
-  { team: "GOLDEN WARRIOS", goalsAgainst: 3, cleanSheets: 0 },
+  { team: "GOLDEN WARRIOS", goalsAgainst: 6, cleanSheets: 0 },
 ];
