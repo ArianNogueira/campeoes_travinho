@@ -200,7 +200,7 @@ export const standings = [
 
 export const topScorers = [
   { name: "Robinho", team: "THUNDER FC", goals: 12 },
-  { name: "Robgol", team: "CM INTER MIAMI", goals: 7 },
+  { name: "Robgol", team: "CM INTER MIAMI", goals: 8 },
   { name: "Ítalo", team: "THUNDER FC", goals: 6 },
   { name: "Gleyvison", team: "TITANS FC", goals: 5 },
   { name: "Alef", team: "FC DALLAS", goals: 5 },
