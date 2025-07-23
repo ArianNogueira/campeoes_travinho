@@ -13,7 +13,7 @@ export default function StatisticsPage() {
   );
 
   return (
-    <div className="bg-[#fdfaf3] container mx-auto px-4 py-10">
+    <div className="bg-[#fdfaf3] px-4 py-10">
       {/* Título principal */}
       <h1 className="text-4xl font-extrabold text-center mb-8 text-[#5e5035]">
         Estatísticas do Campeonato
