@@ -43,6 +43,11 @@ export default function Header() {
               Partidas
             </span>
           </Link>
+          <Link href="/statistics" passHref onClick={() => setMenuOpen(false)}>
+            <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
+              Estatísticas
+            </div>
+          </Link>
           <Link href="/news" passHref>
             <span className="px-3 py-1 rounded cursor-pointer hover:bg-[#2b4d66] transition">
               Notícias
@@ -80,6 +85,11 @@ export default function Header() {
           <Link href="/matches" passHref onClick={() => setMenuOpen(false)}>
             <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
               Partidas
+            </div>
+          </Link>
+          <Link href="/statistics" passHref onClick={() => setMenuOpen(false)}>
+            <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
+              Estatísticas
             </div>
           </Link>
           <Link href="/news" passHref onClick={() => setMenuOpen(false)}>

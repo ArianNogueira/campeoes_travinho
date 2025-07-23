@@ -42,6 +42,12 @@ export default function Footer() {
           >
             Partidas
           </Link>
+          <Link
+            href="/statistics"
+            className="hover:text-[#855b21] transition-colors"
+          >
+            Estatísticas
+          </Link>
           <Link href="/news" className="hover:text-[#855b21] transition-colors">
             Notícias
           </Link>
