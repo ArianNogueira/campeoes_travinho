@@ -6,9 +6,9 @@ import Link from "next/link";
 
 export default function SponsorsPage() {
   return (
-    <div className="bg-[#fdfaf3] container mx-auto px-4 py-10 text-center">
+    <div className="bg-[#fdfaf3] px-4 py-10 text-center">
       {/* Título */}
-      <div className="bg-[#d0bb942c] p-2 rounded-2xl shadow-md mb-10">
+      <div className="bg-[#d0bb94] p-2 rounded-2xl shadow-md mb-10">
         <h1 className="text-4xl font-bold my-4 text-white">
           Nossos Patrocinadores
         </h1>
@@ -25,19 +25,21 @@ export default function SponsorsPage() {
         {sponsors.map((sponsor) => (
           <div
             key={sponsor.id}
-            className="bg-white shadow-md rounded-2xl p-4 flex flex-col items-center hover:shadow-xl transition"
+            className="bg-[#d0bb942c] shadow-md rounded-2xl p-4 flex flex-col items-center hover:shadow-xl transition"
           >
             {/* Logo */}
             <Image
               src={sponsor.logo}
               alt={sponsor.name}
-              className="w-28 h-28 object-contain mb-4"
+              className="w-50 h-30 object-contain mb-4"
             />
 
             {/* Nome */}
-            <h2 className="text-lg font-semibold mb-2 text-gray-500">
+            <h2 className="text-lg font-semibold mb-2 text-gray-700">
               {sponsor.name}
             </h2>
+
+            <p className="text-md text-gray-500 my-3">{sponsor.mensage}</p>
 
             {/* Instagram */}
             <Link
