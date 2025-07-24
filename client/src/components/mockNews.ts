@@ -140,4 +140,46 @@ export const news: NewsItem[] = [
     summary:
     "Com a classificação do Golden, agora restam apenas 3 vagas em aberto no Grupo B, que segue completamente embolado, com os times praticamente somando a mesma pontuação. A disputa promete fortes emoções nas próximas rodadas para definir quem avança!"
   },
+  {
+    id: 25,
+    title: "🔄 Virada de chave! CA NOTTS cala os críticos e garante classificação",
+    date: "23/07/2025",
+    summary:
+    "Após uma fase de grupos marcada por momentos conturbados, com brigas, polêmicas e até atraso de salários, o CA NOTTS deu a volta por cima e conquistou a classificação para o mata-mata! Com uma equipe experiente e veterana, o time mostrou que não se pode duvidar de quem tem história e casca no futebol."
+  },
+  {
+    id: 24,
+    title: "🌟 Inter Miami fecha a fase de grupos com 100% e se torna o grande favorito!",
+    date: "23/07/2025",
+    summary:
+    "O CM Inter Miami encerra a fase de grupos com a melhor campanha da competição, vencendo todos os seus jogos e mostrando um futebol sólido e eficiente. Com esse desempenho, o time se firma como o principal favorito ao título. Será que vem aí o primeiro bi-campeonato da história do campeonato?"
+  },
+  {
+    id: 20,
+    title: "💪 FC Dallas está classificado!",
+    date: "23/07/2025",
+    summary:
+    "Após um começo conturbado e cercado de incertezas, o FC Dallas reagiu na reta final e garantiu sua classificação para o mata-mata! A equipe mostrou força e agora entra na próxima fase embalada pela recuperação."
+  },
+  {
+    id: 21,
+    title: "🏁 Fim de campanha para o TG FC",
+    date: "23/07/2025",
+    summary:
+    "Estreante na competição, o TG FC encerrou sua participação sem pontuar, enfrentando grandes desafios ao longo da fase de grupos. Apesar dos resultados, a equipe deixa lições e experiência para possíveis futuras edições."
+  },
+  {
+    id: 22,
+    title: "⛔ De vice em 2023 à eliminação precoce: Falcon FC está fora",
+    date: "23/07/2025",
+    summary:
+    "O Falcon FC, vice-campeão em 2023, se despede da competição sem conseguir a classificação e amarga também o título de pior defesa do campeonato. Uma campanha muito abaixo do esperado, que surpreendeu torcedores e colocou em xeque o desempenho da equipe nesta edição."
+  },
+  {
+    id: 23,
+    title: "🏁 Fim da linha para Os Lisos Team",
+    date: "23/07/2025",
+    summary:
+    "O Os Lisos Team lutou até o fim e mostrou garra, mas a camisa pesou nos momentos decisivos, e a equipe acabou eliminada ainda na fase de grupos. Fica o esforço e a entrega como marca da participação nesta edição."
+  },
 ];
