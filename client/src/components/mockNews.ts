@@ -182,4 +182,53 @@ export const news: NewsItem[] = [
     summary:
     "O Os Lisos Team lutou até o fim e mostrou garra, mas a camisa pesou nos momentos decisivos, e a equipe acabou eliminada ainda na fase de grupos. Fica o esforço e a entrega como marca da participação nesta edição."
   },
+   {
+    id: 32,
+    title: "🏆 Parabéns aos classificados para as quartas de final!",
+    date: "25/07/2025",
+    summary:
+    "A Organização Campeões Travinho parabeniza todas as equipes que conquistaram a vaga para as quartas de final! Desejamos boa sorte a todos e que venham grandes jogos, repletos de emoção e disputas saudáveis. Que cada lance seja marcado pelo companheirismo, respeito e compreensão, valores que fazem deste campeonato algo especial."
+  },
+  {
+    id: 26,
+    title: "🟨 Em jogo quente, Atlético vence e garante classificação!",
+    date: "25/07/2025",
+    summary:
+    "Em uma partida intensa e marcada por muitos cartões e disputas acirradas, o Atlético conseguiu se impor em campo e saiu com a vitória decisiva, garantindo sua classificação para a próxima fase! O time mostrou força nos momentos cruciais e segue vivo na briga pelo título."
+  },
+  {
+    id: 27,
+    title: "🏁 Villareal se despede da competição",
+    date: "25/07/2025",
+    summary:
+    "O Villareal encerra sua participação após uma campanha de bons jogos, mas sem conseguir concretizar vitórias. Faltou pouco, e quem sabe na próxima edição, com um time mais unido e reformulado, a equipe volte ainda mais forte."
+  },
+  {
+    id: 28,
+    title: "⚔️ Golden segue firme na briga pelo título!",
+    date: "25/07/2025",
+    summary:
+    "Com mais uma vitória, o Golden mostrou foco total na competição e fechou a fase de grupos com a 2ª melhor campanha geral. A equipe chega embalada para o mata-mata e segue como um dos favoritos ao título!"
+  },
+  {
+    id: 29,
+    title: "🦁 Já classificado, Lions sofre nova derrota e mira o mata-mata",
+    date: "25/07/2025",
+    summary:
+    "Mesmo com a classificação garantida, o Lions voltou a ser derrotado na última rodada da fase de grupos. Agora, a equipe foca totalmente no mata-mata, onde cada jogo será decisivo na busca pelo título."
+  },
+  {
+    id: 30,
+    title: "🛡️ Ataque vs Defesa: Titans se impõem e fecham com a melhor defesa da fase de grupos",
+    date: "25/07/2025",
+    summary:
+    "Em um duelo direto contra a equipe de melhor ataque, o Titans mostrou força, organização e foco total, conseguindo segurar o adversário e garantir mais uma vitória. Com o resultado, a equipe encerra a fase de grupos com a melhor defesa do campeonato, mostrando que está pronta para os desafios do mata-mata!"
+  },
+  {
+    id: 31,
+    title: "⚡ Derrota e desfalque: Thunder tropeça antes do mata-mata",
+    date: "25/07/2025",
+    summary:
+    "O Thunder sofreu uma derrota inesperada na última rodada da fase de grupos e ainda perdeu um dos seus jogadores para a próxima fase. Após um início avassalador, surge a dúvida: será que veremos novamente aquele Thunder dominante das primeiras rodadas? Tudo será decidido no mata-mata!"
+  },
 ];

@@ -91,7 +91,7 @@ export default function StatisticsPage() {
             <tbody>
               {cards.map((c) => {
                 const status =
-                  c.yellow > 2
+                  c.yellow > 2 || c.red === 1
                     ? "Suspenso"
                     : c.yellow === 2
                     ? "Pendurado"

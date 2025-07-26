@@ -39,24 +39,35 @@ interface TeamStats {
 const topScorers: PlayerStats[] = [
   { id: 1, name: "Robgol", team: inter, goals: 17 },
   { id: 2, name: "Robinho", team: thunder, goals: 12 },
-  { id: 5, name: "Alef", team: dalas, goals: 6 },
-  { id: 3, name: "Ítalo", team: thunder, goals: 6 },
-  { id: 4, name: "Gleyvison", team: titans, goals: 5 },
-  { id: 6, name: "Renan", team: titans, goals: 5 },
-  { id: 7, name: "Joanderson", team: titans, goals: 5 },
-  { id: 8, name: "Dudu", team: dalas, goals: 4 },
-  { id: 9, name: "David", team: golden, goals: 4 },
-  { id: 10, name: "Maycon", team: tungo, goals: 3 },
-  { id: 11, name: "Pereu", team: lisos, goals: 3 },
-  { id: 12, name: "Eduardo", team: atletico, goals: 3 },
-  { id: 13, name: "Cl", team: vilarreal, goals: 3 },
-  { id: 14, name: "Nigago", team: lisos, goals: 3 },
-  { id: 15, name: "Gustavo", team: atletico, goals: 3 },
+  { id: 3, name: "Alef", team: dalas, goals: 6 },
+  { id: 4, name: "Ítalo", team: thunder, goals: 6 },
+  { id: 5, name: "Cl", team: vilarreal, goals: 5 },
+  { id: 6, name: "Neyvison", team: titans, goals: 5 },
+  { id: 7, name: "Joelson", team: lions, goals: 5 },
+  { id: 8, name: "Gleyvison", team: titans, goals: 5 },
+  { id: 9, name: "Renan", team: titans, goals: 5 },
+  { id: 10, name: "Joanderson", team: titans, goals: 5 },
+  { id: 11, name: "João Pedro", team: atletico, goals: 4 },
+  { id: 12, name: "Kleberson", team: golden, goals: 4 },
+  { id: 13, name: "Eduardo", team: atletico, goals: 4 },
+  { id: 14, name: "Dudu", team: dalas, goals: 4 },
+  { id: 15, name: "David", team: golden, goals: 4 },
+  { id: 16, name: "Maycon", team: tungo, goals: 3 },
+  { id: 17, name: "Pereu", team: lisos, goals: 3 },
+  { id: 18, name: "Claudio", team: notts, goals: 3 },
+  { id: 19, name: "Nigago", team: lisos, goals: 3 },
+  { id: 20, name: "Gustavo", team: atletico, goals: 3 },
+  { id: 21, name: "Mateus", team: falcon, goals: 3 },
 ];
 
 const cards: CardStats[] = [
+  { id: 19, name: "BRUNO", team: thunder, yellow: 1, red: 1 },
   { id: 3, name: "CLAUDIO", team: notts, yellow: 3, red: 0 },
-  { id: 2, name: "STHÊNIO", team: golden, yellow: 2, red: 0 },
+  { id: 2, name: "EDUARDO", team: atletico, yellow: 2, red: 0 },
+  { id: 16, name: "GEDSON", team: atletico, yellow: 2, red: 0 },
+  { id: 18, name: "LAURO", team: vilarreal, yellow: 2, red: 0 },
+  { id: 17, name: "STHÊNIO", team: golden, yellow: 2, red: 0 },
+  { id: 20, name: "DANRLEY", team: lions, yellow: 1, red: 0 },
   { id: 1, name: "MAYCON", team: tungo, yellow: 1, red: 0 },
   { id: 4, name: "ÍTALO", team: thunder, yellow: 1, red: 0 },
   { id: 5, name: "PEREU", team: lisos, yellow: 1, red: 0 },
@@ -73,9 +84,9 @@ const cards: CardStats[] = [
 ];
 
 const teams: TeamStats[] = [
-  { id: 1, name: "Thunder", goalsScored: 25, goalsConceded: 11 },
-  { id: 2, name: "Villareal", goalsScored: 15, goalsConceded: 4 },
-  { id: 3, name: "Golden", goalsScored: 8, goalsConceded: 12 },
+  { id: 1, name: "Thunder FC", goalsScored: 26, goalsConceded: 14 },
+  { id: 2, name: "CM Inter Miami", goalsScored: 24, goalsConceded: 9 },
+  { id: 3, name: "Titans FC", goalsScored: 21, goalsConceded: 6 },
 ];
 
 const statisticsMockup = {
