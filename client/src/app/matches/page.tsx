@@ -12,7 +12,7 @@ type Match = {
   date: string;
   time: string;
   group: string;
-  round: number;
+  round: number | string;
   scoreHome?: number;
   scoreAway?: number;
 };
@@ -41,7 +41,8 @@ import matchesJson from "./matches.json";
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
-  const [selectedRound, setSelectedRound] = useState(5);
+  const [selectedRound, setSelectedRound] =
+    useState<string>("QUARTAS DE FINAL");
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
@@ -113,13 +114,19 @@ export default function MatchesPage() {
     new Set(matches.flatMap((m) => [m.home?.name, m.away?.name]))
   );
 
-  const roundsList = Array.from(new Set(matches.map((m) => m.round))).sort(
-    (a, b) => a - b
-  );
+  const roundsList = Array.from(new Set(matches.map((m) => m.round)));
+
+  // Separar por tipo e ordenar
+  const numericRounds = roundsList
+    .filter((r) => typeof r === "number")
+    .sort((a, b) => Number(a) - Number(b));
+  const stringRounds = roundsList.filter((r) => typeof r === "string");
+
+  const finalRoundsList = [...numericRounds, ...stringRounds];
 
   const filteredMatches =
     selectedTeam === "all"
-      ? matches.filter((m) => m.round === selectedRound)
+      ? matches.filter((m) => m.round.toString() === selectedRound)
       : matches.filter(
           (m) => m.home?.name === selectedTeam || m.away?.name === selectedTeam
         );
@@ -129,11 +136,11 @@ export default function MatchesPage() {
 
     if (senha === "travinho2019") {
       setEditingMatch(match);
-      setEditData({
-        date: match.date,
-        time: match.time,
-        round: match.round,
-      });
+      // setEditData({
+      //   date: match.date,
+      //   time: match.time,
+      //   round: match.round,
+      // });
     } else {
       alert("Senha incorreta!");
     }
@@ -282,12 +289,12 @@ export default function MatchesPage() {
           <select
             className="border rounded px-3 py-1 text-gray-700"
             value={selectedRound}
-            onChange={(e) => setSelectedRound(Number(e.target.value))}
+            onChange={(e) => setSelectedRound(e.target.value)}
             disabled={selectedTeam !== "all"}
           >
-            {roundsList.map((round) => (
-              <option key={round} value={round}>
-                {round}
+            {finalRoundsList.map((round) => (
+              <option key={round} value={round} className="text-center">
+                {typeof round === "number" ? `${round}` : round}
               </option>
             ))}
           </select>
@@ -306,8 +313,19 @@ export default function MatchesPage() {
             {/* Cabeçalho da partida: rodada + botão editar */}
             <div className="flex flex-col  sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
               <div className="text-center w-full text-sm text-indigo-600 font-semibold">
-                Rodada {match.round} · Grupo {match.group}
+                {["QUARTAS DE FINAL", "SEMI", "FINAL"].includes(
+                  match.round.toString().toUpperCase()
+                ) ? (
+                  <>
+                    {match.round} {match.group && `· ${match.group}`}
+                  </>
+                ) : (
+                  <>
+                    Rodada {match.round} · Grupo {match.group}
+                  </>
+                )}
               </div>
+
               <div className="text-center sm:text-right">
                 <button
                   className="bg-blue-600 px-3 py-1.5 text-sm text-white rounded hover:bg-blue-700 transition-colors"
