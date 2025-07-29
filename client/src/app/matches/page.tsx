@@ -3,6 +3,8 @@
 type TeamInfo = {
   name: string;
   score: number;
+  penaltiesHome?: number;
+  penaltiesAway?: number;
 };
 
 type Match = {
@@ -15,6 +17,8 @@ type Match = {
   round: number | string;
   scoreHome?: number;
   scoreAway?: number;
+  penaltiesHome?: number;
+  penaltiesAway?: number;
 };
 
 type Player = {
@@ -376,11 +380,19 @@ export default function MatchesPage() {
               </div>
 
               {/* Placar */}
-              <div className="text-2xl font-bold text-gray-400 flex items-center justify-center h-full">
+              <div className="text-2xl font-bold text-gray-700 flex flex-col items-center justify-center h-full">
                 {typeof match.home.score === "number" &&
                 typeof match.away.score === "number"
                   ? `${match.home.score} x ${match.away.score}`
                   : "vs"}
+
+                {typeof match.home.penaltiesHome === "number" &&
+                typeof match.away.penaltiesAway === "number" ? (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Pênaltis: <br /> ( {match.home.penaltiesHome} x{" "}
+                    {match.away.penaltiesAway} )
+                  </p>
+                ) : null}
               </div>
 
               {/* Placar */}

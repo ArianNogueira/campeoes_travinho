@@ -231,4 +231,25 @@ export const news: NewsItem[] = [
     summary:
     "O Thunder sofreu uma derrota inesperada na última rodada da fase de grupos e ainda perdeu um dos seus jogadores para a próxima fase. Após um início avassalador, surge a dúvida: será que veremos novamente aquele Thunder dominante das primeiras rodadas? Tudo será decidido no mata-mata!"
   },
+  {
+    id: 33,
+    title: "⚡ Mata-mata começou no 220V!",
+    date: "28/07/2025",
+    summary:
+    "A fase eliminatória começou com tudo — jogos intensos, emoção e muita disputa em campo! E isso foi só o começo… Nesta quarta-feira, teremos os dois jogos restantes das quartas de final e, logo após, o sorteio que definirá os confrontos da semifinal! Fique ligado, porque agora cada lance é decisivo!"
+  },
+  {
+    id: 34,
+    title: "🎉 Atlético vai à semifinal nos pênaltis!",
+    date: "28/07/2025",
+    summary:
+    "Em um jogo equilibrado e com a torcida com os nervos à flor da pele, o Atlético garantiu sua vaga na semifinal! Após ceder o empate no tempo normal, a equipe manteve a calma e venceu nos pênaltis, mostrando frieza e determinação nos momentos decisivos. Agora, o sonho do título segue vivo!"
+  },
+  {
+    id: 35,
+    title: "⚔️ Golden vence e avança à semifinal!",
+    date: "28/07/2025",
+    summary:
+    "Em um jogo agitado e cheio de emoções, o Golden mostrou superioridade em campo e garantiu sua vaga na semifinal! Do outro lado, o Dallas se despede da competição como um verdadeiro guerreiro, após uma campanha abaixo das expectativas. Agora é tudo ou nada na luta pelo título!"
+  },
 ];

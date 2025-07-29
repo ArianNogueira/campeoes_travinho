@@ -34,8 +34,8 @@
     {"id":29,"date":"25/07/2025","time":"20:00","round":5,"group":"B","home":{"id":7,"name":"LIONS FC","group":"Grupo B", "score": 3, "emblem":null},"away":{"id":10,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": 5, "emblem":null}},
     {"id":30,"date":"25/07/2025","time":"21:00","round":5,"group":"A","home":{"id":2,"name":"THUNDER FC","group":"Grupo A", "score": 1, "emblem":null},"away":{"id":3,"name":"TITANS FC","group":"Grupo A", "score": 3, "emblem":null}},
 
-    {"id":31,"date":"28/07/2025","time":"19:30","round":"QUARTAS DE FINAL","group":"1 Partida","home":{"id":1,"name":"CA NOTTS","group":"Grupo B", "score": "", "emblem":null},"away":{"id":4,"name":"ATLÉTICO RF","group":"Grupo B", "score": "", "emblem":null}},
-    {"id":32,"date":"28/07/2025","time":"20:30","round":"QUARTAS DE FINAL","group":"2 Partida","home":{"id":8,"name":"GOLDEN WARRIOS","group":"Grupo A", "score": "", "emblem":null},"away":{"id":9,"name":"FC DALLAS","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":31,"date":"28/07/2025","time":"19:30","round":"QUARTAS DE FINAL","group":"1 Partida","home":{"id":1,"name":"CA NOTTS","group":"Grupo B", "score": 2, "emblem":null, "penaltiesHome": 0},"away":{"id":4,"name":"ATLÉTICO RF","group":"Grupo B", "score": 2, "emblem":null, "penaltiesAway": 2}},
+    {"id":32,"date":"28/07/2025","time":"20:30","round":"QUARTAS DE FINAL","group":"2 Partida","home":{"id":8,"name":"GOLDEN WARRIOS","group":"Grupo A", "score": 2, "emblem":null},"away":{"id":9,"name":"FC DALLAS","group":"Grupo B", "score": 1, "emblem":null}},
     {"id":33,"date":"30/07/2025","time":"19:30","round":"QUARTAS DE FINAL","group":"1 Partida","home":{"id":7,"name":"CM INTER MIAMI","group":"Grupo A", "score": "", "emblem":null},"away":{"id":10,"name":"TITANS FC","group":"Grupo A", "score": "", "emblem":null}},
     {"id":34,"date":"30/07/2025","time":"20:30","round":"QUARTAS DE FINAL","group":"2 Partida","home":{"id":2,"name":"LIONS FC","group":"Grupo B", "score": "", "emblem":null},"away":{"id":3,"name":"THUNDER FC","group":"Grupo A", "score": "", "emblem":null}}
 ]
