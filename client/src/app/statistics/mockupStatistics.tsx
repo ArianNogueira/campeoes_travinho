@@ -82,7 +82,7 @@ const cards: CardStats[] = [
   // { id: 12, name: "GEDSON", team: atletico, yellow: 1, red: 0 },
   { id: 13, name: "NETO", team: notts, yellow: 1, red: 0 },
   // { id: 14, name: "WEDERSON", team: lions, yellow: 1, red: 0 },
-  { id: 15, name: "RUAN", team: inter, yellow: 1, red: 0 },
+  // { id: 15, name: "RUAN", team: inter, yellow: 1, red: 0 },
   // { id: 2, name: "EDUARDO", team: atletico, yellow: 0, red: 0 },
   // { id: 16, name: "GEDSON", team: atletico, yellow: 0, red: 0 },
   // { id: 17, name: "STHÊNIO", team: golden, yellow: 0, red: 0 },
