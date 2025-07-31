@@ -19,7 +19,9 @@ const NewsCard: React.FC<NewsCardProps> = ({
       {/* <Image src={imageUrl} alt={title} className="object-cover w-full h-48" /> */}
       <div className="p-4">
         <h3 className="text-xl font-semibold text-[#2d1f0f] mb-2">{title}</h3>
-        <p className="text-sm text-[#5e5035] mb-3">{description}</p>
+        <p className="text-sm text-[#5e5035] mb-3 whitespace-pre-line">
+          {description}
+        </p>
         <span className="text-xs text-[#718c99]">{date}</span>
       </div>
     </div>

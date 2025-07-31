@@ -12,6 +12,7 @@ import lions from "../../assets/emblemas/Lions_FC.jpeg";
 import notts from "../../assets/emblemas/CA_Notts.jpeg";
 import lisos from "../../assets/emblemas/Os_Lisos_Team.jpeg";
 import atletico from "../../assets/emblemas/Atletico.svg.png";
+import indefinido from "../../assets/emblemas/escudo_indefinido.png";
 
 export const emblemMap: Record<string, StaticImageData> = {
   "CM INTER MIAMI": inter,
@@ -26,4 +27,5 @@ export const emblemMap: Record<string, StaticImageData> = {
   "GOLDEN WARRIOS": golden,
   "CA NOTTS": notts,
   "OS LISOS TEAM": lisos,
+  "A DEFINIR": indefinido,
 };

@@ -45,8 +45,7 @@ import matchesJson from "./matches.json";
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
-  const [selectedRound, setSelectedRound] =
-    useState<string>("QUARTAS DE FINAL");
+  const [selectedRound, setSelectedRound] = useState<string>("SEMIFINAL");
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
@@ -317,7 +316,7 @@ export default function MatchesPage() {
             {/* Cabeçalho da partida: rodada + botão editar */}
             <div className="flex flex-col  sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
               <div className="text-center w-full text-sm text-indigo-600 font-semibold">
-                {["QUARTAS DE FINAL", "SEMI", "FINAL"].includes(
+                {["QUARTAS DE FINAL", "SEMIFINAL", "FINAL"].includes(
                   match.round.toString().toUpperCase()
                 ) ? (
                   <>

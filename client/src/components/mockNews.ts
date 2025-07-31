@@ -252,4 +252,25 @@ export const news: NewsItem[] = [
     summary:
     "Em um jogo agitado e cheio de emoções, o Golden mostrou superioridade em campo e garantiu sua vaga na semifinal! Do outro lado, o Dallas se despede da competição como um verdadeiro guerreiro, após uma campanha abaixo das expectativas. Agora é tudo ou nada na luta pelo título!"
   },
+  {
+    id: 36,
+    title: "🏆 Quartas de final encerradas! Semifinais definidas!",
+    date: "30/07/2025",
+    summary:
+    `As quartas de final chegaram ao fim com grandes jogos e noites agitadas no Praça Events Stadium! Após o sorteio, já temos os confrontos das semifinais: \n\n 🔹 CM INTER MIAMI X ATLÉTICO RF \n🔹 LIONS FC X GOLDEN WARRIOS \n\n Os jogos acontecem na próxima segunda-feira (04/08) e prometem fortes emoções! Quem vai para a grande final?`
+  },
+  {
+    id: 37,
+    title: "🦁 Lions avança para a semifinal nos pênaltis!",
+    date: "30/07/2025",
+    summary:
+    "Em uma partida muito equilibrada, com as equipes mostrando respeito e entregando tudo em campo, Lions e Thunder empataram em 1x1 no tempo normal. Nas penalidades, o Lions manteve a frieza e garantiu sua vaga na semifinal! Agora a equipe segue viva na luta pelo título!"
+  },
+  {
+    id: 38,
+    title: "🔥 Inter Miami vence e garante vaga na semifinal!",
+    date: "30/07/2025",
+    summary:
+    "O Inter Miami voltou a mostrar força ao vencer o Titans e garantir sua classificação para a semifinal! Enquanto isso, o sonho do título para o Titans fica adiado para o próximo ano, após uma campanha de muita luta. Agora, o Inter Miami segue firme na busca pelo bi-campeonato!"
+  },
 ];
