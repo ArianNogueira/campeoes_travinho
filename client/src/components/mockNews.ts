@@ -273,4 +273,25 @@ export const news: NewsItem[] = [
     summary:
     "O Inter Miami voltou a mostrar força ao vencer o Titans e garantir sua classificação para a semifinal! Enquanto isso, o sonho do título para o Titans fica adiado para o próximo ano, após uma campanha de muita luta. Agora, o Inter Miami segue firme na busca pelo bi-campeonato!"
   },
+  {
+    id: 39,
+    title: "🏆 Final definida! Inter Miami x Lions FC — Quem levantará a taça da 7ª edição?",
+    date: "05/08/2025",
+    summary:
+    "Após noites inesquecíveis e grandes jogos que pararam a Praça Events Stadium, a 7ª edição do campeonato chega ao seu momento mais aguardado! Temos os dois finalistas: \n\n 🔴 Inter Miami, atual campeão, em busca do bi-campeonato inédito \n vs \n 🦁 Lions FC, campeão da 5ª edição, que superou altos e baixos para voltar à grande decisão! \n\n É o duelo dos gigantes, das camisas pesadas e da história viva do campeonato. Quem sairá vencedor desse confronto eletrizante e levantará a taça? \n\n A final está chegando… e promete parar tudo mais uma vez!"
+  },
+  {
+    id: 40,
+    title: "🏁 Inter Miami vence e está na final!",
+    date: "05/08/2025",
+    summary:
+    "Em um jogo muito disputado, o Inter Miami mostrou porque é o atual campeão, mantendo o foco e a calma nos momentos decisivos da partida para garantir a vaga na grande final! \n\n Do outro lado, a surpreendente trajetória do Atlético Rio Frio chega ao fim. A equipe se despede com honra, após uma campanha marcante e cheia de superação."
+  },
+  {
+    id: 41,
+    title: "🦁 Lions vence e está na grande final!",
+    date: "05/08/2025",
+    summary:
+    "Em um confronto sem favoritos, o Lions superou o Golden por 4 a 2, protagonizando uma verdadeira façanha digna de finalista! Mesmo com momentos conturbados e dúvidas ao redor do clube, a equipe permaneceu unida e mostrou sua força na hora certa. \n\n Já o Golden se despede mais uma vez batendo na trave, deixando escapar o sonho do título por detalhes, após mais uma bela campanha. O grito de campeão ficará guardado para a próxima temporada."
+  },
 ];

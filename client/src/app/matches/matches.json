@@ -39,8 +39,8 @@
     {"id":33,"date":"30/07/2025","time":"19:30","round":"QUARTAS DE FINAL","group":"1 Partida","home":{"id":7,"name":"CM INTER MIAMI","group":"Grupo A", "score": 2, "emblem":null},"away":{"id":10,"name":"TITANS FC","group":"Grupo A", "score": 0, "emblem":null}},
     {"id":34,"date":"30/07/2025","time":"20:30","round":"QUARTAS DE FINAL","group":"2 Partida","home":{"id":2,"name":"LIONS FC","group":"Grupo B", "score": 1, "emblem":null, "penaltiesHome": 1},"away":{"id":3,"name":"THUNDER FC","group":"Grupo A", "score": 1, "emblem":null, "penaltiesAway": 0}},
 
-    {"id":35,"date":"04/08/2025","time":"19:30","round":"SEMIFINAL","group":"1 Partida","home":{"id":7,"name":"CM INTER MIAMI","group":"Grupo A", "score": "", "emblem":null},"away":{"id":10,"name":"ATLÉTICO RF","group":"Grupo B", "score": "", "emblem":null}},
-    {"id":36,"date":"04/08/2025","time":"20:30","round":"SEMIFINAL","group":"2 Partida","home":{"id":8,"name":"LIONS FC","group":"Grupo B", "score": "", "emblem":null},"away":{"id":9,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": "", "emblem":null}},
+    {"id":35,"date":"04/08/2025","time":"19:30","round":"SEMIFINAL","group":"1 Partida","home":{"id":7,"name":"CM INTER MIAMI","group":"Grupo A", "score": 4, "emblem":null},"away":{"id":10,"name":"ATLÉTICO RF","group":"Grupo B", "score": 2, "emblem":null}},
+    {"id":36,"date":"04/08/2025","time":"20:30","round":"SEMIFINAL","group":"2 Partida","home":{"id":8,"name":"LIONS FC","group":"Grupo B", "score": 4, "emblem":null},"away":{"id":9,"name":"GOLDEN WARRIOS","group":"Grupo B", "score": 2, "emblem":null}},
 
-    {"id":37,"date":"08/08/2025","time":"19:30","round":"FINAL","group":"Jogo Único","home":{"id":8,"name":"A DEFINIR","group":"Grupo B", "score": "", "emblem":null},"away":{"id":9,"name":"A DEFINIR","group":"Grupo B", "score": "", "emblem":null}}
+    {"id":37,"date":"08/08/2025","time":"19:30","round":"FINAL","group":"Jogo Único","home":{"id":8,"name":"CM INTER MIAMI","group":"Grupo B", "score": "", "emblem":null},"away":{"id":9,"name":"LIONS FC","group":"Grupo B", "score": "", "emblem":null}}
 ]

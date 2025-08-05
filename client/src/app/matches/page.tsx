@@ -45,7 +45,7 @@ import matchesJson from "./matches.json";
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
-  const [selectedRound, setSelectedRound] = useState<string>("SEMIFINAL");
+  const [selectedRound, setSelectedRound] = useState<string>("FINAL");
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [editData, setEditData] = useState({ date: "", time: "", round: 1 });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);

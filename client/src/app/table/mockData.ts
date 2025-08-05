@@ -199,16 +199,16 @@ export const standings = [
 
 
 export const topScorers = [
-  { id: 1, name: "Robgol", team: "CM INTER MIAMI", goals: 18 },
+  { id: 1, name: "Robgol", team: "CM INTER MIAMI", goals: 19 },
   { id: 2, name: "Robinho", team: "THUNDER FC", goals: 12 },
-  { id: 11, name: "João Pedro", team: "ATLÉTICO RF", goals: 6 },
-  { id: 3, name: "Alef", team: "FC DALLAS", goals: 6 },
-  { id: 4, name: "Ítalo", team: "THUNDER FC", goals: 6 },
-  { id: 15, name: "David", team: "GOLDEN WARRIOS", goals: 5 },
+  { id: 3, name: "João Pedro", team: "ATLÉTICO RF", goals: 7 },
+  { id: 4, name: "Kleberson", team: "GOLDEN WARRIOS", goals: 7 },
+  { id: 5, name: "Alef", team: "FC DALLAS", goals: 6 },
+  { id: 6, name: "Ítalo", team: "THUNDER FC", goals: 6 },
 ];
 
 export const bestDefenses = [
   { team: "TITANS FC", goalsAgainst: 8, cleanSheets: 0 },
-  { team: "CM INTER MIAMI", goalsAgainst: 9, cleanSheets: 1 },
+  { team: "CA NOTTS", goalsAgainst: 9, cleanSheets: 0 },
   { team: "VILLAREAL", goalsAgainst: 9, cleanSheets: 0 },
 ];
