@@ -1,164 +1,213 @@
-import React from "react";
-import statisticsMockup from "./mockupStatistics";
-import Image from "next/image";
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  getMatches,
+  getMatchEvents,
+  getTeams,
+  subscribeToTournamentChanges,
+} from "@/services/tournamentService";
+import {
+  buildStandings,
+  buildTournamentStats,
+} from "@/lib/tournamentCalculations";
+import type { Match, MatchEvent, Team } from "@/types/tournament";
 
 export default function StatisticsPage() {
-  const { topScorers, cards, teams } = statisticsMockup;
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [events, setEvents] = useState<MatchEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const bestAttack = teams.reduce((prev, curr) =>
-    curr.goalsScored > prev.goalsScored ? curr : prev
-  );
-  const bestDefense = teams.reduce((prev, curr) =>
-    curr.goalsConceded < prev.goalsConceded ? curr : prev
+  const loadData = useCallback(async () => {
+    try {
+      setError(null);
+      const [teamsData, matchesData, eventsData] = await Promise.all([
+        getTeams(),
+        getMatches(),
+        getMatchEvents(),
+      ]);
+      setTeams(teamsData);
+      setMatches(matchesData);
+      setEvents(eventsData);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Erro ao carregar estatísticas."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    return subscribeToTournamentChanges(loadData);
+  }, [loadData]);
+
+  const standings = useMemo(() => buildStandings(teams, matches), [matches, teams]);
+  const stats = useMemo(
+    () => buildTournamentStats(standings, matches, events),
+    [events, matches, standings]
   );
 
   return (
-    <div className="bg-[#fdfaf3] px-4 py-10">
-      {/* Título principal */}
-      <h1 className="text-4xl font-extrabold text-center mb-8 text-[#5e5035]">
+    <div className="min-h-screen bg-[#fdfaf3] px-4 py-10">
+      <h1 className="mb-8 text-center text-4xl font-extrabold text-[#5e5035]">
         Estatísticas do Campeonato
       </h1>
 
-      {/* Andamento */}
+      {error ? (
+        <div className="mx-auto mb-6 max-w-4xl rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      ) : null}
+
       <section className="mb-12 text-center">
-        <h2 className="text-2xl font-semibold my-5 text-[#5e5035]">
+        <h2 className="my-5 text-2xl font-semibold text-[#5e5035]">
           Andamento do Campeonato
         </h2>
-        <p className="text-gray-700 text-lg">
-          Estamos atualmente na{" "}
-          <span className="font-bold text-[#5e5035]">5ª Rodada</span> do
-          campeonato.
+        <p className="text-lg text-gray-700">
+          {loading
+            ? "Carregando dados..."
+            : stats.currentRound
+            ? `Rodada atual: ${stats.currentRound}`
+            : "Nenhuma rodada cadastrada."}
         </p>
-      </section>
-
-      {/* Artilharia */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4 text-[#5e5035]">Artilharia</h2>
-        <div className="bg-white shadow rounded-xl p-4 border-l-4 border-[#5e5035] max-h-64 overflow-y-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-white z-20 shadow-md">
-              <tr className="border-b text-[#5e5035]">
-                <th className="p-2">Jogador</th>
-                <th className="p-2">Time</th>
-                <th className="p-2 text-center">Gols</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topScorers.map((player) => (
-                <tr
-                  key={player.id}
-                  className="border-b hover:bg-[#f9f5ec] transition"
-                >
-                  <td className="p-2 text-gray-800 font-medium">
-                    {player.name}
-                  </td>
-                  <td className="p-2 text-gray-600">
-                    {typeof player.team === "string" ? (
-                      player.team
-                    ) : (
-                      <Image
-                        src={player.team}
-                        alt={player.name}
-                        width={35}
-                        className="rounded-full"
-                      />
-                    )}
-                  </td>
-                  <td className="p-2 text-center font-bold text-[#5e5035]">
-                    {player.goals}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mx-auto mt-4 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatBox label="Jogos realizados" value={`${stats.finishedMatches}/${stats.totalMatches}`} />
+          <StatBox label="Total de gols" value={stats.totalGoals.toString()} />
+          <StatBox label="Média por jogo" value={stats.averageGoals.toString()} />
         </div>
       </section>
 
-      {/* Cartões */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4 text-red-700">Cartões</h2>
-        <div className="bg-white shadow rounded-xl p-4 border-l-4 border-red-400 max-h-64 overflow-y-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-white z-20 shadow-md">
-              <tr className="border-b text-gray-700">
-                <th className="p-2">Jogador</th>
-                <th className="p-2">Time</th>
-                <th className="p-2 text-center text-yellow-600">Amarelos</th>
-                <th className="p-2 text-center text-red-600">Vermelhos</th>
-                <th className="p-2 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cards.map((c) => {
-                const status =
-                  c.yellow > 2 || c.red === 1
-                    ? "Suspenso"
-                    : c.yellow === 2
-                    ? "Pendurado"
-                    : "-";
-
-                return (
-                  <tr
-                    key={c.id}
-                    className="border-b hover:bg-red-50 transition"
-                  >
-                    <td className="p-2 text-gray-800 font-medium">{c.name}</td>
-                    <td className="p-2 text-gray-600">
-                      {typeof c.team === "string" ? (
-                        c.team
-                      ) : (
-                        <Image
-                          src={c.team}
-                          alt={c.name}
-                          width={35}
-                          className="rounded-full"
-                        />
-                      )}
-                    </td>
-                    <td className="p-2 text-center font-bold text-yellow-700">
-                      {c.yellow}
-                    </td>
-                    <td className="p-2 text-center font-bold text-red-600">
-                      {c.red}
-                    </td>
-                    <td
-                      className={`p-2 text-center font-semibold ${
-                        status === "Suspenso"
-                          ? "text-red-700"
-                          : status === "Pendurado"
-                          ? "text-yellow-700"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      {status}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      <section className="mb-12 grid gap-6 lg:grid-cols-2">
+        <RankingTable
+          columns={["Jogador", "Time", "Gols"]}
+          emptyText="Sem gols registrados."
+          rows={stats.topScorers.map((player) => [
+            player.name,
+            player.team,
+            player.total.toString(),
+          ])}
+          title="Artilharia"
+        />
+        <RankingTable
+          columns={["Jogador", "Time", "Assistências"]}
+          emptyText="Sem assistências registradas."
+          rows={stats.topAssists.map((player) => [
+            player.name,
+            player.team,
+            player.total.toString(),
+          ])}
+          title="Assistências"
+        />
       </section>
 
-      {/* Melhor ataque e defesa */}
-      <section className="mb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-green-100 border-l-4 border-green-600 p-4 rounded-xl shadow">
+      <section className="mb-12">
+        <RankingTable
+          columns={["Jogador", "Time", "Amarelos", "Vermelhos", "Status"]}
+          emptyText="Sem cartões registrados."
+          rows={stats.cards.map((card) => {
+            const status =
+              card.red > 0 ? "Suspenso" : card.yellow >= 2 ? "Pendurado" : "-";
+
+            return [
+              card.name,
+              card.team,
+              card.yellow.toString(),
+              card.red.toString(),
+              status,
+            ];
+          })}
+          title="Cartões"
+        />
+      </section>
+
+      <section className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="rounded-lg border-l-4 border-green-600 bg-green-100 p-4 shadow">
           <h3 className="text-xl font-bold text-green-800">Melhor Ataque</h3>
-          <p className="text-gray-700 mt-2 text-lg">
-            <span className="font-bold text-green-900">{bestAttack.name}</span>{" "}
-            com <span className="font-bold">{bestAttack.goalsScored}</span> gols
-            marcados.
+          <p className="mt-2 text-lg text-gray-700">
+            {stats.bestAttack
+              ? `${stats.bestAttack.team} com ${stats.bestAttack.goalsFor} gols marcados.`
+              : "Sem jogos finalizados."}
           </p>
         </div>
-        <div className="bg-blue-500 p-4 rounded-xl shadow">
+        <div className="rounded-lg bg-blue-500 p-4 shadow">
           <h3 className="text-xl font-bold text-white">Melhor Defesa</h3>
-          <p className="text-white mt-2 text-lg">
-            <span className="font-bold">{bestDefense.name}</span> com apenas{" "}
-            <span className="font-bold">{bestDefense.goalsConceded}</span> gols
-            sofridos.
+          <p className="mt-2 text-lg text-white">
+            {stats.bestDefense
+              ? `${stats.bestDefense.team} com ${stats.bestDefense.goalsAgainst} gols sofridos.`
+              : "Sem jogos finalizados."}
           </p>
         </div>
       </section>
+    </div>
+  );
+}
+
+function StatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg bg-white p-4 shadow">
+      <div className="text-2xl font-bold text-[#5e5035]">{value}</div>
+      <div className="text-sm text-gray-600">{label}</div>
+    </div>
+  );
+}
+
+function RankingTable({
+  title,
+  columns,
+  rows,
+  emptyText,
+}: {
+  title: string;
+  columns: string[];
+  rows: string[][];
+  emptyText: string;
+}) {
+  return (
+    <div>
+      <h2 className="mb-4 text-2xl font-bold text-[#5e5035]">{title}</h2>
+      <div className="max-h-80 overflow-y-auto rounded-lg border-l-4 border-[#5e5035] bg-white p-4 shadow">
+        <table className="w-full border-collapse text-left">
+          <thead className="bg-white shadow-sm">
+            <tr className="border-b text-[#5e5035]">
+              {columns.map((column) => (
+                <th className="p-2" key={column}>
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length ? (
+              rows.map((row, rowIndex) => (
+                <tr className="border-b transition hover:bg-[#f9f5ec]" key={rowIndex}>
+                  {row.map((cell, cellIndex) => (
+                    <td
+                      className={`p-2 ${
+                        cellIndex === 0
+                          ? "font-medium text-gray-800"
+                          : "text-gray-600"
+                      }`}
+                      key={`${rowIndex}-${cellIndex}`}
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="p-4 text-center text-sm text-gray-500" colSpan={columns.length}>
+                  {emptyText}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

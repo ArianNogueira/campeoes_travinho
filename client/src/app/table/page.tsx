@@ -1,76 +1,111 @@
 "use client";
 
-import { useState } from "react";
-import { Trophy, ArrowLeft, TrendingUp, Target, Shield } from "lucide-react";
-import { bestDefenses, standings, topScorers } from "./mockData";
-import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { ArrowLeft, Shield, Target, TrendingUp, Trophy } from "lucide-react";
+import {
+  getMatches,
+  getMatchEvents,
+  getTeams,
+  subscribeToTournamentChanges,
+} from "@/services/tournamentService";
+import {
+  buildStandings,
+  buildTournamentStats,
+} from "@/lib/tournamentCalculations";
+import type { Match, MatchEvent, StandingRow, Team } from "@/types/tournament";
+import { emblemMap } from "../matches/emblem";
 
-const StandingsPage = () => {
+const groups = ["A", "B"];
+
+export default function StandingsPage() {
   const [selectedGroup, setSelectedGroup] = useState("all");
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [events, setEvents] = useState<MatchEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const sortTeams = (teams: typeof standings) =>
-    teams
-      .slice()
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points; // 1. Pontos
-        if (b.goalDifference !== a.goalDifference)
-          return b.goalDifference - a.goalDifference; // 2. Saldo
-        return b.goalsFor - a.goalsFor; // 3. Gols marcados
-      })
-      .map((team, index) => ({ ...team, position: index + 1 }));
+  const loadData = useCallback(async () => {
+    try {
+      setError(null);
+      const [teamsData, matchesData, eventsData] = await Promise.all([
+        getTeams(),
+        getMatches(),
+        getMatchEvents(),
+      ]);
+      setTeams(teamsData);
+      setMatches(matchesData);
+      setEvents(eventsData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar tabela.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
+    loadData();
+    return subscribeToTournamentChanges(loadData);
+  }, [loadData]);
+
+  const standings = useMemo(() => buildStandings(teams, matches), [teams, matches]);
+  const stats = useMemo(
+    () => buildTournamentStats(standings, matches, events),
+    [events, matches, standings]
+  );
   const filteredStandings =
     selectedGroup === "all"
-      ? sortTeams(standings)
-      : sortTeams(standings.filter((team) => team.group === selectedGroup));
-
-  const groups = ["A", "B"];
-
-  const getPositionColor = (position: number) => {
-    if (position <= 4) return "text-green-600 bg-green-50"; // Classificados
-    return "text-red-600 bg-red-50"; // Zona de rebaixamento
-  };
+      ? standings
+      : standings
+          .filter((team) => team.group === selectedGroup)
+          .map((team, index) => ({ ...team, position: index + 1 }));
 
   return (
     <div className="min-h-screen bg-[#fdfaf3]">
-      {/* Header */}
-      <header className="text-white bg-[#708c9a] shadow-lg">
-        <div className="container px-4 py-4 mx-auto">
+      <header className="bg-[#708c9a] text-white shadow-lg">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-3">
-            <Link href="/" className="hover:text-green-200">
-              <ArrowLeft className="w-6 h-6" />
+            <Link className="hover:text-green-200" href="/">
+              <ArrowLeft className="h-6 w-6" />
             </Link>
-            <Trophy className="w-6 h-6" />
+            <Trophy className="h-6 w-6" />
             <h1 className="text-xl font-bold">Classificação</h1>
           </div>
         </div>
       </header>
 
-      <div className="container px-4 py-8 mx-auto">
-        {/* Filters */}
-        <div className="p-6 mb-6 bg-[#d0bb942c] rounded-lg shadow-md">
+      <div className="container mx-auto px-4 py-8">
+        {error ? (
+          <div className="mb-6 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        ) : null}
+
+        <div className="mb-6 rounded-lg bg-[#d0bb942c] p-6 shadow-md">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => setSelectedGroup("all")}
-                className={`px-4 py-2 rounded-lg transition-colors ${
+                className={`rounded-lg px-4 py-2 transition-colors ${
                   selectedGroup === "all"
                     ? "bg-[#557389] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
+                onClick={() => setSelectedGroup("all")}
+                type="button"
               >
-                Todos
+                Geral
               </button>
               {groups.map((group) => (
                 <button
-                  key={group}
-                  onClick={() => setSelectedGroup(group)}
-                  className={`px-4 py-2 rounded-lg transition-colors ${
+                  className={`rounded-lg px-4 py-2 transition-colors ${
                     selectedGroup === group
                       ? "bg-[#557389] text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
+                  key={group}
+                  onClick={() => setSelectedGroup(group)}
+                  type="button"
                 >
                   Grupo {group}
                 </button>
@@ -79,11 +114,10 @@ const StandingsPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-1 lg:px-0">
-          {/* Tabela principal (ocupa 2 colunas no desktop) */}
-          <div className="lg:col-span-2 w-full">
-            <div className="overflow-hidden bg-white rounded-lg shadow-md">
-              <div className="px-6 py-4 text-white bg-[#708c9a]">
+        <div className="grid grid-cols-1 gap-6 px-1 lg:grid-cols-3 lg:px-0">
+          <div className="w-full lg:col-span-2">
+            <div className="overflow-hidden rounded-lg bg-white shadow-md">
+              <div className="bg-[#708c9a] px-6 py-4 text-white">
                 <h2 className="text-xl font-bold">
                   {selectedGroup === "all"
                     ? "Classificação Geral"
@@ -94,197 +128,85 @@ const StandingsPage = () => {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[700px]">
                   <thead className="bg-gray-50">
-                    <tr className="text-left">
-                      {[
-                        "Pos",
-                        "Time",
-                        "Pts",
-                        "J",
-                        "V",
-                        "E",
-                        "D",
-                        "GP",
-                        "GC",
-                        "SG",
-                      ].map((header) => (
-                        <th
-                          key={header}
-                          className="px-4 py-3 text-sm font-semibold text-gray-600 text-center"
-                        >
-                          {header}
-                        </th>
-                      ))}
+                    <tr>
+                      {["Pos", "Time", "Pts", "J", "V", "E", "D", "GP", "GC", "SG"].map(
+                        (header) => (
+                          <th
+                            className="px-4 py-3 text-center text-sm font-semibold text-gray-600"
+                            key={header}
+                          >
+                            {header}
+                          </th>
+                        )
+                      )}
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredStandings.map((team) => (
-                      <tr
-                        key={team.id}
-                        className="transition-colors border-b border-gray-200 hover:bg-gray-50"
-                      >
-                        <td className="px-4 py-4 text-center">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${getPositionColor(
-                              team.position
-                            )}`}
-                          >
-                            {team.position}
-                          </div>
-                        </td>
-                        <td className="px-2 py-4 min-w-44">
-                          <div className="flex items-center gap-3">
-                            <Image
-                              src={team.img}
-                              alt={team.team}
-                              className="rounded-full w-10 h-10 object-cover"
-                              width={40}
-                              height={40}
-                            />
-                            <div>
-                              <p className="font-semibold text-gray-800 text-sm md:text-base">
-                                {team.team}
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                Grupo {team.group}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-center font-bold text-black">
-                          {team.points}
-                        </td>
-                        <td className="px-4 py-4 text-center text-gray-600">
-                          {team.played}
-                        </td>
-                        <td className="px-4 py-4 text-center text-green-600">
-                          {team.won}
-                        </td>
-                        <td className="px-4 py-4 text-center text-yellow-600">
-                          {team.drawn}
-                        </td>
-                        <td className="px-4 py-4 text-center text-red-600">
-                          {team.lost}
-                        </td>
-                        <td className="px-4 py-4 text-center text-gray-600">
-                          {team.goalsFor}
-                        </td>
-                        <td className="px-4 py-4 text-center text-gray-600">
-                          {team.goalsAgainst}
-                        </td>
-                        <td className="px-4 py-4 text-center font-semibold">
-                          <span
-                            className={`${
-                              team.goalDifference >= 0
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {team.goalDifference >= 0 ? "+" : ""}
-                            {team.goalDifference}
-                          </span>
+                    {loading ? (
+                      <tr>
+                        <td className="px-4 py-8 text-center text-gray-500" colSpan={10}>
+                          Carregando classificação...
                         </td>
                       </tr>
-                    ))}
+                    ) : filteredStandings.length === 0 ? (
+                      <tr>
+                        <td className="px-4 py-8 text-center text-gray-500" colSpan={10}>
+                          Nenhum time encontrado.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredStandings.map((team) => (
+                        <StandingTableRow key={team.id} team={team} />
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
 
-              {/* Legenda */}
-              <div className="px-6 py-4 bg-gray-100 border-t text-sm">
-                {selectedGroup === "all" ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
-                    <span className="text-black">
-                      Times com a melhor campanha durante a fase de grupos!
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-green-200 rounded-full bg-green-50"></div>
-                      <span className="text-black">Classificados (1º-4º)</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-red-200 rounded-full bg-red-50"></div>
-                      <span className="text-black">Eliminados (5º-6º)</span>
-                    </div>
-                  </div>
-                )}
+              <div className="border-t bg-gray-100 px-6 py-4 text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="h-4 w-4 rounded-full border-2 border-green-200 bg-green-50" />
+                  <span className="text-black">
+                    Critérios: pontos, vitorias, saldo de gols, gols marcados e confronto direto.
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Statistics Sidebar */}
-          <div className="space-y-6 max-w-[23.5em] md:max-w-full">
-            {/* Top Scorers */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="px-6 py-4 text-white bg-[#5e5035]">
-                <h3 className="flex items-center font-bold">
-                  <Target className="w-5 h-5 mr-2" />
-                  Artilheiros
-                </h3>
-              </div>
-              <div className="p-6">
-                <div className="space-y-3">
-                  {topScorers.map((scorer, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
-                      <div>
-                        <div className="font-semibold text-gray-800">
-                          {scorer.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {scorer.team}
-                        </div>
-                      </div>
-                      <div className="px-3 py-1 font-bold text-yellow-800 bg-yellow-100 rounded-full">
-                        {scorer.goals}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <aside className="space-y-6">
+            <RankingCard
+              icon={<Target className="mr-2 h-5 w-5" />}
+              title="Artilheiros"
+              color="bg-[#5e5035]"
+              rows={stats.topScorers.slice(0, 5).map((row) => ({
+                label: row.name,
+                detail: row.team,
+                value: row.total,
+              }))}
+              emptyText="Sem gols registrados."
+            />
 
-            {/* Best Defenses */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="px-6 py-4 text-white bg-blue-500">
-                <h3 className="flex items-center font-bold">
-                  <Shield className="w-5 h-5 mr-2" />
-                  Melhores Defesas
-                </h3>
-              </div>
-              <div className="p-6">
-                <div className="space-y-3">
-                  {bestDefenses.map((defense, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
-                      <div>
-                        <div className="font-semibold text-gray-800">
-                          {defense.team}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {defense.cleanSheets} jogos sem sofrer
-                        </div>
-                      </div>
-                      <div className="px-3 py-1 font-bold text-blue-800 bg-blue-100 rounded-full">
-                        {defense.goalsAgainst}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <RankingCard
+              icon={<Shield className="mr-2 h-5 w-5" />}
+              title="Melhores Defesas"
+              color="bg-blue-500"
+              rows={standings
+                .filter((row) => row.played > 0)
+                .sort((a, b) => a.goalsAgainst - b.goalsAgainst)
+                .slice(0, 5)
+                .map((row) => ({
+                  label: row.team,
+                  detail: `${row.played} jogos`,
+                  value: row.goalsAgainst,
+                }))}
+              emptyText="Sem jogos finalizados."
+            />
 
-            {/* Tournament Progress */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="px-6 py-4 text-white bg-purple-500">
+            <div className="rounded-lg bg-white shadow-md">
+              <div className="bg-purple-500 px-6 py-4 text-white">
                 <h3 className="flex items-center font-bold">
-                  <TrendingUp className="w-5 h-5 mr-2" />
+                  <TrendingUp className="mr-2 h-5 w-5" />
                   Progresso do Campeonato
                 </h3>
               </div>
@@ -292,34 +214,140 @@ const StandingsPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-gray-600">
                     <span>Jogos Realizados</span>
-                    <span className="font-bold">36/37</span>
+                    <span className="font-bold">
+                      {stats.finishedMatches}/{stats.totalMatches}
+                    </span>
                   </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
+                  <div className="h-2 w-full rounded-full bg-gray-200">
                     <div
-                      className="h-2 bg-purple-500 rounded-full"
-                      style={{ width: "97.3%" }}
-                    ></div>
+                      className="h-2 rounded-full bg-purple-500"
+                      style={{
+                        width: stats.totalMatches
+                          ? `${(stats.finishedMatches / stats.totalMatches) * 100}%`
+                          : "0%",
+                      }}
+                    />
                   </div>
-                  <div className="text-sm text-gray-500">97% concluído</div>
+                  <div className="text-sm text-gray-500">
+                    {stats.totalMatches
+                      ? Math.round((stats.finishedMatches / stats.totalMatches) * 100)
+                      : 0}
+                    % concluído
+                  </div>
 
-                  <div className="pt-4 space-y-2 border-t">
+                  <div className="space-y-2 border-t pt-4">
                     <div className="flex justify-between text-gray-600">
                       <span>Total de Gols</span>
-                      <span className="font-bold">200</span>
+                      <span className="font-bold">{stats.totalGoals}</span>
                     </div>
                     <div className="flex justify-between text-gray-600">
                       <span>Média por Jogo</span>
-                      <span className="font-bold">5,5</span>
+                      <span className="font-bold">{stats.averageGoals}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default StandingsPage;
+function StandingTableRow({ team }: { team: StandingRow }) {
+  const localEmblem = emblemMap[team.team]?.src;
+  const src = team.emblemUrl || localEmblem;
+
+  return (
+    <tr className="border-b border-gray-200 transition-colors hover:bg-gray-50">
+      <td className="px-4 py-4 text-center">
+        <div
+          className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
+            team.position <= 4
+              ? "bg-green-50 text-green-600"
+              : "bg-red-50 text-red-600"
+          }`}
+        >
+          {team.position}
+        </div>
+      </td>
+      <td className="min-w-44 px-2 py-4">
+        <div className="flex items-center gap-3">
+          {src ? (
+            <img
+              alt={team.team}
+              className="h-10 w-10 rounded-full object-cover"
+              src={src}
+            />
+          ) : (
+            <div className="h-10 w-10 rounded-full bg-gray-100" />
+          )}
+          <div>
+            <p className="text-sm font-semibold text-gray-800 md:text-base">
+              {team.team}
+            </p>
+            <p className="text-sm text-gray-500">Grupo {team.group}</p>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4 text-center font-bold text-black">{team.points}</td>
+      <td className="px-4 py-4 text-center text-gray-600">{team.played}</td>
+      <td className="px-4 py-4 text-center text-green-600">{team.won}</td>
+      <td className="px-4 py-4 text-center text-yellow-600">{team.drawn}</td>
+      <td className="px-4 py-4 text-center text-red-600">{team.lost}</td>
+      <td className="px-4 py-4 text-center text-gray-600">{team.goalsFor}</td>
+      <td className="px-4 py-4 text-center text-gray-600">{team.goalsAgainst}</td>
+      <td className="px-4 py-4 text-center font-semibold">
+        <span className={team.goalDifference >= 0 ? "text-green-600" : "text-red-600"}>
+          {team.goalDifference >= 0 ? "+" : ""}
+          {team.goalDifference}
+        </span>
+      </td>
+    </tr>
+  );
+}
+
+function RankingCard({
+  icon,
+  title,
+  color,
+  rows,
+  emptyText,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  color: string;
+  rows: Array<{ label: string; detail: string; value: number }>;
+  emptyText: string;
+}) {
+  return (
+    <div className="rounded-lg bg-white shadow-md">
+      <div className={`${color} px-6 py-4 text-white`}>
+        <h3 className="flex items-center font-bold">
+          {icon}
+          {title}
+        </h3>
+      </div>
+      <div className="p-6">
+        {rows.length ? (
+          <div className="space-y-3">
+            {rows.map((row) => (
+              <div className="flex items-center justify-between" key={row.label}>
+                <div>
+                  <div className="font-semibold text-gray-800">{row.label}</div>
+                  <div className="text-sm text-gray-500">{row.detail}</div>
+                </div>
+                <div className="rounded-full bg-yellow-100 px-3 py-1 font-bold text-yellow-800">
+                  {row.value}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">{emptyText}</p>
+        )}
+      </div>
+    </div>
+  );
+}

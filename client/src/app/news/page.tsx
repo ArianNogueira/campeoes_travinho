@@ -1,76 +1,74 @@
-import { NextPage } from "next";
-import Head from "next/head";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import NewsCard from "@/components/NewsCard";
-import { news } from "@/components/mockNews";
-// import imageUrl from "@/assets/WhatsApp Image 2025-07-11 at 21.29.08.jpeg";
-// import Image from "next/image";
+import { getNews, subscribeToTournamentChanges } from "@/services/tournamentService";
+import type { NewsItem } from "@/types/tournament";
 
-const Noticias: NextPage = () => {
+export default function Noticias() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadNews = useCallback(async () => {
+    try {
+      setError(null);
+      setNews(await getNews());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar notícias.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadNews();
+    return subscribeToTournamentChanges(loadNews);
+  }, [loadNews]);
+
   return (
-    <>
-      <Head>
-        <title>Notícias | Campeonato Master</title>
-        <meta
-          name="description"
-          content="Últimas notícias do campeonato master"
-        />
-      </Head>
-
-      <div className="min-h-screen bg-[#fdfaf3] text-[#2d1f0f]">
-        <div className="bg-[#557389] py-8 text-center text-white shadow-md">
-          <h1 className="text-3xl font-bold tracking-wide">
-            Fique por dentro de tudo que acontece no campeonato
-          </h1>
-        </div>
-
-        <div className="max-w-6xl p-4 mx-auto">
-          <h1 className="text-3xl font-bold text-[#102f4c] mt-5 text-center">
-            Últimas Notícias
-          </h1>
-
-          <div className="grid max-w-6xl gap-8 px-6 py-12 mx-auto md:grid-cols-2 lg:grid-cols-3">
-            {/* <div className="rounded-2xl overflow-hidden shadow-lg bg-[#f8f6f2] border border-[#d0bb94] transition-transform hover:scale-[1.01]">
-              <Image
-                src={imageUrl}
-                alt="jogador bebendo"
-                className="object-cover w-full h-48"
-              />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold text-[#2d1f0f] mb-2">
-                  🔥 Crise no CA NOTTS se aprofunda
-                </h3>
-                <p className="text-sm text-[#5e5035] mb-3">
-                  Em meio à má fase e derrotas, um jogador do CA NOTTS foi
-                  flagrado curtindo em um bar 🍻. Ao ser questionado, afirmou
-                  que o clima no elenco está tenso e há atraso de pagamento.
-                </p>
-                <span className="text-xs text-[#718c99]">DESTAQUE</span>
-              </div>
-            </div> */}
-
-            {[...news]
-              .sort((a, b) => {
-                const [dayA, monthA, yearA] = a.date.split("/");
-                const [dayB, monthB, yearB] = b.date.split("/");
-
-                const dateA = new Date(`${yearA}-${monthA}-${dayA}`);
-                const dateB = new Date(`${yearB}-${monthB}-${dayB}`);
-
-                return dateB.getTime() - dateA.getTime(); // Mais recente primeiro
-              })
-              .map((item) => (
-                <NewsCard
-                  key={item.id}
-                  title={item.title}
-                  description={item.summary}
-                  date={item.date}
-                />
-              ))}
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#fdfaf3] text-[#2d1f0f]">
+      <div className="bg-[#557389] py-8 text-center text-white shadow-md">
+        <h1 className="text-3xl font-bold tracking-wide">
+          Fique por dentro de tudo que acontece no campeonato
+        </h1>
       </div>
-    </>
-  );
-};
 
-export default Noticias;
+      <div className="mx-auto max-w-6xl p-4">
+        <h2 className="mt-5 text-center text-3xl font-bold text-[#102f4c]">
+          Últimas Notícias
+        </h2>
+
+        {error ? (
+          <div className="mx-auto mt-6 max-w-3xl rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        ) : null}
+
+        {loading ? (
+          <p className="py-12 text-center text-gray-500">Carregando notícias...</p>
+        ) : news.length ? (
+          <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 md:grid-cols-2 lg:grid-cols-3">
+            {news.map((item) => (
+              <NewsCard
+                date={formatDate(item.published_at)}
+                description={item.summary}
+                imageUrl={item.image_url || undefined}
+                key={item.id}
+                title={item.title}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="py-12 text-center text-gray-500">
+            Nenhuma notícia cadastrada.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("pt-BR").format(new Date(value));
+}

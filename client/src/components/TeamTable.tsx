@@ -1,61 +1,74 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getTeams, subscribeToTournamentChanges } from "@/services/tournamentService";
+import type { Team } from "@/types/tournament";
+
 export default function TeamTable() {
-  const groupA = [
-    "CM INTER MIAMI",
-    "THUNDER FC",
-    "TITANS FC",
-    "FALCON FC",
-    "TG FC",
-    "FC DALLAS",
-  ];
-  const groupB = [
-    "LIONS FC",
-    "ATLÉTICO RF",
-    "VILARREAL",
-    "GOLDEN WARRIOS",
-    "CA NOTTS",
-    "OS LISOS TEAM",
-  ];
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadTeams = useCallback(async () => {
+    try {
+      setError(null);
+      setTeams(await getTeams());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar times.");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTeams();
+    return subscribeToTournamentChanges(loadTeams);
+  }, [loadTeams]);
+
+  const groups = useMemo(() => {
+    return teams.reduce<Record<string, Team[]>>((acc, team) => {
+      acc[team.group_name] = [...(acc[team.group_name] || []), team];
+      return acc;
+    }, {});
+  }, [teams]);
+
+  const groupNames = Object.keys(groups).sort();
 
   return (
-    <section className="py-8 px-4 bg-[#fdfaf3] min-h-[300px]">
-      <h3 className="text-2xl font-bold text-center text-[#2d1f0f] mb-8">
-        Times Pré-Inscritos
+    <section className="min-h-[300px] bg-[#fdfaf3] px-4 py-8">
+      <h3 className="mb-8 text-center text-2xl font-bold text-[#2d1f0f]">
+        Times Inscritos
       </h3>
 
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-8">
-        {/* Grupo A */}
-        <div className="flex-1 bg-white rounded-lg shadow p-6">
-          <h4 className="text-xl font-semibold text-[#557489] mb-4 text-center">
-            Grupo A
-          </h4>
-          <ul className="divide-y divide-[#d0bb94]">
-            {groupA.map((team, i) => (
-              <li
-                key={i}
-                className="py-3 text-center text-[#2d1f0f] font-medium"
-              >
-                {team}
-              </li>
-            ))}
-          </ul>
-        </div>
+      {error ? (
+        <p className="mx-auto mb-6 max-w-3xl rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      ) : null}
 
-        {/* Grupo B */}
-        <div className="flex-1 bg-white rounded-lg shadow p-6">
-          <h4 className="text-xl font-semibold text-[#557489] mb-4 text-center">
-            Grupo B
-          </h4>
-          <ul className="divide-y divide-[#d0bb94]">
-            {groupB.map((team, i) => (
-              <li
-                key={i}
-                className="py-3 text-center text-[#2d1f0f] font-medium"
-              >
-                {team}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="mx-auto flex max-w-4xl flex-col gap-8 md:flex-row">
+        {(groupNames.length ? groupNames : ["A", "B"]).map((groupName) => (
+          <div className="flex-1 rounded-lg bg-white p-6 shadow" key={groupName}>
+            <h4 className="mb-4 text-center text-xl font-semibold text-[#557489]">
+              {groupName === "null"
+                ? "Grupos a definir"
+                : `Grupo ${groupName}`}
+            </h4>
+            <ul className="divide-y divide-[#d0bb94]">
+              {(groupName !== null && (groups[groupName] || []).length) ? (
+                groups[groupName].map((team) => (
+                  <li
+                    className="py-3 text-center font-medium text-[#2d1f0f]"
+                    key={team.id}
+                  >
+                    {team.name}
+                  </li>
+                ))
+              ) : (
+                <li className="py-3 text-center font-medium text-[#2d1f0f]">
+                  A definir
+                </li>
+              )}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
   );

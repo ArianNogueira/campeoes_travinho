@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react"; // ícones
 
-import logo from "@/assets/Logo_Preto.jpeg";
+import logo from "../assets/Logo_Preto.jpeg";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,6 +58,11 @@ export default function Header() {
               Patrocinadores
             </span>
           </Link>
+          <Link href="/history" passHref>
+            <span className="px-3 py-1 rounded cursor-pointer hover:bg-[#2b4d66] transition">
+              Histórico
+            </span>
+          </Link>
           <Link href="/inscription">
             <button className="bg-[#855b21] hover:bg-[#5e5035] text-white font-semibold px-4 py-2 rounded-full transition">
               Fazer Inscrição
@@ -105,6 +110,11 @@ export default function Header() {
           <Link href="/sponsors" passHref onClick={() => setMenuOpen(false)}>
             <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
               Patrocinadores
+            </div>
+          </Link>
+          <Link href="/history" passHref onClick={() => setMenuOpen(false)}>
+            <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
+              Histórico
             </div>
           </Link>
           <Link href="/inscription" passHref onClick={() => setMenuOpen(false)}>

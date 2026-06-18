@@ -5,10 +5,10 @@ import Link from "next/link";
 
 export default function Home() {
   const stats = [
-    { label: "Times Inscritos", value: "12", icon: Users },
-    { label: "Jogos", value: "38", icon: Trophy },
-    { label: "Jogadores", value: "72", icon: Target },
-    { label: "Próximos Jogos", value: "02/07/2025", icon: Calendar },
+    { label: "Times Inscritos", value: "-", icon: Users },
+    { label: "Jogos", value: "-", icon: Trophy },
+    { label: "Jogadores", value: "-", icon: Target },
+    { label: "Próximos Jogos", value: "-", icon: Calendar },
   ];
 
   return (
@@ -19,7 +19,7 @@ export default function Home() {
             O Maior Campeonato de Travinha da Baixada
           </h2>
           <p className="text-xl mb-8 text-[#718c99]">
-            12 times, muita emoção e o melhor do futebol amador
+           Muita emoção e o melhor do futebol amador
           </p>
           <div className="space-x-4">
             <Link href="/inscription" passHref>

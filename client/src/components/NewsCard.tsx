@@ -1,4 +1,3 @@
-// import Image from "next/image";
 import React from "react";
 
 interface NewsCardProps {
@@ -12,11 +11,13 @@ const NewsCard: React.FC<NewsCardProps> = ({
   title,
   description,
   date,
-  //   imageUrl,
+  imageUrl,
 }) => {
   return (
     <div className="rounded-2xl overflow-hidden shadow-lg bg-[#f8f6f2] border border-[#d0bb94] transition-transform hover:scale-[1.01]">
-      {/* <Image src={imageUrl} alt={title} className="object-cover w-full h-48" /> */}
+      {imageUrl ? (
+        <img alt={title} className="h-48 w-full object-cover" src={imageUrl} />
+      ) : null}
       <div className="p-4">
         <h3 className="text-xl font-semibold text-[#2d1f0f] mb-2">{title}</h3>
         <p className="text-sm text-[#5e5035] mb-3 whitespace-pre-line">

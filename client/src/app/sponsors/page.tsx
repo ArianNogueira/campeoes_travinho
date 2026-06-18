@@ -12,47 +12,64 @@ export default function SponsorsPage() {
         <h1 className="text-4xl font-bold my-4 text-white">
           Nossos Patrocinadores
         </h1>
-        {/* Descrição */}
-        <p className="text-gray-600 max-w-2xl mx-auto mb-10">
+
+        {/* <p className="text-gray-600 max-w-2xl mx-auto mb-10">
           Agradecemos a todos os nossos patrocinadores que acreditam e apoiam
           este projeto. O sucesso do campeonato só é possível graças ao
           incentivo dessas marcas incríveis.
-        </p>
+        </p> */}
       </div>
 
-      {/* Grade de patrocinadores */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {sponsors.map((sponsor) => (
-          <div
-            key={sponsor.id}
-            className="bg-[#d0bb942c] shadow-md rounded-2xl p-4 flex flex-col items-center hover:shadow-xl transition"
-          >
-            {/* Logo */}
-            <Image
-              src={sponsor.logo}
-              alt={sponsor.name}
-              className="w-50 h-30 object-contain mb-4"
-            />
-
-            {/* Nome */}
-            <h2 className="text-lg font-semibold mb-2 text-gray-700">
-              {sponsor.name}
-            </h2>
-
-            <p className="text-md text-gray-500 my-3">{sponsor.mensage}</p>
-
-            {/* Instagram */}
-            <Link
-              href={sponsor.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center text-pink-600 hover:text-pink-800 transition"
+      {sponsors.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {sponsors.map((sponsor) => (
+            <div
+              key={sponsor.id}
+              className="bg-[#d0bb942c] shadow-md rounded-2xl p-4 flex flex-col items-center hover:shadow-xl transition"
             >
-              <Instagram className="w-5 h-5 mr-1" />@{sponsor.insta}
-            </Link>
-          </div>
-        ))}
-      </div>
+              {/* Logo */}
+              <Image
+                src={sponsor.logo}
+                alt={sponsor.name}
+                width={200}
+                height={120}
+                className="w-50 h-30 object-contain mb-4"
+              />
+
+              {/* Nome */}
+              <h2 className="text-lg font-semibold mb-2 text-gray-700">
+                {sponsor.name}
+              </h2>
+
+              <p className="text-md text-gray-500 my-3">
+                {sponsor.mensage}
+              </p>
+
+              {/* Instagram */}
+              <Link
+                href={sponsor.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-pink-600 hover:text-pink-800 transition"
+              >
+                <Instagram className="w-5 h-5 mr-1" />
+                @{sponsor.insta}
+              </Link>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-3">
+            Ainda não há patrocinadores cadastrados
+          </h2>
+
+          <p className="text-gray-500 max-w-md">
+            Em breve você encontrará aqui as empresas que apoiam o campeonato.
+            Fique ligado nas próximas atualizações!
+          </p>
+        </div>
+      )}
     </div>
   );
 }
