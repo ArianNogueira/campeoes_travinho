@@ -30,6 +30,13 @@ export type TeamInscriptionPlayerInput = {
   isCaptain: boolean;
 };
 
+export type HomeStats = {
+  teams: number;
+  matches: number;
+  players: number;
+  upcomingMatches: number;
+};
+
 export async function getTeams() {
   assertSupabaseConfig();
 
@@ -41,6 +48,40 @@ export async function getTeams() {
 
   if (error) throw error;
   return (data || []) as Team[];
+}
+
+export async function getHomeStats(): Promise<HomeStats> {
+  assertSupabaseConfig();
+
+  const [
+    teamsResult,
+    matchesResult,
+    playersResult,
+    upcomingMatchesResult,
+  ] = await Promise.all([
+    supabase.from("teams").select("id", { count: "exact", head: true }),
+    supabase.from("matches").select("id", { count: "exact", head: true }),
+    supabase.from("players").select("id", { count: "exact", head: true }),
+    supabase
+      .from("matches")
+      .select("id", { count: "exact", head: true })
+      .neq("status", "finished"),
+  ]);
+
+  const error =
+    teamsResult.error ||
+    matchesResult.error ||
+    playersResult.error ||
+    upcomingMatchesResult.error;
+
+  if (error) throw error;
+
+  return {
+    teams: teamsResult.count ?? 0,
+    matches: matchesResult.count ?? 0,
+    players: playersResult.count ?? 0,
+    upcomingMatches: upcomingMatchesResult.count ?? 0,
+  };
 }
 
 export async function getMatches() {

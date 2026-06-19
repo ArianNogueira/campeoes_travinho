@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Shield, Target, TrendingUp, Trophy } from "lucide-react";
+import { ArrowLeft, Shield, Target, TrendingUp, Trophy, X } from "lucide-react";
 import {
   getMatches,
   getMatchEvents,
+  getPlayersByTeamIds,
   getTeams,
   subscribeToTournamentChanges,
 } from "@/services/tournamentService";
@@ -13,7 +14,7 @@ import {
   buildStandings,
   buildTournamentStats,
 } from "@/lib/tournamentCalculations";
-import type { Match, MatchEvent, StandingRow, Team } from "@/types/tournament";
+import type { Match, MatchEvent, Player, StandingRow, Team } from "@/types/tournament";
 import { emblemMap } from "../matches/emblem";
 
 const groups = ["A", "B"];
@@ -23,6 +24,8 @@ export default function StandingsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [events, setEvents] = useState<MatchEvent[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<StandingRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,9 +37,13 @@ export default function StandingsPage() {
         getMatches(),
         getMatchEvents(),
       ]);
+      const playersData = teamsData.length
+        ? await getPlayersByTeamIds(teamsData.map((team) => team.id))
+        : [];
       setTeams(teamsData);
       setMatches(matchesData);
       setEvents(eventsData);
+      setPlayers(playersData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao carregar tabela.");
     } finally {
@@ -60,6 +67,9 @@ export default function StandingsPage() {
       : standings
           .filter((team) => team.group === selectedGroup)
           .map((team, index) => ({ ...team, position: index + 1 }));
+  const selectedTeamPlayers = selectedTeam
+    ? players.filter((player) => player.team_id === selectedTeam.id)
+    : [];
 
   return (
     <div className="min-h-screen bg-[#fdfaf3]">
@@ -156,7 +166,11 @@ export default function StandingsPage() {
                       </tr>
                     ) : (
                       filteredStandings.map((team) => (
-                        <StandingTableRow key={team.id} team={team} />
+                        <StandingTableRow
+                          key={team.id}
+                          onOpenTeam={setSelectedTeam}
+                          team={team}
+                        />
                       ))
                     )}
                   </tbody>
@@ -181,7 +195,7 @@ export default function StandingsPage() {
               color="bg-[#5e5035]"
               rows={stats.topScorers.slice(0, 5).map((row) => ({
                 label: row.name,
-                detail: row.team,
+                detail: row.team.toUpperCase(),
                 value: row.total,
               }))}
               emptyText="Sem gols registrados."
@@ -197,6 +211,7 @@ export default function StandingsPage() {
                 .slice(0, 5)
                 .map((row) => ({
                   label: row.team,
+                  labelClassName: "uppercase",
                   detail: `${row.played} jogos`,
                   value: row.goalsAgainst,
                 }))}
@@ -251,11 +266,25 @@ export default function StandingsPage() {
           </aside>
         </div>
       </div>
+
+      {selectedTeam ? (
+        <TeamPlayersModal
+          onClose={() => setSelectedTeam(null)}
+          players={selectedTeamPlayers}
+          team={selectedTeam}
+        />
+      ) : null}
     </div>
   );
 }
 
-function StandingTableRow({ team }: { team: StandingRow }) {
+function StandingTableRow({
+  team,
+  onOpenTeam,
+}: {
+  team: StandingRow;
+  onOpenTeam: (team: StandingRow) => void;
+}) {
   const localEmblem = emblemMap[team.team]?.src;
   const src = team.emblemUrl || localEmblem;
 
@@ -284,9 +313,13 @@ function StandingTableRow({ team }: { team: StandingRow }) {
             <div className="h-10 w-10 rounded-full bg-gray-100" />
           )}
           <div>
-            <p className="text-sm font-semibold text-gray-800 md:text-base">
+            <button
+              className="text-left text-sm font-semibold uppercase text-gray-800 transition-colors hover:text-[#557389] focus:outline-none md:text-base"
+              onClick={() => onOpenTeam(team)}
+              type="button"
+            >
               {team.team}
-            </p>
+            </button>
             <p className="text-sm text-gray-500">Grupo {team.group}</p>
           </div>
         </div>
@@ -308,6 +341,101 @@ function StandingTableRow({ team }: { team: StandingRow }) {
   );
 }
 
+function TeamPlayersModal({
+  team,
+  players,
+  onClose,
+}: {
+  team: StandingRow;
+  players: Player[];
+  onClose: () => void;
+}) {
+  const localEmblem = emblemMap[team.team]?.src;
+  const src = team.emblemUrl || localEmblem;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="team-players-title"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg overflow-hidden rounded-lg bg-white shadow-xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between bg-[#708c9a] px-5 py-4 text-white">
+          <div className="flex min-w-0 items-center gap-3">
+            {src ? (
+              <img
+                alt={team.team}
+                className="h-11 w-11 rounded-full bg-white object-cover"
+                src={src}
+              />
+            ) : (
+              <div className="h-11 w-11 rounded-full bg-white/25" />
+            )}
+            <div className="min-w-0">
+              <h2 id="team-players-title" className="truncate text-lg font-bold">
+                {team.team.toUpperCase()}
+              </h2>
+              <p className="text-sm text-white/85">Grupo {team.group}</p>
+            </div>
+          </div>
+
+          <button
+            aria-label="Fechar modal"
+            className="rounded-full p-2 transition-colors hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white"
+            onClick={onClose}
+            type="button"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="p-5">
+          <h3 className="mb-4 font-semibold text-gray-800">Jogadores</h3>
+
+          {players.length ? (
+            <div className="max-h-[55vh] overflow-y-auto">
+              <ul className="divide-y divide-gray-100">
+                {players.map((player) => (
+                  <li
+                    className="flex items-center justify-between gap-4 py-3"
+                    key={player.id}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-gray-800">
+                        {player.name}
+                        {player.is_captain ? (
+                          <span className="ml-2 rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800">
+                            Capitao
+                          </span>
+                        ) : null}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {player.position || "Posicao nao informada"}
+                      </p>
+                    </div>
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#557389]/10 text-sm font-bold text-[#557389]">
+                      {player.number ?? "-"}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500">
+              Nenhum jogador cadastrado para esta equipe.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RankingCard({
   icon,
   title,
@@ -318,7 +446,7 @@ function RankingCard({
   icon: React.ReactNode;
   title: string;
   color: string;
-  rows: Array<{ label: string; detail: string; value: number }>;
+  rows: Array<{ label: string; detail: string; value: number; labelClassName?: string }>;
   emptyText: string;
 }) {
   return (
@@ -335,7 +463,9 @@ function RankingCard({
             {rows.map((row) => (
               <div className="flex items-center justify-between" key={row.label}>
                 <div>
-                  <div className="font-semibold text-gray-800">{row.label}</div>
+                  <div className={`font-semibold text-gray-800 ${row.labelClassName || ""}`}>
+                    {row.label}
+                  </div>
                   <div className="text-sm text-gray-500">{row.detail}</div>
                 </div>
                 <div className="rounded-full bg-yellow-100 px-3 py-1 font-bold text-yellow-800">

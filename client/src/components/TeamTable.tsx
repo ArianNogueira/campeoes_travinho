@@ -55,7 +55,7 @@ export default function TeamTable() {
               {(groupName !== null && (groups[groupName] || []).length) ? (
                 groups[groupName].map((team) => (
                   <li
-                    className="py-3 text-center font-medium text-[#2d1f0f]"
+                    className="py-3 text-center font-medium uppercase text-[#2d1f0f]"
                     key={team.id}
                   >
                     {team.name}

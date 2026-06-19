@@ -1,34 +1,80 @@
+"use client";
+
 import NewsSection from "@/components/NewsSection";
 import TeamTable from "@/components/TeamTable";
 import { Calendar, Trophy, Users, Target } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  getHomeStats,
+  subscribeToTournamentChanges,
+  type HomeStats,
+} from "@/services/tournamentService";
 
 export default function Home() {
-  const stats = [
-    { label: "Times Inscritos", value: "-", icon: Users },
-    { label: "Jogos", value: "-", icon: Trophy },
-    { label: "Jogadores", value: "-", icon: Target },
-    { label: "Próximos Jogos", value: "-", icon: Calendar },
-  ];
+  const [homeStats, setHomeStats] = useState<HomeStats | null>(null);
+  const [statsError, setStatsError] = useState<string | null>(null);
+
+  const loadHomeStats = useCallback(async () => {
+    try {
+      setStatsError(null);
+      setHomeStats(await getHomeStats());
+    } catch (err) {
+      setStatsError(
+        err instanceof Error ? err.message : "Erro ao carregar estatisticas."
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    loadHomeStats();
+    return subscribeToTournamentChanges(loadHomeStats);
+  }, [loadHomeStats]);
+
+  const summaryCards = useMemo(
+    () => [
+      {
+        label: "Times Inscritos",
+        value: homeStats ? String(homeStats.teams) : "-",
+        icon: Users,
+      },
+      {
+        label: "Jogos",
+        value: homeStats ? String(homeStats.matches) : "-",
+        icon: Trophy,
+      },
+      {
+        label: "Jogadores",
+        value: homeStats ? String(homeStats.players) : "-",
+        icon: Target,
+      },
+      {
+        label: "Proximos Jogos",
+        value: homeStats ? String(homeStats.upcomingMatches) : "-",
+        icon: Calendar,
+      },
+    ],
+    [homeStats]
+  );
 
   return (
     <div className="min-h-screen bg-[#d0bb94]">
-      <section className="bg-gradient-to-r from-[#2b4d66] to-[#102f4c] text-[#d0bb94] py-16">
+      <section className="bg-gradient-to-r from-[#2b4d66] to-[#102f4c] py-16 text-[#d0bb94]">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="mb-4 text-4xl font-bold md:text-5xl">
             O Maior Campeonato de Travinha da Baixada
           </h2>
-          <p className="text-xl mb-8 text-[#718c99]">
-           Muita emoção e o melhor do futebol amador
+          <p className="mb-8 text-xl text-[#718c99]">
+            Muita emocao e o melhor do futebol amador
           </p>
           <div className="space-x-4">
             <Link href="/inscription" passHref>
-              <button className="bg-[#855b21] hover:bg-[#5e5035] text-white cursor-pointer px-8 py-3 rounded-lg font-semibold transition-colors">
+              <button className="cursor-pointer rounded-lg bg-[#855b21] px-8 py-3 font-semibold text-white transition-colors hover:bg-[#5e5035]">
                 Inscrever Time
               </button>
             </Link>
             <Link href="/table" passHref>
-              <button className="border-2 border-[#d0bb94] hover:bg-[#d0bb94] cursor-pointer hover:text-[#102f4c] px-8 py-3 rounded-lg font-semibold transition-colors">
+              <button className="cursor-pointer rounded-lg border-2 border-[#d0bb94] px-8 py-3 font-semibold transition-colors hover:bg-[#d0bb94] hover:text-[#102f4c]">
                 Ver Tabela
               </button>
             </Link>
@@ -36,21 +82,27 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 bg-[#fdfaf3]">
+      <section className="bg-[#fdfaf3] py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => {
+          {statsError ? (
+            <p className="mx-auto mb-6 max-w-3xl rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {statsError}
+            </p>
+          ) : null}
+
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {summaryCards.map((stat) => {
               const IconComponent = stat.icon;
               return (
                 <div
-                  key={index}
-                  className="text-center p-6 bg-[#fffefb] rounded-lg shadow-sm"
+                  key={stat.label}
+                  className="rounded-lg bg-[#fffefb] p-6 text-center shadow-sm"
                 >
-                  <IconComponent className="h-8 w-8 mx-auto mb-3 text-[#2b4d66]" />
-                  <div className="text-2xl md:text-3xl font-bold text-[#2d1f0f] mb-1">
+                  <IconComponent className="mx-auto mb-3 h-8 w-8 text-[#2b4d66]" />
+                  <div className="mb-1 text-2xl font-bold text-[#2d1f0f] md:text-3xl">
                     {stat.value}
                   </div>
-                  <div className="text-[#557489] text-sm">{stat.label}</div>
+                  <div className="text-sm text-[#557489]">{stat.label}</div>
                 </div>
               );
             })}

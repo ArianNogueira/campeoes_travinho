@@ -28,7 +28,7 @@ const seasons: Seasons[] = [
       season: "2025",
       champion: "Inter Miami",
       vice: "Lions FC",
-      result: "5 x 2",
+      result: "7 x 2",
     },
     {
       season: "2024",
