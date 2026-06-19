@@ -51,6 +51,9 @@ export default function Footer() {
           <Link href="/news" className="hover:text-[#855b21] transition-colors">
             Notícias
           </Link>
+          <Link href="/history" className="hover:text-[#855b21] transition-colors">
+            Histórico
+          </Link>
         </nav>
 
         {/* Instagram */}
