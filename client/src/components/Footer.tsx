@@ -5,72 +5,62 @@ import logo from "@/assets/Logo_Tranparente.png";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#102f4c] text-[#d0bb94] py-6 px-4">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 flex-wrap">
-        {/* Logo e Regulamento */}
-        <div className="flex flex-col items-center gap-4">
+    <footer className="bg-[#102f4c] px-4 py-6 text-[#d0bb94]">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 md:flex-row md:items-start md:justify-between">
+        <div className="flex w-full flex-col items-center gap-4 md:w-auto">
           <Image
             src={logo}
             alt="Logo do Campeonato Travinha"
-            width={60}
-            height={60}
+            width={72}
+            height={72}
             className="object-contain"
           />
           <a
             href="/Regulamento_Travinho_2025.pdf"
             download
-            className="text-sm underline hover:text-[#855b21] transition-colors"
+            className="text-center text-sm underline transition-colors hover:text-[#855b21]"
           >
             Veja Nosso Regulamento
           </a>
         </div>
 
-        {/* Navegação */}
-        <nav className="flex gap-4 text-md">
-          <Link href="/" className="hover:text-[#855b21] transition-colors">
+        <nav className="grid w-full max-w-sm grid-cols-2 gap-x-6 gap-y-3 text-center text-sm sm:flex sm:max-w-none sm:flex-wrap sm:justify-center sm:gap-4 md:w-auto md:text-base">
+          <Link href="/" className="transition-colors hover:text-[#855b21]">
             Home
           </Link>
-          <Link
-            href="/table"
-            className="hover:text-[#855b21] transition-colors"
-          >
+          <Link href="/table" className="transition-colors hover:text-[#855b21]">
             Tabela
           </Link>
-          <Link
-            href="/matches"
-            className="hover:text-[#855b21] transition-colors"
-          >
+          <Link href="/matches" className="transition-colors hover:text-[#855b21]">
             Partidas
           </Link>
           <Link
             href="/statistics"
-            className="hover:text-[#855b21] transition-colors"
+            className="transition-colors hover:text-[#855b21]"
           >
             Estatísticas
           </Link>
-          <Link href="/news" className="hover:text-[#855b21] transition-colors">
+          <Link href="/news" className="transition-colors hover:text-[#855b21]">
             Notícias
           </Link>
-          <Link href="/history" className="hover:text-[#855b21] transition-colors">
+          <Link href="/history" className="transition-colors hover:text-[#855b21]">
             Histórico
           </Link>
         </nav>
 
-        {/* Instagram */}
         <Link
           href="https://www.instagram.com/campeoes_travinha?igsh=NWR2eGxxMXB6aHMw"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 text-sm hover:text-[#855b21] transition-colors"
+          className="flex max-w-full items-center gap-2 text-sm transition-colors hover:text-[#855b21] md:justify-end"
         >
-          <FaInstagram className="text-xl" />
-          <span>@campeoes_travinha</span>
+          <FaInstagram className="shrink-0 text-xl" />
+          <span className="break-all">@campeoes_travinha</span>
         </Link>
       </div>
 
-      {/* Direitos autorais */}
-      <div className="text-center text-sm mt-6 border-t border-[#d0bb94]/20 pt-4">
-        © {new Date().getFullYear()} Campeonato Travinha. Todos os direitos
+      <div className="mt-6 border-t border-[#d0bb94]/20 pt-4 text-center text-xs leading-relaxed sm:text-sm">
+        &copy; {new Date().getFullYear()} Campeonato Travinha. Todos os direitos
         reservados.
       </div>
     </footer>
