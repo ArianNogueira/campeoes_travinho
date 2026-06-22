@@ -15,7 +15,6 @@ import {
   buildTournamentStats,
 } from "@/lib/tournamentCalculations";
 import type { Match, MatchEvent, Player, StandingRow, Team } from "@/types/tournament";
-import { emblemMap } from "../matches/emblem";
 
 const groups = ["A", "B"];
 
@@ -285,8 +284,7 @@ function StandingTableRow({
   team: StandingRow;
   onOpenTeam: (team: StandingRow) => void;
 }) {
-  const localEmblem = emblemMap[team.team]?.src;
-  const src = team.emblemUrl || localEmblem;
+  const src = team.emblemUrl;
 
   return (
     <tr className="border-b border-gray-200 transition-colors hover:bg-gray-50">
@@ -350,8 +348,7 @@ function TeamPlayersModal({
   players: Player[];
   onClose: () => void;
 }) {
-  const localEmblem = emblemMap[team.team]?.src;
-  const src = team.emblemUrl || localEmblem;
+  const src = team.emblemUrl;
 
   return (
     <div

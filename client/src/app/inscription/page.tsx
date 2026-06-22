@@ -86,6 +86,7 @@ export default function InscriptionPage() {
     setTeamName("");
     setCaptain({ ...emptyPlayer });
     setPlayers(Array.from({ length: 5 }, () => ({ ...emptyPlayer })));
+    setEmblemFile(null);
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -93,6 +94,11 @@ export default function InscriptionPage() {
 
     if (!teamName.trim()) {
       toast.error("Informe o nome do time.");
+      return;
+    }
+
+    if (!emblemFile) {
+      toast.error("Envie o escudo do time.");
       return;
     }
 
@@ -219,9 +225,11 @@ export default function InscriptionPage() {
                 <input
                   accept="image/*"
                   className="mt-2 w-full rounded-lg border border-gray-300 p-2"
+                  key={emblemFile?.name || "empty-emblem"}
                   onChange={(e) =>
                     setEmblemFile(e.target.files?.[0] ?? null)
                   }
+                  required
                   type="file"
                 />
               </label>

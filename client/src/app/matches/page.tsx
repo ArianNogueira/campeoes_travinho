@@ -1,8 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CalendarClock, Pencil, Save, Trophy } from "lucide-react";
-import { emblemMap } from "./emblem";
+import {
+  CalendarClock,
+  Download,
+  FileText,
+  LogIn,
+  Pencil,
+  Save,
+  Trophy,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
   generateTournamentMatches,
@@ -38,6 +45,7 @@ export default function MatchesPage() {
   const [selectedTeam, setSelectedTeam] = useState("all");
   const [selectedRound, setSelectedRound] = useState("all");
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [summaryMatch, setSummaryMatch] = useState<Match | null>(null);
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
   const [scheduleForm, setScheduleForm] = useState<ScheduleForm>({
     date: "",
@@ -51,6 +59,7 @@ export default function MatchesPage() {
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminUser, setAdminUser] = useState<string | null>(null);
+  const [adminLoginOpen, setAdminLoginOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -228,6 +237,7 @@ export default function MatchesPage() {
 
       if (authError) throw authError;
       setAdminPassword("");
+      setAdminLoginOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao entrar como admin.");
     } finally {
@@ -267,13 +277,10 @@ export default function MatchesPage() {
         Gerar Partidas
       </button> */}
 
-      <form
-        className="mx-auto mb-6 flex max-w-3xl flex-col gap-3 rounded-lg bg-white p-4 shadow sm:flex-row sm:items-end"
-        onSubmit={handleAdminLogin}
-      >
+      <div className="mx-auto mb-6 flex max-w-3xl justify-end">
         {adminUser ? (
-          <>
-            <div className="flex-1 text-sm text-gray-700">
+          <div className="flex flex-col items-end gap-2 rounded-lg bg-white px-4 py-3 shadow sm:flex-row sm:items-center">
+            <div className="text-sm text-gray-700">
               Admin conectado: <span className="font-semibold">{adminUser}</span>
             </div>
             <button
@@ -283,37 +290,18 @@ export default function MatchesPage() {
             >
               Sair
             </button>
-          </>
+          </div>
         ) : (
-          <>
-            <label className="flex-1 text-sm font-medium text-gray-700">
-              Email admin
-              <input
-                className="mt-1 w-full rounded border px-3 py-2"
-                onChange={(event) => setAdminEmail(event.target.value)}
-                type="email"
-                value={adminEmail}
-              />
-            </label>
-            <label className="flex-1 text-sm font-medium text-gray-700">
-              Senha
-              <input
-                className="mt-1 w-full rounded border px-3 py-2"
-                onChange={(event) => setAdminPassword(event.target.value)}
-                type="password"
-                value={adminPassword}
-              />
-            </label>
-            <button
-              className="rounded bg-[#102f4c] px-4 py-2 text-white hover:bg-[#1c3d5a] disabled:opacity-60"
-              disabled={saving}
-              type="submit"
-            >
-              Entrar
-            </button>
-          </>
+          <button
+            className="inline-flex items-center gap-2 rounded bg-[#102f4c] px-4 py-2 text-sm font-semibold text-white shadow transition-colors hover:bg-[#1c3d5a]"
+            onClick={() => setAdminLoginOpen(true)}
+            type="button"
+          >
+            <LogIn className="h-4 w-4" />
+            Entrar
+          </button>
         )}
-      </form>
+      </div>
 
       {error ? (
         <div className="mx-auto mb-6 max-w-3xl rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -370,24 +358,34 @@ export default function MatchesPage() {
                 <div className="text-center text-sm font-semibold text-indigo-600 sm:text-left">
                   {match.round} {match.group_name ? `- Grupo ${match.group_name}` : ""}
                 </div>
-                <div className="flex justify-center gap-2">
-                  <button
-                    className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
-                    onClick={() => openScheduleModal(match)}
-                    type="button"
-                  >
-                    <Pencil className="h-4 w-4" />
-                    Editar
-                  </button>
-                  <button
-                    className="inline-flex items-center gap-2 rounded bg-green-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-green-700"
-                    onClick={() => openResultModal(match)}
-                    type="button"
-                  >
-                    <Trophy className="h-4 w-4" />
-                    Adicionar Resultado
-                  </button>
-                </div>
+                {adminUser ? (
+                  <div className="flex justify-center gap-2">
+                    <button
+                      className="inline-flex items-center gap-2 rounded bg-[#102f4c] px-3 py-1.5 text-sm text-white transition-colors hover:bg-[#1c3d5a]"
+                      onClick={() => setSummaryMatch(match)}
+                      type="button"
+                    >
+                      <FileText className="h-4 w-4" />
+                      Súmula
+                    </button>
+                    <button
+                      className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
+                      onClick={() => openScheduleModal(match)}
+                      type="button"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Editar
+                    </button>
+                    <button
+                      className="inline-flex items-center gap-2 rounded bg-green-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-green-700"
+                      onClick={() => openResultModal(match)}
+                      type="button"
+                    >
+                      <Trophy className="h-4 w-4" />
+                      Adicionar Resultado
+                    </button>
+                  </div>
+                ) : null}
               </div>
 
               <div className="mb-4 flex flex-wrap items-center justify-center gap-4 text-center text-sm text-gray-600">
@@ -456,6 +454,57 @@ export default function MatchesPage() {
         </Modal>
       ) : null}
 
+      {adminLoginOpen ? (
+        <Modal title="Entrar como admin" onClose={() => setAdminLoginOpen(false)}>
+          <form className="space-y-4" onSubmit={handleAdminLogin}>
+            <label className="block text-sm font-medium text-gray-700">
+              Email admin
+              <input
+                className="mt-1 w-full rounded border px-3 py-2 text-gray-800"
+                onChange={(event) => setAdminEmail(event.target.value)}
+                type="email"
+                value={adminEmail}
+              />
+            </label>
+            <label className="block text-sm font-medium text-gray-700">
+              Senha
+              <input
+                className="mt-1 w-full rounded border px-3 py-2 text-gray-800"
+                onChange={(event) => setAdminPassword(event.target.value)}
+                type="password"
+                value={adminPassword}
+              />
+            </label>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                className="rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300"
+                disabled={saving}
+                onClick={() => setAdminLoginOpen(false)}
+                type="button"
+              >
+                Cancelar
+              </button>
+              <button
+                className="inline-flex items-center gap-2 rounded bg-[#102f4c] px-4 py-2 text-white hover:bg-[#1c3d5a] disabled:opacity-60"
+                disabled={saving}
+                type="submit"
+              >
+                <LogIn className="h-4 w-4" />
+                {saving ? "Entrando..." : "Entrar"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
+
+      {summaryMatch ? (
+        <SummaryModal
+          events={events.filter((event) => event.match_id === summaryMatch.id)}
+          match={summaryMatch}
+          onClose={() => setSummaryMatch(null)}
+        />
+      ) : null}
+
       {selectedMatch ? (
         <Modal
           title={`${selectedMatch.home?.name || "Mandante"} x ${
@@ -517,6 +566,330 @@ export default function MatchesPage() {
   );
 }
 
+function SummaryModal({
+  events,
+  match,
+  onClose,
+}: {
+  events: MatchEvent[];
+  match: Match;
+  onClose: () => void;
+}) {
+  const homeEvents = events.filter((event) => event.team_id === match.home_team_id);
+  const awayEvents = events.filter((event) => event.team_id === match.away_team_id);
+  const statusLabel = match.status === "finished" ? "Finalizada" : "Agendada";
+
+  function handleDownloadSummary() {
+    const summary = buildMatchSummaryPdf(match, homeEvents, awayEvents, statusLabel);
+    const fileName = `sumula-${slugify(match.home?.name || "mandante")}-x-${slugify(
+      match.away?.name || "visitante"
+    )}.pdf`;
+    const blob = new Blob([summary], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <Modal title="Súmula da Partida" onClose={onClose} wide>
+      <section className="space-y-6 text-gray-800">
+        <div className="flex justify-end">
+          <button
+            className="inline-flex items-center gap-2 rounded bg-[#855b21] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#5e5035]"
+            onClick={handleDownloadSummary}
+            type="button"
+          >
+            <Download className="h-4 w-4" />
+            Baixar PDF
+          </button>
+        </div>
+
+        <div className="rounded-lg border border-gray-200 p-4">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-[#102f4c]">
+                {match.round} {match.group_name ? `- Grupo ${match.group_name}` : ""}
+              </p>
+              <h3 className="mt-1 text-2xl font-bold">
+                {match.home?.name || "Mandante"} x {match.away?.name || "Visitante"}
+              </h3>
+            </div>
+            <span className="w-fit rounded bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
+              {statusLabel}
+            </span>
+          </div>
+
+          <div className="grid gap-3 text-sm sm:grid-cols-3">
+            <SummaryInfo label="Data" value={formatDate(match.date)} />
+            <SummaryInfo label="Horário" value={match.time || "A definir"} />
+            <SummaryInfo
+              label="Placar"
+              value={
+                match.status === "finished"
+                  ? `${match.home_score || 0} x ${match.away_score || 0}`
+                  : "A definir"
+              }
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <TeamSummary
+            events={homeEvents}
+            score={match.home_score}
+            status={match.status}
+            title={match.home?.name || "Mandante"}
+          />
+          <TeamSummary
+            events={awayEvents}
+            score={match.away_score}
+            status={match.status}
+            title={match.away?.name || "Visitante"}
+          />
+        </div>
+      </section>
+    </Modal>
+  );
+}
+
+function buildMatchSummaryPdf(
+  match: Match,
+  homeEvents: MatchEvent[],
+  awayEvents: MatchEvent[],
+  statusLabel: string
+) {
+  const lines = buildMatchSummaryLines(match, homeEvents, awayEvents, statusLabel);
+  const content = [
+    "BT",
+    "/F1 18 Tf",
+    "50 790 Td",
+    `(${escapePdfText("SUMULA DA PARTIDA")}) Tj`,
+    "/F1 10 Tf",
+    "0 -24 Td",
+    ...lines.flatMap((line) => [`(${escapePdfText(line)}) Tj`, "0 -16 Td"]),
+    "ET",
+    ...buildPdfLineDrawings(),
+  ].join("\n");
+  const stream = content;
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+  ];
+
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+
+  objects.forEach((object, index) => {
+    offsets.push(pdf.length);
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n`;
+  pdf += "0000000000 65535 f \n";
+  offsets.slice(1).forEach((offset) => {
+    pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  });
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\n`;
+  pdf += `startxref\n${xrefOffset}\n%%EOF`;
+
+  return pdf;
+}
+
+function buildMatchSummaryLines(
+  match: Match,
+  homeEvents: MatchEvent[],
+  awayEvents: MatchEvent[],
+  statusLabel: string
+) {
+  const score =
+    match.status === "finished"
+      ? `${match.home_score || 0} x ${match.away_score || 0}`
+      : "A definir";
+
+  return [
+    `Partida: ${match.home?.name || "Mandante"} x ${match.away?.name || "Visitante"}`,
+    `Rodada: ${match.round || "A definir"}`,
+    `Grupo: ${match.group_name || "A definir"}`,
+    `Data: ${formatDate(match.date)}`,
+    `Horário: ${match.time || "A definir"}`,
+    `Status: ${statusLabel}`,
+    `Placar: ${score}`,
+    "",
+    "EQUIPE DE ARBITRAGEM",
+    "Arbitro principal: ______________________________________________",
+    "Segundo arbitro: _______________________________________________",
+    "Mesario: _______________________________________________________",
+    "Responsavel da mesa: ___________________________________________",
+    "",
+    "RESPONSAVEIS DAS EQUIPES",
+    `Responsavel ${match.home?.name || "Mandante"}: ________________________________`,
+    `Responsavel ${match.away?.name || "Visitante"}: ________________________________`,
+    "",
+    "CONTROLE DA PARTIDA",
+    "Inicio: ____________  Intervalo: ____________  Termino: ____________",
+    "Observacoes:",
+    "________________________________________________________________",
+    "________________________________________________________________",
+    "________________________________________________________________",
+    "",
+    "ASSINATURAS",
+    "Arbitro: _________________________  Mesa: _______________________",
+    "Capitao mandante: _________________  Capitao visitante: __________",
+  ].flatMap((line) => line.split("\n"));
+}
+
+function buildTeamSummaryLines(
+  teamName: string,
+  score: number | null,
+  status: Match["status"],
+  events: MatchEvent[]
+) {
+  return [
+    `${teamName.toUpperCase()} - ${status === "finished" ? score || 0 : "-"}`,
+    formatEventsForDownload("Gols", events.filter((event) => event.type === "goal")),
+    formatEventsForDownload("Assistências", events.filter((event) => event.type === "assist")),
+    formatEventsForDownload(
+      "Cartões amarelos",
+      events.filter((event) => event.type === "yellow_card")
+    ),
+    formatEventsForDownload(
+      "Cartões vermelhos",
+      events.filter((event) => event.type === "red_card")
+    ),
+  ].join("\n");
+}
+
+function formatEventsForDownload(title: string, events: MatchEvent[]) {
+  if (!events.length) {
+    return `${title}: Nenhum registro.`;
+  }
+
+  return [
+    `${title}:`,
+    ...events.map((event) => {
+      const playerNumber = event.player?.number ? `${event.player.number} - ` : "";
+      const quantity = event.quantity > 1 ? ` (${event.quantity})` : "";
+
+      return `- ${playerNumber}${event.player?.name || "Jogador não informado"}${quantity}`;
+    }),
+  ].join("\n");
+}
+
+function slugify(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function escapePdfText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\x20-\x7E]/g, "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\(/g, "\\(")
+    .replace(/\)/g, "\\)");
+}
+
+function buildPdfLineDrawings() {
+  return [
+    "0.7 w",
+    "50 805 m 545 805 l S",
+    "50 615 m 545 615 l S",
+    "50 472 m 545 472 l S",
+    "50 315 m 545 315 l S",
+    "50 165 m 545 165 l S",
+  ];
+}
+
+function SummaryInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded border border-gray-100 bg-gray-50 px-3 py-2">
+      <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
+      <p className="mt-1 font-medium text-gray-800">{value}</p>
+    </div>
+  );
+}
+
+function TeamSummary({
+  events,
+  score,
+  status,
+  title,
+}: {
+  events: MatchEvent[];
+  score: number | null;
+  status: Match["status"];
+  title: string;
+}) {
+  const goals = events.filter((event) => event.type === "goal");
+  const assists = events.filter((event) => event.type === "assist");
+  const yellowCards = events.filter((event) => event.type === "yellow_card");
+  const redCards = events.filter((event) => event.type === "red_card");
+
+  return (
+    <article className="rounded-lg border border-gray-200 p-4">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h4 className="text-lg font-bold text-[#102f4c]">{title}</h4>
+        <span className="rounded bg-[#102f4c] px-3 py-1 text-sm font-bold text-white">
+          {status === "finished" ? score || 0 : "-"}
+        </span>
+      </div>
+
+      <div className="space-y-4 text-sm">
+        <EventList events={goals} title="Gols" />
+        <EventList events={assists} title="Assistências" />
+        <EventList events={yellowCards} title="Cartões amarelos" />
+        <EventList events={redCards} title="Cartões vermelhos" />
+      </div>
+    </article>
+  );
+}
+
+function EventList({ events, title }: { events: MatchEvent[]; title: string }) {
+  return (
+    <div>
+      <p className="mb-1 font-semibold text-gray-700">{title}</p>
+      {events.length ? (
+        <ul className="space-y-1 text-gray-600">
+          {events.map((event) => (
+            <li key={event.id}>
+              {event.player?.number ? `${event.player.number} - ` : ""}
+              {event.player?.name || "Jogador não informado"}
+              {event.quantity > 1 ? ` (${event.quantity})` : ""}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-400">Nenhum registro.</p>
+      )}
+    </div>
+  );
+}
+
+function formatDate(date: string) {
+  if (!date) return "A definir";
+
+  const parsedDate = new Date(`${date}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("pt-BR").format(parsedDate);
+}
+
 function TeamBadge({
   name,
   emblemUrl,
@@ -524,8 +897,7 @@ function TeamBadge({
   name?: string;
   emblemUrl?: string | null;
 }) {
-  const localEmblem = name ? emblemMap[name]?.src : undefined;
-  const src = emblemUrl || localEmblem;
+  const src = emblemUrl;
 
   return (
     <div className="flex min-w-0 flex-col items-center gap-2">
