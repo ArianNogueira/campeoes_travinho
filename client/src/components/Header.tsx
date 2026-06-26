@@ -4,12 +4,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react"; // ícones
+import { Menu, X, ChevronDown  } from "lucide-react"; // ícones
 
 import logo from "../assets/Logo_Preto.jpeg";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [matchMenuOpen, setMatchMenuOpen] = useState(false);
 
   return (
     <header className="bg-[#102f4c] text-[#d0bb94] shadow">
@@ -38,16 +40,48 @@ export default function Header() {
               Tabela
             </span>
           </Link>
-          <Link href="/matches" passHref>
-            <span className="px-3 py-1 rounded cursor-pointer hover:bg-[#2b4d66] transition">
-              Partidas
-            </span>
-          </Link>
-          <Link href="/statistics" passHref onClick={() => setMenuOpen(false)}>
-            <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
-              Estatísticas
-            </div>
-          </Link>
+          <div className="relative">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex w-full items-center justify-between rounded px-3 py-2 hover:bg-[#2b4d66] transition"
+            >
+              <span>Partidas</span>
+
+              <ChevronDown
+                className={`h-4 w-4 ml-1 transition-transform duration-200 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isOpen && (
+              <div className="absolute left-0 top-full mt-1 w-56 overflow-hidden rounded-md bg-white shadow-lg z-50 md:w-60">
+                <Link
+                  href="/matches"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                >
+                  Partidas
+                </Link>
+
+                <Link
+                  href="/statistics"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                >
+                  Estatísticas
+                </Link>
+
+                <Link
+                  href="/matches/floods"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                >
+                  Enquetes
+                </Link>
+              </div>
+            )}
+          </div>
           <Link href="/news" passHref>
             <span className="px-3 py-1 rounded cursor-pointer hover:bg-[#2b4d66] transition">
               Notícias
@@ -92,16 +126,34 @@ export default function Header() {
               Tabela
             </div>
           </Link>
-          <Link href="/matches" passHref onClick={() => setMenuOpen(false)}>
-            <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
-              Partidas
+
+          <button onClick={() => setMatchMenuOpen(!matchMenuOpen)} className="flex w-full items-center justify-between rounded px-3 pt-2 hover:bg-[#2b4d66]">
+              <span>Partidas</span>
+              <ChevronDown
+              className={`h-4 w-4 transition-transform duration-200 ${
+                isOpen ? "rotate-180" : ""
+              }`}/>
+          </button>
+
+          {matchMenuOpen && (
+            <div className="ml-4 border-l border-white/20">
+              <Link href="/matches" passHref onClick={() => setMenuOpen(false)}>
+                <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
+                  Partidas
+              </div>
+              </Link>
+              <Link href="/statistics" passHref onClick={() => setMenuOpen(false)}>
+                <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
+                  Estatísticas
+                </div>
+              </Link>
+              <Link href="/matches/floods" onClick={() => setIsOpen(false)} 
+                className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
+                Enquetes
+              </Link>
             </div>
-          </Link>
-          <Link href="/statistics" passHref onClick={() => setMenuOpen(false)}>
-            <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
-              Estatísticas
-            </div>
-          </Link>
+          )}
+
           <Link href="/news" passHref onClick={() => setMenuOpen(false)}>
             <div className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
               Notícias
