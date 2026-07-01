@@ -20,12 +20,6 @@ type Prediction = {
   confidence: "Baixa" | "Media" | "Alta";
 };
 
-const confidenceStyles = {
-  Baixa: "bg-yellow-50 text-yellow-700",
-  Media: "bg-blue-50 text-blue-700",
-  Alta: "bg-green-50 text-green-700",
-};
-
 export default function FloodsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
@@ -143,21 +137,6 @@ export default function FloodsPage() {
                 ))}
               </select>
             </label>
-            <label className="text-sm font-medium text-gray-700">
-              Grupo
-              <select
-                className="mt-1 w-full rounded border border-gray-200 px-3 py-2 text-gray-800"
-                onChange={(event) => setSelectedGroup(event.target.value)}
-                value={selectedGroup}
-              >
-                <option value="all">Todos</option>
-                {groups.map((group) => (
-                  <option key={group} value={group}>
-                    Grupo {group}
-                  </option>
-                ))}
-              </select>
-            </label>
           </div>
         </section>
 
@@ -222,13 +201,6 @@ function PollCard({
             </span>
           </div>
         </div>
-        <span
-          className={`w-fit rounded-full px-3 py-1 text-xs font-bold ${
-            confidenceStyles[prediction.confidence]
-          }`}
-        >
-          Confianca {prediction.confidence}
-        </span>
       </div>
 
       <div className="mb-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center">

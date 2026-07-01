@@ -77,7 +77,7 @@ export default function Header() {
                   onClick={() => setIsOpen(false)}
                   className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
                 >
-                  Enquetes
+                  Problabilidades
                 </Link>
               </div>
             )}
@@ -149,7 +149,7 @@ export default function Header() {
               </Link>
               <Link href="/matches/floods" onClick={() => setIsOpen(false)} 
                 className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
-                Enquetes
+                Probabilidades
               </Link>
             </div>
           )}
