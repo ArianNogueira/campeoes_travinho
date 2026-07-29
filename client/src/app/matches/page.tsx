@@ -261,7 +261,7 @@ export default function MatchesPage() {
         onClick={async () => {
           try {
             const total = await generateTournamentMatches(
-              "2026-08-03"
+              "2026-07-31"
             );
 
             alert(`${total} partidas geradas`);
@@ -376,7 +376,7 @@ export default function MatchesPage() {
                       <Pencil className="h-4 w-4" />
                       Editar
                     </button>
-                    <button
+                    <button 
                       className="inline-flex items-center gap-2 rounded bg-green-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-green-700"
                       onClick={() => openResultModal(match)}
                       type="button"
@@ -391,7 +391,7 @@ export default function MatchesPage() {
               <div className="mb-4 flex flex-wrap items-center justify-center gap-4 text-center text-sm text-gray-600">
                 <span className="inline-flex items-center gap-1">
                   <CalendarClock className="h-4 w-4" />
-                  {match.date} - {match.time}
+                  {formatDate(match.date)} - {match.time}
                 </span>
                 <span>{match.status === "finished" ? "Finalizada" : "Agendada"}</span>
               </div>

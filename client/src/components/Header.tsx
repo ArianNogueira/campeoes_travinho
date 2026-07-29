@@ -97,11 +97,11 @@ export default function Header() {
               Histórico
             </span>
           </Link>
-          <Link href="/inscription">
+          {/* <Link href="/inscription">
             <button className="bg-[#855b21] hover:bg-[#5e5035] text-white font-semibold px-4 py-2 rounded-full transition">
               Fazer Inscrição
             </button>
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Botão mobile */}
@@ -169,11 +169,11 @@ export default function Header() {
               Histórico
             </div>
           </Link>
-          <Link href="/inscription" passHref onClick={() => setMenuOpen(false)}>
+          {/* <Link href="/inscription" passHref onClick={() => setMenuOpen(false)}>
             <div className="block bg-[#855b21] text-white text-center py-2 rounded-full hover:bg-[#5e5035] font-semibold">
               Fazer Inscrição
             </div>
-          </Link>
+          </Link> */}
         </div>
       )}
     </header>
