@@ -946,8 +946,8 @@ function PlayersResultTable({
               <th className="py-2 text-left">Jogador</th>
               <th className="py-2 text-center">G</th>
               <th className="py-2 text-center">A</th>
-              <th className="py-2 text-center">CA</th>
-              <th className="py-2 text-center">CV</th>
+              <th className="py-2 text-center">C.A</th>
+              <th className="py-2 text-center">C.V</th>
             </tr>
           </thead>
           <tbody>
