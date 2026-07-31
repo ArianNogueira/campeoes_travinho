@@ -11,6 +11,10 @@ import {
   buildStandings,
   buildTournamentStats,
 } from "@/lib/tournamentCalculations";
+import {
+  getPendingSuspensions,
+  getSuspensionHistory,
+} from "@/lib/suspensions";
 import type { Match, MatchEvent, Team } from "@/types/tournament";
 
 export default function StatisticsPage() {
@@ -49,6 +53,14 @@ export default function StatisticsPage() {
   const stats = useMemo(
     () => buildTournamentStats(standings, matches, events),
     [events, matches, standings]
+  );
+  const pendingSuspensions = useMemo(
+    () => getPendingSuspensions(matches, events),
+    [events, matches]
+  );
+  const suspensionHistory = useMemo(
+    () => getSuspensionHistory(matches, events),
+    [events, matches]
   );
 
   return (
@@ -106,11 +118,25 @@ export default function StatisticsPage() {
 
       <section className="mb-12">
         <RankingTable
-          columns={["Jogador", "Time", "Amarelos", "Vermelhos", "Status"]}
+          columns={[
+            "Jogador",
+            "Time",
+            "Amarelos",
+            "Vermelhos",
+            "Status",
+            "Rodada da suspensão",
+            "Histórico de suspensões",
+          ]}
           emptyText="Sem cartões registrados."
           rows={stats.cards.map((card) => {
+            const suspension = pendingSuspensions.get(card.id);
+            const history = suspensionHistory.get(card.id) || [];
             const status =
-              card.red > 0 ? "Suspenso" : card.yellow >= 2 ? "Pendurado" : "-";
+              suspension
+                ? "Suspenso"
+                : card.yellow % 3 === 2
+                  ? "Pendurado"
+                  : "-";
 
             return [
               card.name,
@@ -118,6 +144,15 @@ export default function StatisticsPage() {
               card.yellow.toString(),
               card.red.toString(),
               status,
+              suspension?.round || "-",
+              history.length
+                ? history
+                    .map(
+                      (item) =>
+                        `${item.round} (${item.fulfilled ? "cumprida" : "a cumprir"})`
+                    )
+                    .join(" • ")
+                : "-",
             ];
           })}
           title="Cartões"

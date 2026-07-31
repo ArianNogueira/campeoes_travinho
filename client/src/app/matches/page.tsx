@@ -11,6 +11,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getSuspendedPlayerIdsForMatch } from "@/lib/suspensions";
 import {
   generateTournamentMatches,
   getMatches,
@@ -132,6 +133,14 @@ export default function MatchesPage() {
     });
   }, [matches, selectedRound, selectedTeam]);
 
+  const suspendedPlayerIds = useMemo(
+    () =>
+      selectedMatch
+        ? getSuspendedPlayerIdsForMatch(selectedMatch, players, matches, events)
+        : new Set<number>(),
+    [events, matches, players, selectedMatch]
+  );
+
   async function openResultModal(match: Match) {
     setSelectedMatch(match);
     setHomeScore(match.home_score || 0);
@@ -165,6 +174,8 @@ export default function MatchesPage() {
     field: keyof PlayerResultForm[number],
     value: number
   ) {
+    const nextValue = Math.max(0, value);
+
     setResultForm((current) => ({
       ...current,
       [playerId]: {
@@ -174,9 +185,25 @@ export default function MatchesPage() {
           yellowCards: 0,
           redCards: 0,
         }),
-        [field]: Math.max(0, value),
+        [field]: nextValue,
       },
     }));
+
+    if (field !== "goals" || !selectedMatch) return;
+
+    const player = players.find((item) => item.id === playerId);
+    if (!player) return;
+
+    const currentGoals = resultForm[playerId]?.goals || 0;
+    const difference = nextValue - currentGoals;
+
+    if (player.team_id === selectedMatch.home_team_id) {
+      setHomeScore((current) => Math.max(0, current + difference));
+    }
+
+    if (player.team_id === selectedMatch.away_team_id) {
+      setAwayScore((current) => Math.max(0, current + difference));
+    }
   }
 
   async function handleSaveSchedule() {
@@ -515,7 +542,7 @@ export default function MatchesPage() {
         >
           <div className="mb-6 grid grid-cols-2 gap-4">
             <label className="text-sm font-medium text-gray-700">
-              Gols {selectedMatch.home?.name}
+              {selectedMatch.home?.name}
               <input
                 className="mt-1 w-full rounded border px-3 py-2 text-center text-gray-800"
                 min={0}
@@ -525,7 +552,7 @@ export default function MatchesPage() {
               />
             </label>
             <label className="text-sm font-medium text-gray-700">
-              Gols {selectedMatch.away?.name}
+              {selectedMatch.away?.name}
               <input
                 className="mt-1 w-full rounded border px-3 py-2 text-center text-gray-800"
                 min={0}
@@ -543,6 +570,7 @@ export default function MatchesPage() {
                 (player) => player.team_id === selectedMatch.home_team_id
               )}
               resultForm={resultForm}
+              suspendedPlayerIds={suspendedPlayerIds}
               onChange={updatePlayerResult}
             />
             <PlayersResultTable
@@ -551,6 +579,7 @@ export default function MatchesPage() {
                 (player) => player.team_id === selectedMatch.away_team_id
               )}
               resultForm={resultForm}
+              suspendedPlayerIds={suspendedPlayerIds}
               onChange={updatePlayerResult}
             />
           </div>
@@ -923,11 +952,13 @@ function PlayersResultTable({
   title,
   players,
   resultForm,
+  suspendedPlayerIds,
   onChange,
 }: {
   title: string;
   players: Player[];
   resultForm: PlayerResultForm;
+  suspendedPlayerIds: Set<number>;
   onChange: (
     playerId: number,
     field: keyof PlayerResultForm[number],
@@ -951,31 +982,48 @@ function PlayersResultTable({
             </tr>
           </thead>
           <tbody>
-            {players.map((player) => (
-              <tr key={player.id} className="border-b text-gray-800">
-                <td className="py-2">
-                  <span className="font-medium">{player.name}</span>
-                  {player.is_captain ? (
-                    <span className="ml-2 text-xs text-gray-500">Cap.</span>
-                  ) : null}
-                </td>
-                {(["goals", "assists", "yellowCards", "redCards"] as const).map(
-                  (field) => (
-                    <td key={field} className="py-2 text-center">
-                      <input
-                        className="w-14 rounded border px-2 py-1 text-center"
-                        min={0}
-                        onChange={(event) =>
-                          onChange(player.id, field, Number(event.target.value))
-                        }
-                        type="number"
-                        value={resultForm[player.id]?.[field] || 0}
-                      />
-                    </td>
-                  )
-                )}
-              </tr>
-            ))}
+            {players.map((player) => {
+              const isSuspended = suspendedPlayerIds.has(player.id);
+
+              return (
+                <tr
+                  key={player.id}
+                  className={`border-b ${
+                    isSuspended ? "bg-red-50 text-red-700" : "text-gray-800"
+                  }`}
+                >
+                  <td className="py-2">
+                    <span className="font-medium">{player.name}</span>
+                    {player.is_captain ? (
+                      <span className="ml-2 text-xs text-gray-500">Cap.</span>
+                    ) : null}
+                    {isSuspended ? (
+                      <span className="ml-2 text-xs font-semibold text-red-600">
+                        Suspenso
+                      </span>
+                    ) : null}
+                  </td>
+                  {(["goals", "assists", "yellowCards", "redCards"] as const).map(
+                    (field) => (
+                      <td key={field} className="py-2 text-center">
+                        <input
+                          className={`w-14 rounded border px-2 py-1 text-center disabled:cursor-not-allowed disabled:border-red-200 disabled:bg-red-100 disabled:text-red-700 ${
+                            isSuspended ? "border-red-200" : ""
+                          }`}
+                          disabled={isSuspended}
+                          min={0}
+                          onChange={(event) =>
+                            onChange(player.id, field, Number(event.target.value))
+                          }
+                          type="number"
+                          value={resultForm[player.id]?.[field] || 0}
+                        />
+                      </td>
+                    )
+                  )}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

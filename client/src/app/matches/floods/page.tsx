@@ -1,11 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BarChart3, CalendarClock, Gauge, ShieldQuestion } from "lucide-react";
+import { CalendarClock, Gauge, ShieldQuestion } from "lucide-react";
 import {
+  castMatchVote,
   getMatches,
+  getMatchVoteTotals,
   getTeams,
   subscribeToTournamentChanges,
+  type MatchVoteOption,
+  type MatchVoteTotals,
 } from "@/services/tournamentService";
 import { buildStandings } from "@/lib/tournamentCalculations";
 import type { Match, StandingRow, Team } from "@/types/tournament";
@@ -20,9 +24,14 @@ type Prediction = {
   confidence: "Baixa" | "Media" | "Alta";
 };
 
+const VOTES_STORAGE_KEY = "campeoes-travinho-match-votes";
+
 export default function FloodsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
+  const [voteTotals, setVoteTotals] = useState<Map<number, MatchVoteTotals>>(new Map());
+  const [votedChoices, setVotedChoices] = useState<Record<number, MatchVoteOption>>({});
+  const [votingMatchId, setVotingMatchId] = useState<number | null>(null);
   const [selectedRound, setSelectedRound] = useState("all");
   const [selectedGroup, setSelectedGroup] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -31,12 +40,14 @@ export default function FloodsPage() {
   const loadData = useCallback(async () => {
     try {
       setError(null);
-      const [teamsData, matchesData] = await Promise.all([
+      const [teamsData, matchesData, voteTotalsData] = await Promise.all([
         getTeams(),
         getMatches(),
+        getMatchVoteTotals(),
       ]);
       setTeams(teamsData);
       setMatches(matchesData);
+      setVoteTotals(voteTotalsData);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erro ao carregar enquetes."
@@ -50,6 +61,17 @@ export default function FloodsPage() {
     loadData();
     return subscribeToTournamentChanges(loadData);
   }, [loadData]);
+
+  useEffect(() => {
+    try {
+      const storedVotes = localStorage.getItem(VOTES_STORAGE_KEY);
+      if (storedVotes) {
+        setVotedChoices(JSON.parse(storedVotes) as Record<number, MatchVoteOption>);
+      }
+    } catch {
+      // Se o armazenamento local estiver indisponível, a votação continua funcionando.
+    }
+  }, []);
 
   const standings = useMemo(() => buildStandings(teams, matches), [matches, teams]);
   const standingsByTeamId = useMemo(
@@ -79,7 +101,23 @@ export default function FloodsPage() {
       );
   }, [matches, selectedGroup, selectedRound, standingsByTeamId]);
 
-  const featuredPrediction = predictions[0] || null;
+  async function handleVote(matchId: number, choice: MatchVoteOption) {
+    if (votedChoices[matchId]) return;
+
+    try {
+      setVotingMatchId(matchId);
+      await castMatchVote(matchId, choice);
+
+      const updatedChoices = { ...votedChoices, [matchId]: choice };
+      setVotedChoices(updatedChoices);
+      localStorage.setItem(VOTES_STORAGE_KEY, JSON.stringify(updatedChoices));
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao registrar voto.");
+    } finally {
+      setVotingMatchId(null);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#fdfaf3] px-4 py-8">
@@ -140,8 +178,6 @@ export default function FloodsPage() {
           </div>
         </section>
 
-        {featuredPrediction ? <FeaturedPoll prediction={featuredPrediction} /> : null}
-
         {loading ? (
           <p className="rounded-lg bg-white p-6 text-center text-gray-500 shadow-sm">
             Carregando enquetes...
@@ -153,7 +189,14 @@ export default function FloodsPage() {
         ) : (
           <section className="grid gap-5 lg:grid-cols-2">
             {predictions.map((prediction) => (
-              <PollCard key={prediction.match.id} prediction={prediction} />
+              <PollCard
+                key={prediction.match.id}
+                prediction={prediction}
+                voteTotals={voteTotals.get(prediction.match.id) || { home: 0, draw: 0, away: 0 }}
+                votedChoice={votedChoices[prediction.match.id]}
+                voting={votingMatchId === prediction.match.id}
+                onVote={handleVote}
+              />
             ))}
           </section>
         )}
@@ -162,33 +205,24 @@ export default function FloodsPage() {
   );
 }
 
-function FeaturedPoll({ prediction }: { prediction: Prediction }) {
-  return (
-    <section className="mb-6 rounded-lg border border-[#d0bb94] bg-white p-5 shadow-md">
-      <div className="mb-4 flex items-center gap-2 text-sm font-bold uppercase text-[#855b21]">
-        <BarChart3 className="h-4 w-4" />
-        Proxima enquete em destaque
-      </div>
-      <PollCard prediction={prediction} featured />
-    </section>
-  );
-}
-
 function PollCard({
   prediction,
-  featured = false,
+  voteTotals,
+  votedChoice,
+  voting,
+  onVote,
 }: {
   prediction: Prediction;
-  featured?: boolean;
+  voteTotals: MatchVoteTotals;
+  votedChoice?: MatchVoteOption;
+  voting: boolean;
+  onVote: (matchId: number, choice: MatchVoteOption) => void;
 }) {
   const { match } = prediction;
+  const totalVotes = voteTotals.home + voteTotals.draw + voteTotals.away;
 
   return (
-    <article
-      className={`rounded-lg bg-white p-5 shadow-sm ${
-        featured ? "border border-gray-100 shadow-none" : ""
-      }`}
-    >
+    <article className="rounded-lg bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-[#557389]">
@@ -223,11 +257,73 @@ function PollCard({
         />
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-        <RatingBox label="Forca mandante" value={prediction.homeRating} />
-        <RatingBox label="Forca visitante" value={prediction.awayRating} />
+      <div className="mt-5 border-t border-gray-100 pt-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h3 className="font-bold text-gray-800">Votação do público</h3>
+          <span className="text-xs text-gray-500">
+            {totalVotes} {totalVotes === 1 ? "voto" : "votos"}
+          </span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <VoteButton
+            active={votedChoice === "home"}
+            disabled={Boolean(votedChoice) || voting}
+            label={match.home?.name || "Mandante"}
+            onClick={() => onVote(match.id, "home")}
+            votes={voteTotals.home}
+          />
+          <VoteButton
+            active={votedChoice === "draw"}
+            disabled={Boolean(votedChoice) || voting}
+            label="Empate"
+            onClick={() => onVote(match.id, "draw")}
+            votes={voteTotals.draw}
+          />
+          <VoteButton
+            active={votedChoice === "away"}
+            disabled={Boolean(votedChoice) || voting}
+            label={match.away?.name || "Visitante"}
+            onClick={() => onVote(match.id, "away")}
+            votes={voteTotals.away}
+          />
+        </div>
+        {votedChoice ? (
+          <p className="mt-3 text-xs font-medium text-green-700">
+            Seu voto foi registrado.
+          </p>
+        ) : null}
       </div>
     </article>
+  );
+}
+
+function VoteButton({
+  active,
+  disabled,
+  label,
+  onClick,
+  votes,
+}: {
+  active: boolean;
+  disabled: boolean;
+  label: string;
+  onClick: () => void;
+  votes: number;
+}) {
+  return (
+    <button
+      className={`rounded border px-3 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed ${
+        active
+          ? "border-[#557389] bg-[#557389] text-white"
+          : "border-gray-200 text-gray-700 hover:border-[#557389] hover:bg-[#f3f7f9] disabled:opacity-60"
+      }`}
+      disabled={disabled}
+      onClick={onClick}
+      type="button"
+    >
+      <span className="block truncate font-semibold">{label}</span>
+      <span className="text-xs">{votes} {votes === 1 ? "voto" : "votos"}</span>
+    </button>
   );
 }
 
@@ -276,15 +372,6 @@ function TeamBadge({
       <p className="max-w-[140px] truncate text-sm font-bold text-gray-800">
         {name || "A definir"}
       </p>
-    </div>
-  );
-}
-
-function RatingBox({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded border border-gray-100 bg-gray-50 px-3 py-2">
-      <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
-      <p className="mt-1 text-lg font-bold text-gray-800">{value.toFixed(1)}</p>
     </div>
   );
 }

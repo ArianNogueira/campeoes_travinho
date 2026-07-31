@@ -23,6 +23,10 @@ export type PlayerResultInput = {
   redCards: number;
 };
 
+export type MatchVoteOption = "home" | "draw" | "away";
+
+export type MatchVoteTotals = Record<MatchVoteOption, number>;
+
 export type TeamInscriptionPlayerInput = {
   name: string;
   number: number;
@@ -220,6 +224,41 @@ export async function getMatchEvents() {
   return (data || []) as unknown as MatchEvent[];
 }
 
+export async function getMatchVoteTotals(): Promise<Map<number, MatchVoteTotals>> {
+  assertSupabaseConfig();
+
+  const { data, error } = await supabase
+    .from("match_votes")
+    .select("match_id, choice");
+
+  if (error) throw error;
+
+  const totals = new Map<number, MatchVoteTotals>();
+
+  for (const vote of data || []) {
+    const current = totals.get(vote.match_id) || { home: 0, draw: 0, away: 0 };
+    const choice = vote.choice as MatchVoteOption;
+
+    if (choice === "home" || choice === "draw" || choice === "away") {
+      current[choice] += 1;
+      totals.set(vote.match_id, current);
+    }
+  }
+
+  return totals;
+}
+
+export async function castMatchVote(matchId: number, choice: MatchVoteOption) {
+  assertSupabaseConfig();
+
+  const { error } = await supabase.from("match_votes").insert({
+    match_id: matchId,
+    choice,
+  });
+
+  if (error) throw error;
+}
+
 export async function getNews() {
   assertSupabaseConfig();
 
@@ -310,6 +349,11 @@ export function subscribeToTournamentChanges(onChange: () => void) {
     .on(
       "postgres_changes",
       { event: "*", schema: "public", table: "match_events" },
+      onChange
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "match_votes" },
       onChange
     )
     .on(
