@@ -3,10 +3,10 @@
 // import hw from "@/assets/HW.png";
 // import vieira from "@/assets/VIEIRA.png";
 // import ph from "@/assets/PH.jpeg";
-// import net from "@/assets/MARANHAO_NET.png";
-// import wg from "@/assets/WG.jpeg";
-// import prefeitura from "@/assets/PREFEITURA.png";
-// import jo from "@/assets/JO.png";
+import net from "@/assets/MARANHAO_NET.png";
+import wg from "@/assets/WG.jpeg";
+import prefeitura from "@/assets/PREFEITURA.png";
+import jo from "@/assets/JO.png";
 import { StaticImageData } from "next/image";
 
 interface Sponsor {
@@ -18,27 +18,56 @@ interface Sponsor {
   instagram: string;
 }
 
-// const sponsors: Sponsor[] = [
-//   {
-//     id: 1,
-//     name: "JS STORE",
-//     mensage:
-//       "Conheça a JS STORE! Aqui você encontra tudo para seu smartphone! Trabalhamos com acessórios e equipamentos para as principais marcas do mercado, como iPhone, Samsung e Xiaomi. Qualidade, confiança e variedade em um só lugar!",
-//     insta: "js.store_oficial",
-//     logo: js,
-//     instagram:
-//       "https://www.instagram.com/js.store_oficial?igsh=ajRta2hhaXN6cDBt",
-//   },
-//   {
-//     id: 2,
-//     name: "JOÃO DE OLIVEIRA",
-//     mensage:
-//       "Gostaríamos de parabenizar o Secretário de Cultura, João Oliveira, pelo excelente trabalho à frente da pasta. Sua dedicação à valorização da cultura local e incentivo às expressões artísticas tem feito a diferença para nossa comunidade. Que o compromisso com a arte, a educação e a diversidade cultural siga inspirando novos projetos e transformações",
-//     insta: "joaodeoliveirapfb",
-//     logo: jo,
-//     instagram:
-//       "https://www.instagram.com/joaodeoliveirapfb?igsh=MXhmbXVkOG45N3VweQ==",
-//   },
+const sponsors: Sponsor[] = [
+  // {
+  //   id: 1,
+  //   name: "JS STORE",
+  //   mensage:
+  //     "Conheça a JS STORE! Aqui você encontra tudo para seu smartphone! Trabalhamos com acessórios e equipamentos para as principais marcas do mercado, como iPhone, Samsung e Xiaomi. Qualidade, confiança e variedade em um só lugar!",
+  //   insta: "js.store_oficial",
+  //   logo: js,
+  //   instagram:
+  //     "https://www.instagram.com/js.store_oficial?igsh=ajRta2hhaXN6cDBt",
+  // },
+  {
+    id: 1,
+    name: "MARANHÃO NET",
+    mensage:
+      "A Maranhão Net conecta você ao mundo com a melhor internet da Baixada! Velocidade, estabilidade e atendimento de qualidade para transformar sua experiência online. Seja para trabalhar, estudar ou se divertir, a escolha certa é Maranhão Net – conectando sonhos, aproximando pessoas.",
+    insta: "maranhaonetbaixada",
+    logo: net,
+    instagram:
+      "https://www.instagram.com/maranhaonetbaixada?igsh=MWhocmVkd3A4emI5eQ==",
+  },
+  {
+    id: 2,
+    name: "WG VEÍCULOS",
+    mensage:
+      "WG Veículos – Sua melhor opção em carros e motos, novos e seminovos! Variedade, qualidade e condições especiais para você sair de veículo novo com total confiança. Venha conhecer nosso estoque e encontre o seu próximo companheiro de estrada!",
+    insta: "wgveiculos_mzl",
+    logo: wg,
+    instagram: "https://www.instagram.com/wgveiculos_mzl?igsh=cXU2ejZhNnNnbjZl",
+  },
+  {
+    id: 3,
+    name: "SECRETARIA MUNICIPAL DE ESPORTES DE MIRINZAL",
+    mensage:
+      "Agradecemos imensamente à Secretaria Municipal de Esportes de Mirinzal pelo apoio e patrocínio fundamental ao nosso torneio. Graças a essa parceria, pudemos realizar um evento de qualidade, promovendo a união, o esporte e o lazer para toda a comunidade.",
+    insta: "prefeiturademirinzal.oficial",
+    logo: prefeitura,
+    instagram:
+      "https://www.instagram.com/prefeiturademirinzal.oficial?igsh=MTM0YjdpMHkxYWN5NQ==",
+  },
+  {
+    id: 4,
+    name: "JOÃO DE OLIVEIRA",
+    mensage:
+      "Gostaríamos de parabenizar o Secretário de Cultura, João Oliveira, pelo excelente trabalho à frente da pasta. Sua dedicação à valorização da cultura local e incentivo às expressões artísticas tem feito a diferença para nossa comunidade. Que o compromisso com a arte, a educação e a diversidade cultural siga inspirando novos projetos e transformações",
+    insta: "joaodeoliveirapfb",
+    logo: jo,
+    instagram:
+      "https://www.instagram.com/joaodeoliveirapfb?igsh=MXhmbXVkOG45N3VweQ==",
+  },
 //   {
 //     id: 3,
 //     name: "DEP. HEMETERIO WEBA",
@@ -59,16 +88,7 @@ interface Sponsor {
 //     instagram:
 //       "https://www.instagram.com/paulohenrique.team?igsh=dXM2MGQzeHhkejVp",
 //   },
-//   {
-//     id: 5,
-//     name: "MARANHÃO NET",
-//     mensage:
-//       "A Maranhão Net conecta você ao mundo com a melhor internet da Baixada! Velocidade, estabilidade e atendimento de qualidade para transformar sua experiência online. Seja para trabalhar, estudar ou se divertir, a escolha certa é Maranhão Net – conectando sonhos, aproximando pessoas.",
-//     insta: "maranhaonetbaixada",
-//     logo: net,
-//     instagram:
-//       "https://www.instagram.com/maranhaonetbaixada?igsh=MWhocmVkd3A4emI5eQ==",
-//   },
+  
 //   {
 //     id: 6,
 //     name: "VNX ENGENHARIA & SERVIÇOS",
@@ -89,28 +109,11 @@ interface Sponsor {
 //     instagram:
 //       "https://www.instagram.com/vieiracomerciohortifruti?igsh=MXVzdTFmamdhcDRlcQ==",
 //   },
-//   {
-//     id: 8,
-//     name: "WG VEÍCULOS",
-//     mensage:
-//       "WG Veículos – Sua melhor opção em carros e motos, novos e seminovos! Variedade, qualidade e condições especiais para você sair de veículo novo com total confiança. Venha conhecer nosso estoque e encontre o seu próximo companheiro de estrada!",
-//     insta: "wgveiculos_mzl",
-//     logo: wg,
-//     instagram: "https://www.instagram.com/wgveiculos_mzl?igsh=cXU2ejZhNnNnbjZl",
-//   },
-//   {
-//     id: 9,
-//     name: "SECRETARIA MUNICIPAL DE ESPORTES DE MIRINZAL",
-//     mensage:
-//       "Agradecemos imensamente à Secretaria Municipal de Esportes de Mirinzal pelo apoio e patrocínio fundamental ao nosso torneio. Graças a essa parceria, pudemos realizar um evento de qualidade, promovendo a união, o esporte e o lazer para toda a comunidade.",
-//     insta: "prefeiturademirinzal.oficial",
-//     logo: prefeitura,
-//     instagram:
-//       "https://www.instagram.com/prefeiturademirinzal.oficial?igsh=MTM0YjdpMHkxYWN5NQ==",
-//   },
-// ];
+  
+  
+];
 
-const sponsors: Sponsor[] = []
+// const sponsors: Sponsor[] = []
 
 export default sponsors;
 
