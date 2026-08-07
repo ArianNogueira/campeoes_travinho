@@ -18,6 +18,7 @@ export type PlayerResultInput = {
   playerId: number;
   teamId: number;
   goals: number;
+  ownGoals: number;
   assists: number;
   yellowCards: number;
   redCards: number;
@@ -315,6 +316,7 @@ export async function saveMatchResult(params: {
 
   const rows = events.flatMap((event) => [
     ...buildEventRows(matchId, event, "goal", event.goals),
+    ...buildEventRows(matchId, event, "own_goal", event.ownGoals),
     ...buildEventRows(matchId, event, "assist", event.assists),
     ...buildEventRows(matchId, event, "yellow_card", event.yellowCards),
     ...buildEventRows(matchId, event, "red_card", event.redCards),

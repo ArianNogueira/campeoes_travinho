@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type FocusEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
   CalendarClock,
   Download,
@@ -28,6 +28,7 @@ type PlayerResultForm = Record<
   number,
   {
     goals: number;
+    ownGoals: number;
     assists: number;
     yellowCards: number;
     redCards: number;
@@ -39,6 +40,18 @@ type ScheduleForm = {
   time: string;
   round: string;
 };
+
+function clearZeroOnFocus(event: FocusEvent<HTMLInputElement>) {
+  if (event.currentTarget.value === "0") {
+    event.currentTarget.value = "";
+  }
+}
+
+function restoreZeroOnBlur(event: FocusEvent<HTMLInputElement>) {
+  if (event.currentTarget.value === "") {
+    event.currentTarget.value = "0";
+  }
+}
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -181,6 +194,7 @@ export default function MatchesPage() {
       [playerId]: {
         ...(current[playerId] || {
           goals: 0,
+          ownGoals: 0,
           assists: 0,
           yellowCards: 0,
           redCards: 0,
@@ -189,19 +203,22 @@ export default function MatchesPage() {
       },
     }));
 
-    if (field !== "goals" || !selectedMatch) return;
+    if ((field !== "goals" && field !== "ownGoals") || !selectedMatch) return;
 
     const player = players.find((item) => item.id === playerId);
     if (!player) return;
 
-    const currentGoals = resultForm[playerId]?.goals || 0;
-    const difference = nextValue - currentGoals;
+    const currentValue = resultForm[playerId]?.[field] || 0;
+    const difference = nextValue - currentValue;
 
-    if (player.team_id === selectedMatch.home_team_id) {
+    const isHomePlayer = player.team_id === selectedMatch.home_team_id;
+    const updatesHomeScore =
+      (field === "goals" && isHomePlayer) ||
+      (field === "ownGoals" && !isHomePlayer);
+
+    if (updatesHomeScore) {
       setHomeScore((current) => Math.max(0, current + difference));
-    }
-
-    if (player.team_id === selectedMatch.away_team_id) {
+    } else {
       setAwayScore((current) => Math.max(0, current + difference));
     }
   }
@@ -228,6 +245,7 @@ export default function MatchesPage() {
       playerId: player.id,
       teamId: player.team_id,
       goals: resultForm[player.id]?.goals || 0,
+      ownGoals: resultForm[player.id]?.ownGoals || 0,
       assists: resultForm[player.id]?.assists || 0,
       yellowCards: resultForm[player.id]?.yellowCards || 0,
       redCards: resultForm[player.id]?.redCards || 0,
@@ -547,6 +565,8 @@ export default function MatchesPage() {
                 className="mt-1 w-full rounded border px-3 py-2 text-center text-gray-800"
                 min={0}
                 onChange={(event) => setHomeScore(Number(event.target.value))}
+                onBlur={restoreZeroOnBlur}
+                onFocus={clearZeroOnFocus}
                 type="number"
                 value={homeScore}
               />
@@ -557,6 +577,8 @@ export default function MatchesPage() {
                 className="mt-1 w-full rounded border px-3 py-2 text-center text-gray-800"
                 min={0}
                 onChange={(event) => setAwayScore(Number(event.target.value))}
+                onBlur={restoreZeroOnBlur}
+                onFocus={clearZeroOnFocus}
                 type="number"
                 value={awayScore}
               />
@@ -971,7 +993,7 @@ function PlayersResultTable({
         {title}
       </h3>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[420px] text-sm">
+        <table className="w-full min-w-[490px] text-sm">
           <thead>
             <tr className="border-b text-gray-600">
               <th className="py-2 text-left">Jogador</th>
@@ -979,6 +1001,7 @@ function PlayersResultTable({
               <th className="py-2 text-center">A</th>
               <th className="py-2 text-center">C.A</th>
               <th className="py-2 text-center">C.V</th>
+              <th className="py-2 text-center">G.C.</th>
             </tr>
           </thead>
           <tbody>
@@ -1003,7 +1026,7 @@ function PlayersResultTable({
                       </span>
                     ) : null}
                   </td>
-                  {(["goals", "assists", "yellowCards", "redCards"] as const).map(
+                  {(["goals", "assists", "yellowCards", "redCards", "ownGoals"] as const).map(
                     (field) => (
                       <td key={field} className="py-2 text-center">
                         <input
@@ -1015,6 +1038,8 @@ function PlayersResultTable({
                           onChange={(event) =>
                             onChange(player.id, field, Number(event.target.value))
                           }
+                          onBlur={restoreZeroOnBlur}
+                          onFocus={clearZeroOnFocus}
                           type="number"
                           value={resultForm[player.id]?.[field] || 0}
                         />
@@ -1105,7 +1130,7 @@ function buildInitialResultForm(
   const form = Object.fromEntries(
     players.map((player) => [
       player.id,
-      { goals: 0, assists: 0, yellowCards: 0, redCards: 0 },
+      { goals: 0, ownGoals: 0, assists: 0, yellowCards: 0, redCards: 0 },
     ])
   ) as PlayerResultForm;
 
@@ -1114,6 +1139,7 @@ function buildInitialResultForm(
     if (!current) continue;
 
     if (event.type === "goal") current.goals = event.quantity;
+    if (event.type === "own_goal") current.ownGoals = event.quantity;
     if (event.type === "assist") current.assists = event.quantity;
     if (event.type === "yellow_card") current.yellowCards = event.quantity;
     if (event.type === "red_card") current.redCards = event.quantity;

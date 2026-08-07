@@ -1,6 +1,11 @@
 export type MatchStatus = "scheduled" | "live" | "finished";
 
-export type MatchEventType = "goal" | "assist" | "yellow_card" | "red_card";
+export type MatchEventType =
+  | "goal"
+  | "own_goal"
+  | "assist"
+  | "yellow_card"
+  | "red_card";
 
 export type Team = {
   id: number;
