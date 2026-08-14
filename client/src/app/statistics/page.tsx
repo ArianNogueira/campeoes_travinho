@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import {
   getMatches,
   getMatchEvents,
@@ -62,6 +62,13 @@ export default function StatisticsPage() {
     () => getSuspensionHistory(matches, events),
     [events, matches]
   );
+  const teamsByName = useMemo(
+    () => new Map(teams.map((team) => [team.name, team])),
+    [teams]
+  );
+  const teamEmblem = (teamName: string) => (
+    <TeamEmblem team={teamsByName.get(teamName)} />
+  );
 
   return (
     <div className="min-h-screen bg-[#fdfaf3] px-4 py-10">
@@ -95,11 +102,11 @@ export default function StatisticsPage() {
 
       <section className="mb-12 grid gap-6 lg:grid-cols-2">
         <RankingTable
-          columns={["Jogador", "Time", "Gols"]}
+          columns={["Jogador", "Escudo", "Gols"]}
           emptyText="Sem gols registrados."
           rows={stats.topScorers.map((player) => [
             player.name,
-            player.team,
+            teamEmblem(player.team),
             player.total.toString(),
           ])}
           title="Artilharia"
@@ -109,7 +116,7 @@ export default function StatisticsPage() {
           emptyText="Sem assistências registradas."
           rows={stats.topAssists.map((player) => [
             player.name,
-            player.team,
+            teamEmblem(player.team),
             player.total.toString(),
           ])}
           title="Assistências"
@@ -120,7 +127,7 @@ export default function StatisticsPage() {
         <RankingTable
           columns={[
             "Jogador",
-            "Time",
+            "Escudo",
             "Amarelos",
             "Vermelhos",
             "Status",
@@ -140,7 +147,7 @@ export default function StatisticsPage() {
 
             return [
               card.name,
-              card.team,
+              teamEmblem(card.team),
               card.yellow.toString(),
               card.red.toString(),
               status,
@@ -190,6 +197,28 @@ function StatBox({ label, value }: { label: string; value: string }) {
   );
 }
 
+function TeamEmblem({ team }: { team: Team | undefined }) {
+  if (!team) {
+    return <span className="inline-flex h-9 w-9 rounded-full bg-gray-200" title="Time não encontrado" />;
+  }
+
+  return team.emblem_url ? (
+    <img
+      alt={`Escudo do ${team.name}`}
+      className="h-9 w-9 rounded-full object-cover shadow-sm"
+      src={team.emblem_url}
+      title={team.name}
+    />
+  ) : (
+    <span
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#708c9a] text-xs font-bold text-white"
+      title={team.name}
+    >
+      {team.name.slice(0, 2).toUpperCase()}
+    </span>
+  );
+}
+
 function RankingTable({
   title,
   columns,
@@ -198,7 +227,7 @@ function RankingTable({
 }: {
   title: string;
   columns: string[];
-  rows: string[][];
+  rows: ReactNode[][];
   emptyText: string;
 }) {
   return (
