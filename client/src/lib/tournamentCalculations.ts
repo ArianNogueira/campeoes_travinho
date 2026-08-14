@@ -42,6 +42,10 @@ export function buildStandings(teams: Team[], matches: Match[]): StandingRow[] {
     const away = rows.get(match.away_team_id);
     if (!home || !away) continue;
 
+    // A tabela é exclusiva da fase de grupos. Jogos antigos podem não ter
+    // group_name preenchido, por isso identificamos o grupo pelos próprios times.
+    if (match.group_name === "MATA-MATA" || home.group !== away.group) continue;
+
     home.played += 1;
     away.played += 1;
 

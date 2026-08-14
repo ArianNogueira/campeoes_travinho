@@ -5,8 +5,10 @@ import type {
   MatchEventType,
   NewsItem,
   Player,
+  StandingRow,
   Team,
 } from "@/types/tournament";
+import { buildStandings } from "@/lib/tournamentCalculations";
 
 import {
   generateRoundRobin,
@@ -106,6 +108,8 @@ export async function getMatches() {
       status,
       home_score,
       away_score,
+      home_penalty_score,
+      away_penalty_score,
       home:home_team_id(id, name, group_name, emblem_url),
       away:away_team_id(id, name, group_name, emblem_url)
     `
@@ -290,17 +294,21 @@ export async function saveMatchResult(params: {
   matchId: number;
   homeScore: number;
   awayScore: number;
+  homePenaltyScore?: number | null;
+  awayPenaltyScore?: number | null;
   events: PlayerResultInput[];
 }) {
   assertSupabaseConfig();
 
-  const { matchId, homeScore, awayScore, events } = params;
+  const { matchId, homeScore, awayScore, homePenaltyScore, awayPenaltyScore, events } = params;
 
   const { error: matchError } = await supabase
     .from("matches")
     .update({
       home_score: homeScore,
       away_score: awayScore,
+      home_penalty_score: homePenaltyScore ?? null,
+      away_penalty_score: awayPenaltyScore ?? null,
       status: "finished",
     })
     .eq("id", matchId);
@@ -327,6 +335,131 @@ export async function saveMatchResult(params: {
   const { error: insertError } = await supabase.from("match_events").insert(rows);
 
   if (insertError) throw insertError;
+}
+
+const KNOCKOUT_GROUP = "MATA-MATA";
+const QUARTERFINALS = [
+  "Quartas de final 1",
+  "Quartas de final 2",
+  "Quartas de final 3",
+  "Quartas de final 4",
+] as const;
+const SEMIFINALS = ["Semifinal 1", "Semifinal 2"] as const;
+const FINAL = "Final";
+
+export function isKnockoutMatch(match: Match) {
+  return match.group_name === KNOCKOUT_GROUP;
+}
+
+/** Gera as quartas: A1×B4, A2×B3, A3×B2 e A4×B1. */
+export async function generateKnockoutMatches() {
+  assertSupabaseConfig();
+  const [teams, matches] = await Promise.all([getTeams(), getMatches()]);
+
+  const groupMatches = matches.filter(
+    (match) =>
+      !isKnockoutMatch(match) &&
+      (match.home?.group_name === "A" || match.home?.group_name === "B") &&
+      match.home?.group_name === match.away?.group_name
+  );
+  if (!groupMatches.length || groupMatches.some((match) => match.status !== "finished")) {
+    return 0;
+  }
+
+  const standings = buildStandings(teams, matches);
+  const groupA = rankGroup(standings, "A");
+  const groupB = rankGroup(standings, "B");
+  if (groupA.length < 4 || groupB.length < 4) {
+    throw new Error("Cada grupo precisa ter pelo menos quatro equipes classificadas.");
+  }
+
+  const clashes: Array<[StandingRow, StandingRow, (typeof QUARTERFINALS)[number]]> = [
+    [groupA[0], groupB[3], QUARTERFINALS[0]],
+    [groupA[1], groupB[2], QUARTERFINALS[1]],
+    [groupA[2], groupB[1], QUARTERFINALS[2]],
+    [groupA[3], groupB[0], QUARTERFINALS[3]],
+  ];
+
+  const existingRounds = new Set(matches.filter(isKnockoutMatch).map((match) => match.round));
+  const missingClashes = clashes.filter(([, , round]) => !existingRounds.has(round));
+  if (!missingClashes.length) return 0;
+
+  const { error } = await supabase.from("matches").insert(
+    missingClashes.map(([home, away, round]) => ({
+      home_team_id: home.id,
+      away_team_id: away.id,
+      group_name: KNOCKOUT_GROUP,
+      round,
+      date: new Date().toISOString().slice(0, 10),
+      time: "00:00",
+      status: "scheduled",
+      home_score: null,
+      away_score: null,
+    }))
+  );
+  if (error) throw error;
+  return missingClashes.length;
+}
+
+/** Cria automaticamente a semifinal ou final assim que os dois vencedores são conhecidos. */
+export async function advanceKnockoutBracket() {
+  assertSupabaseConfig();
+  const matches = (await getMatches()).filter(isKnockoutMatch);
+  const created: string[] = [];
+
+  await createNextMatch(matches, QUARTERFINALS.slice(0, 2), SEMIFINALS[0], created);
+  await createNextMatch(matches, QUARTERFINALS.slice(2, 4), SEMIFINALS[1], created);
+  await createNextMatch(matches, SEMIFINALS, FINAL, created);
+  return created;
+}
+
+function rankGroup(standings: StandingRow[], group: string) {
+  return standings
+    .filter((row) => row.group === group)
+    .sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference || b.goalsFor - a.goalsFor || a.team.localeCompare(b.team));
+}
+
+async function createNextMatch(
+  allMatches: Match[],
+  sourceRounds: readonly string[],
+  targetRound: string,
+  created: string[]
+) {
+  if (allMatches.some((match) => match.round === targetRound)) return;
+  const sources = sourceRounds.map((round) => allMatches.find((match) => match.round === round));
+  if (sources.some((match) => !match || match.status !== "finished")) return;
+
+  const winners = sources.map(getWinner);
+  if (winners.some((winner) => winner === null)) {
+    throw new Error(`Há empate em ${sourceRounds.join(" e ")}. Defina um vencedor antes de avançar.`);
+  }
+  const [homeTeamId, awayTeamId] = winners as number[];
+
+  const { error } = await supabase.from("matches").insert({
+    home_team_id: homeTeamId,
+    away_team_id: awayTeamId,
+    group_name: KNOCKOUT_GROUP,
+    round: targetRound,
+    date: new Date().toISOString().slice(0, 10),
+    time: "00:00",
+    status: "scheduled",
+    home_score: null,
+    away_score: null,
+  });
+  if (error) throw error;
+  created.push(targetRound);
+}
+
+function getWinner(match: Match | undefined) {
+  if (!match || match.home_score === null || match.away_score === null) return null;
+  if (match.home_score === match.away_score) {
+    if (match.home_penalty_score === null || match.away_penalty_score === null) return null;
+    if (match.home_penalty_score === match.away_penalty_score) return null;
+    return match.home_penalty_score > match.away_penalty_score
+      ? match.home_team_id
+      : match.away_team_id;
+  }
+  return match.home_score > match.away_score ? match.home_team_id : match.away_team_id;
 }
 
 export function subscribeToTournamentChanges(onChange: () => void) {

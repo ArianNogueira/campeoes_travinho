@@ -25,7 +25,8 @@ export function getSuspendedPlayerIdsForMatch(
     const teamMatches = matches
       .filter(
         (item) =>
-          item.home_team_id === player.team_id || item.away_team_id === player.team_id
+          (item.home_team_id === player.team_id || item.away_team_id === player.team_id) &&
+          isSameTournamentPhase(item, match)
       )
       .sort(sortMatches);
     const targetIndex = teamMatches.findIndex((item) => item.id === match.id);
@@ -69,6 +70,10 @@ export function getSuspendedPlayerIdsForMatch(
   return suspended;
 }
 
+function isSameTournamentPhase(first: Match, second: Match) {
+  return (first.group_name === "MATA-MATA") === (second.group_name === "MATA-MATA");
+}
+
 /**
  * Retorna a próxima partida em que cada atleta ainda precisa cumprir
  * suspensão. Jogos já finalizados são considerados como suspensão cumprida.
@@ -94,8 +99,16 @@ export function getPendingSuspensions(
       .sort(sortMatches);
     let yellowCards = 0;
     let pendingSuspensions = 0;
+    let previousPhase: boolean | null = null;
 
     for (const match of teamMatches) {
+      const knockoutPhase = match.group_name === "MATA-MATA";
+      if (previousPhase !== null && previousPhase !== knockoutPhase) {
+        yellowCards = 0;
+        pendingSuspensions = 0;
+      }
+      previousPhase = knockoutPhase;
+
       if (pendingSuspensions > 0) {
         if (match.status !== "finished") {
           pendingByPlayer.set(playerId, { matchId: match.id, round: match.round });
@@ -152,8 +165,16 @@ export function getSuspensionHistory(
     const history: SuspensionHistoryItem[] = [];
     let yellowCards = 0;
     let pendingSuspensions = 0;
+    let previousPhase: boolean | null = null;
 
     for (const match of teamMatches) {
+      const knockoutPhase = match.group_name === "MATA-MATA";
+      if (previousPhase !== null && previousPhase !== knockoutPhase) {
+        yellowCards = 0;
+        pendingSuspensions = 0;
+      }
+      previousPhase = knockoutPhase;
+
       if (pendingSuspensions > 0) {
         history.push({
           matchId: match.id,

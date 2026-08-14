@@ -147,7 +147,7 @@ export default function Header() {
                   Estatísticas
                 </div>
               </Link>
-              <Link href="/matches/floods" onClick={() => setIsOpen(false)} 
+              <Link href="/matches/floods" onClick={() => setIsOpen(false)}
                 className="block px-3 py-2 rounded hover:bg-[#2b4d66]">
                 Probabilidades
               </Link>

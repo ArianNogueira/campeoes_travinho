@@ -34,6 +34,8 @@ export type Match = {
   status: MatchStatus;
   home_score: number | null;
   away_score: number | null;
+  home_penalty_score: number | null;
+  away_penalty_score: number | null;
   home?: Team | null;
   away?: Team | null;
 };

@@ -57,8 +57,8 @@ export function mergeGroupRounds(
     result.push({
       round: round + 1,
       matches: [
-        ...roundsA[round],
-        ...roundsB[round],
+        ...roundsA[round].map((match) => ({ ...match, group_name: "A" })),
+        ...roundsB[round].map((match) => ({ ...match, group_name: "B" })),
       ],
     });
   }

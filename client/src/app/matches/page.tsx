@@ -1,6 +1,6 @@
 "use client";
 
-import { type FocusEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { type FocusEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CalendarClock,
   Download,
@@ -13,7 +13,8 @@ import {
 import { supabase } from "@/lib/supabase";
 import { getSuspendedPlayerIdsForMatch } from "@/lib/suspensions";
 import {
-  generateTournamentMatches,
+  advanceKnockoutBracket,
+  generateKnockoutMatches,
   getMatches,
   getMatchEvents,
   getPlayersByTeamIds,
@@ -21,6 +22,7 @@ import {
   subscribeToTournamentChanges,
   updateMatchSchedule,
   type PlayerResultInput,
+  isKnockoutMatch,
 } from "@/services/tournamentService";
 import type { Match, MatchEvent, Player } from "@/types/tournament";
 
@@ -53,11 +55,32 @@ function restoreZeroOnBlur(event: FocusEvent<HTMLInputElement>) {
   }
 }
 
+function getRoundOrder(round: string) {
+  const knockoutOrder: Record<string, number> = {
+    "Quartas de final 1": 1,
+    "Quartas de final 2": 2,
+    "Quartas de final 3": 3,
+    "Quartas de final 4": 4,
+    "Semifinal 1": 5,
+    "Semifinal 2": 6,
+    Final: 7,
+  };
+
+  if (round in knockoutOrder) return knockoutOrder[round];
+  const roundNumber = Number(round.replace(/\D/g, ""));
+  return Number.isFinite(roundNumber) ? roundNumber : 99;
+}
+
+function getMatchOrder(match: Match) {
+  return getRoundOrder(match.round);
+}
+
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [events, setEvents] = useState<MatchEvent[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
   const [selectedRound, setSelectedRound] = useState("all");
+  const [selectedPhase, setSelectedPhase] = useState<"groups" | "knockout">("groups");
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [summaryMatch, setSummaryMatch] = useState<Match | null>(null);
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
@@ -70,6 +93,8 @@ export default function MatchesPage() {
   const [resultForm, setResultForm] = useState<PlayerResultForm>({});
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
+  const [homePenaltyScore, setHomePenaltyScore] = useState<number | null>(null);
+  const [awayPenaltyScore, setAwayPenaltyScore] = useState<number | null>(null);
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminUser, setAdminUser] = useState<string | null>(null);
@@ -77,6 +102,7 @@ export default function MatchesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const knockoutChecked = useRef(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -113,6 +139,23 @@ export default function MatchesPage() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Cobre resultados já lançados: ao entrar como administrador, as quartas
+  // são criadas uma única vez, se toda a primeira fase estiver finalizada.
+  useEffect(() => {
+    if (!adminUser || loading || knockoutChecked.current) return;
+    knockoutChecked.current = true;
+
+    generateKnockoutMatches()
+      .then((created) => {
+        if (created) loadData();
+      })
+      .catch((err) =>
+        setError(err instanceof Error ? err.message : "Erro ao criar confrontos da 2ª fase.")
+      );
+  }, [adminUser, loadData, loading]);
+
+  // Também cobre resultados cadastrados antes da funcionalidade de mata-mata.
+  // A criação é feita somente na sessão de um administrador e apenas uma vez.
   const teamsList = useMemo(
     () =>
       Array.from(
@@ -129,12 +172,22 @@ export default function MatchesPage() {
   );
 
   const roundsList = useMemo(
-    () => Array.from(new Set(matches.map((match) => match.round))).sort(),
-    [matches]
+    () =>
+      Array.from(
+        new Set(
+          matches
+            .filter((match) =>
+              selectedPhase === "knockout" ? isKnockoutMatch(match) : !isKnockoutMatch(match)
+            )
+            .map((match) => match.round)
+        )
+      ).sort((a, b) => getRoundOrder(a) - getRoundOrder(b)),
+    [matches, selectedPhase]
   );
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
+      const matchesPhase = selectedPhase === "knockout" ? isKnockoutMatch(match) : !isKnockoutMatch(match);
       const matchesTeam =
         selectedTeam === "all" ||
         match.home?.name === selectedTeam ||
@@ -142,9 +195,9 @@ export default function MatchesPage() {
       const matchesRound =
         selectedRound === "all" || match.round === selectedRound;
 
-      return matchesTeam && matchesRound;
-    });
-  }, [matches, selectedRound, selectedTeam]);
+      return matchesPhase && matchesTeam && matchesRound;
+    }).sort((a, b) => getMatchOrder(a) - getMatchOrder(b) || `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+  }, [matches, selectedPhase, selectedRound, selectedTeam]);
 
   const suspendedPlayerIds = useMemo(
     () =>
@@ -158,6 +211,8 @@ export default function MatchesPage() {
     setSelectedMatch(match);
     setHomeScore(match.home_score || 0);
     setAwayScore(match.away_score || 0);
+    setHomePenaltyScore(match.home_penalty_score);
+    setAwayPenaltyScore(match.away_penalty_score);
 
     try {
       const playersData = await getPlayersByTeamIds([
@@ -241,6 +296,12 @@ export default function MatchesPage() {
   async function handleSaveResult() {
     if (!selectedMatch) return;
 
+    const penaltiesRequired = isKnockoutMatch(selectedMatch) && homeScore === awayScore;
+    if (penaltiesRequired && (homePenaltyScore === null || awayPenaltyScore === null || homePenaltyScore === awayPenaltyScore)) {
+      setError("Partidas eliminatórias não podem terminar empatadas. Informe o placar após o desempate.");
+      return;
+    }
+
     const payload: PlayerResultInput[] = players.map((player) => ({
       playerId: player.id,
       teamId: player.team_id,
@@ -257,8 +318,17 @@ export default function MatchesPage() {
         matchId: selectedMatch.id,
         homeScore,
         awayScore,
+        homePenaltyScore: penaltiesRequired ? homePenaltyScore : null,
+        awayPenaltyScore: penaltiesRequired ? awayPenaltyScore : null,
         events: payload,
       });
+      // Após cada resultado da primeira fase, verifica se é o último jogo e,
+      // quando for, cria A1×B4, A2×B3, A3×B2 e A4×B1 automaticamente.
+      if (isKnockoutMatch(selectedMatch)) {
+        await advanceKnockoutBracket();
+      } else {
+        await generateKnockoutMatches();
+      }
       await loadData();
       setSelectedMatch(null);
     } catch (err) {
@@ -356,6 +426,20 @@ export default function MatchesPage() {
 
       <div className="mb-6 flex flex-wrap justify-center gap-4">
         <label className="flex items-center gap-2 font-medium text-gray-700">
+          Fase
+          <select
+            className="rounded border px-3 py-1 text-gray-700"
+            value={selectedPhase}
+            onChange={(event) => {
+              setSelectedPhase(event.target.value as "groups" | "knockout");
+              setSelectedRound("all");
+            }}
+          >
+            <option value="groups">1ª fase</option>
+            <option value="knockout">2ª fase — Mata-mata</option>
+          </select>
+        </label>
+        <label className="flex items-center gap-2 font-medium text-gray-700">
           Time
           <select
             className="rounded border px-3 py-1 text-gray-700"
@@ -401,7 +485,7 @@ export default function MatchesPage() {
             >
               <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="text-center text-sm font-semibold text-indigo-600 sm:text-left">
-                  {match.round} {match.group_name ? `- Grupo ${match.group_name}` : ""}
+                  {match.round} {match.group_name && !isKnockoutMatch(match) ? `- Grupo ${match.group_name}` : ""}
                 </div>
                 {adminUser ? (
                   <div className="flex justify-center gap-2">
@@ -443,11 +527,7 @@ export default function MatchesPage() {
 
               <div className="grid grid-cols-3 items-center gap-3 text-center">
                 <TeamBadge name={match.home?.name} emblemUrl={match.home?.emblem_url} />
-                <div className="text-3xl font-bold text-gray-700">
-                  {match.status === "finished"
-                    ? `${match.home_score || 0} x ${match.away_score || 0}`
-                    : "vs"}
-                </div>
+                <MatchScore match={match} />
                 <TeamBadge name={match.away?.name} emblemUrl={match.away?.emblem_url} />
               </div>
             </article>
@@ -585,6 +665,34 @@ export default function MatchesPage() {
             </label>
           </div>
 
+          {isKnockoutMatch(selectedMatch) && homeScore === awayScore ? (
+            <div className="mb-6 rounded-lg border border-[#d0bb94] bg-[#fffaf0] p-4">
+              <p className="mb-3 text-sm font-semibold text-[#102f4c]">Decisão por pênaltis</p>
+              <div className="grid grid-cols-2 gap-4">
+                <label className="text-sm font-medium text-gray-700">
+                  {selectedMatch.home?.name}
+                  <input
+                    className="mt-1 w-full rounded border px-3 py-2 text-center text-gray-800"
+                    min={0}
+                    onChange={(event) => setHomePenaltyScore(toNullableScore(event.target.value))}
+                    type="number"
+                    value={homePenaltyScore ?? ""}
+                  />
+                </label>
+                <label className="text-sm font-medium text-gray-700">
+                  {selectedMatch.away?.name}
+                  <input
+                    className="mt-1 w-full rounded border px-3 py-2 text-center text-gray-800"
+                    min={0}
+                    onChange={(event) => setAwayPenaltyScore(toNullableScore(event.target.value))}
+                    type="number"
+                    value={awayPenaltyScore ?? ""}
+                  />
+                </label>
+              </div>
+            </div>
+          ) : null}
+
           <div className="grid gap-6 md:grid-cols-2">
             <PlayersResultTable
               title={selectedMatch.home?.name || "Mandante"}
@@ -663,7 +771,7 @@ function SummaryModal({
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-semibold text-[#102f4c]">
-                {match.round} {match.group_name ? `- Grupo ${match.group_name}` : ""}
+                {match.round} {match.group_name && !isKnockoutMatch(match) ? `- Grupo ${match.group_name}` : ""}
               </p>
               <h3 className="mt-1 text-2xl font-bold">
                 {match.home?.name || "Mandante"} x {match.away?.name || "Visitante"}
@@ -681,7 +789,7 @@ function SummaryModal({
               label="Placar"
               value={
                 match.status === "finished"
-                  ? `${match.home_score || 0} x ${match.away_score || 0}`
+                  ? formatMatchScore(match)
                   : "A definir"
               }
             />
@@ -762,7 +870,7 @@ function buildMatchSummaryLines(
 ) {
   const score =
     match.status === "finished"
-      ? `${match.home_score || 0} x ${match.away_score || 0}`
+      ? formatMatchScore(match)
       : "A definir";
 
   return [
@@ -941,6 +1049,18 @@ function formatDate(date: string) {
   return new Intl.DateTimeFormat("pt-BR").format(parsedDate);
 }
 
+function formatMatchScore(match: Match) {
+  const regularScore = `${match.home_score || 0} x ${match.away_score || 0}`;
+  if (match.home_penalty_score === null || match.away_penalty_score === null) {
+    return regularScore;
+  }
+  return `${regularScore} (${match.home_penalty_score} x ${match.away_penalty_score} nos pênaltis)`;
+}
+
+function toNullableScore(value: string) {
+  return value === "" ? null : Math.max(0, Number(value));
+}
+
 function TeamBadge({
   name,
   emblemUrl,
@@ -966,6 +1086,28 @@ function TeamBadge({
       <p className="max-w-[150px] truncate text-sm font-semibold text-gray-800">
         {name || "A definir"}
       </p>
+    </div>
+  );
+}
+
+function MatchScore({ match }: { match: Match }) {
+  if (match.status !== "finished") {
+    return <div className="text-3xl font-bold text-gray-700">vs</div>;
+  }
+
+  const hasPenalties =
+    match.home_penalty_score !== null && match.away_penalty_score !== null;
+
+  return (
+    <div className="text-center">
+      <div className="text-3xl font-bold text-gray-700">
+        {match.home_score || 0} x {match.away_score || 0}
+      </div>
+      {hasPenalties ? (
+        <div className="mt-1 text-xs font-semibold text-[#855b21]">
+          Pênaltis: {match.home_penalty_score} x {match.away_penalty_score}
+        </div>
+      ) : null}
     </div>
   );
 }
