@@ -79,7 +79,7 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [events, setEvents] = useState<MatchEvent[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
-  const [selectedRound, setSelectedRound] = useState("all");
+  const [selectedRound, setSelectedRound] = useState("current");
   const [selectedPhase, setSelectedPhase] = useState<"groups" | "knockout">("groups");
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [summaryMatch, setSummaryMatch] = useState<Match | null>(null);
@@ -185,6 +185,20 @@ export default function MatchesPage() {
     [matches, selectedPhase]
   );
 
+  const currentRound = useMemo(() => {
+    const phaseMatches = matches.filter((match) =>
+      selectedPhase === "knockout" ? isKnockoutMatch(match) : !isKnockoutMatch(match)
+    );
+
+    return (
+      roundsList.find((round) =>
+        phaseMatches.some(
+          (match) => match.round === round && match.status !== "finished"
+        )
+      ) || roundsList.at(-1) || null
+    );
+  }, [matches, roundsList, selectedPhase]);
+
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
       const matchesPhase = selectedPhase === "knockout" ? isKnockoutMatch(match) : !isKnockoutMatch(match);
@@ -193,11 +207,14 @@ export default function MatchesPage() {
         match.home?.name === selectedTeam ||
         match.away?.name === selectedTeam;
       const matchesRound =
-        selectedRound === "all" || match.round === selectedRound;
+        selectedRound === "all" ||
+        (selectedRound === "current"
+          ? match.round === currentRound
+          : match.round === selectedRound);
 
       return matchesPhase && matchesTeam && matchesRound;
     }).sort((a, b) => getMatchOrder(a) - getMatchOrder(b) || `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-  }, [matches, selectedPhase, selectedRound, selectedTeam]);
+  }, [currentRound, matches, selectedPhase, selectedRound, selectedTeam]);
 
   const suspendedPlayerIds = useMemo(
     () =>
@@ -432,7 +449,7 @@ export default function MatchesPage() {
             value={selectedPhase}
             onChange={(event) => {
               setSelectedPhase(event.target.value as "groups" | "knockout");
-              setSelectedRound("all");
+              setSelectedRound("current");
             }}
           >
             <option value="groups">1ª fase</option>
@@ -462,6 +479,9 @@ export default function MatchesPage() {
             value={selectedRound}
             onChange={(event) => setSelectedRound(event.target.value)}
           >
+            <option value="current">
+              {currentRound ? `Atual — ${currentRound}` : "Rodada atual"}
+            </option>
             <option value="all">Todas</option>
             {roundsList.map((round) => (
               <option key={round} value={round}>

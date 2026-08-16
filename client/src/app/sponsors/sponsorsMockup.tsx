@@ -89,10 +89,10 @@ const sponsors: Sponsor[] = [
     name: "MUNDO X",
     mensage:
       "A MUNDO X tem tudo para acompanhar você no dia a dia! Encontre acessórios de informática, garrafas, relógios e muito mais, sempre com variedade, qualidade e aquele atendimento especial. Seja para trabalhar, estudar, se divertir ou simplesmente deixar sua rotina mais prática, a escolha certa é MUNDO X – acessórios para todos os momentos, do seu jeito!",
-    insta: "",
+    insta: "mundox_mirinzal",
     logo: mundo,
     instagram:
-      "",
+      "https://www.instagram.com/mundox_mirinzal?igsh=MWU5ZHRpY2gyZnE0NQ==",
   },
   {
     id: 8,
@@ -101,8 +101,7 @@ const sponsors: Sponsor[] = [
       "A KL CONSTRUÇÕES é sua parceira para construir, reformar e transformar seus projetos em realidade! Materiais de construção, qualidade, variedade e atendimento de confiança para você encontrar tudo o que precisa para sua obra. Seja para uma pequena reforma ou uma grande construção, a escolha certa é KL CONSTRUÇÕES – construindo sonhos, realizando projetos!",
     insta: "",
     logo: kl,
-    instagram:
-      "",
+    instagram: "",
   },
   {
     id: 9,
@@ -111,60 +110,56 @@ const sponsors: Sponsor[] = [
       "A EV EMPREENDIMENTOS transforma oportunidades em grandes conquistas! Soluções, qualidade e compromisso para ajudar você a encontrar o que precisa e alcançar seus objetivos. Seja para investir, realizar um projeto ou dar um novo passo na vida, a escolha certa é EV EMPREENDIMENTOS – construindo oportunidades, realizando sonhos!",
     insta: "",
     logo: ev,
-    instagram:
-      "",
+    instagram: "",
   },
   {
     id: 10,
     name: "LOJÃO POPULAR",
     mensage:
       "O LOJÃO POPULAR veste você com estilo, variedade e aquele preço que cabe no bolso! Roupas para todos os momentos, com opções para você renovar o visual e encontrar o look ideal para cada ocasião. Seja para o dia a dia, uma ocasião especial ou aquele passeio com a família, a escolha certa é LOJÃO POPULAR – moda, preço e estilo para todos!",
-    insta: "",
+    insta: "lojao_popular_mirinzal",
     logo: lojao,
     instagram:
-      "",
+      "https://www.instagram.com/lojao_popular_mirinzal?igsh=MW5oZGgzY3dhd3EyNg==",
   },
   {
     id: 11,
     name: "BR ENGENHARIA",
     mensage:
       "A BR ENGENHARIA transforma projetos em realidade com qualidade, precisão e compromisso! Soluções em engenharia, experiência e responsabilidade para garantir segurança e eficiência em cada etapa. Seja para construir, reformar ou tirar um grande projeto do papel, a escolha certa é BR ENGENHARIA – planejando, construindo e realizando sonhos!",
-    insta: "",
+    insta: "br.engenharia.e.consultoria",
     logo: br,
     instagram:
-      "",
+      "https://www.instagram.com/br.engenharia.e.consultoria?igsh=bTVqZGluaXMwanE4",
   },
   {
     id: 12,
     name: "POPULAR 20 e 25",
     mensage:
       "A POPULAR 20 e 25 tem tudo para deixar seu dia a dia mais completo, prático e econômico! Uma grande variedade de produtos, preços acessíveis e opções para toda a família, sempre com qualidade e aquele atendimento especial. Seja para renovar a casa, presentear alguém ou encontrar aquele item que estava procurando, a escolha certa é POPULAR 20 e 25 – variedade, economia e praticidade em um só lugar!",
-    insta: "",
+    insta: "popular__20e25",
     logo: popular,
-    instagram:
-      "",
+    instagram: "https://www.instagram.com/popular__20e25?igsh=MW9memtpMnlxOHFx",
   },
   {
     id: 13,
     name: "ARNON RICARDO",
     mensage:
       "Nosso agradecimento especial ao Arnon Ricardo Personal pelo apoio e patrocínio! Profissional dedicado à preparação física, saúde e qualidade de vida, o Arnon também acredita na força do esporte e apoia nosso projeto",
-    insta: "",
+    insta: "arnonpersonal",
     logo: arnon,
-    instagram:
-      "",
+    instagram: "https://www.instagram.com/arnonpersonal?igsh=dzc3YjNrbWtqYW1x",
   },
   {
     id: 14,
     name: "WALDIR DE DESPACHANTE",
     mensage:
       "Nosso agradecimento especial ao companheiro Waldir pelo apoio e patrocínio! Sua parceria é fundamental para fortalecer nosso projeto e fazer a diferença. Agradecemos pela confiança, pelo incentivo e por acreditar no nosso trabalho.",
-    insta: "",
+    insta: "waldir_despachante",
     logo: waldir,
     instagram:
-      "",
+      "https://www.instagram.com/waldir_despachante?igsh=MTU5aDdyZ3loYmNkdg==",
   },
 ];
 
 export default sponsors;
-
