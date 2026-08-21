@@ -36,6 +36,7 @@ export type Match = {
   away_score: number | null;
   home_penalty_score: number | null;
   away_penalty_score: number | null;
+  counts_for_standings: boolean;
   home?: Team | null;
   away?: Team | null;
 };

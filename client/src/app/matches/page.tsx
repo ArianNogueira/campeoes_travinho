@@ -95,6 +95,7 @@ export default function MatchesPage() {
   const [awayScore, setAwayScore] = useState(0);
   const [homePenaltyScore, setHomePenaltyScore] = useState<number | null>(null);
   const [awayPenaltyScore, setAwayPenaltyScore] = useState<number | null>(null);
+  const [onlyCountsAsPlayed, setOnlyCountsAsPlayed] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminUser, setAdminUser] = useState<string | null>(null);
@@ -230,6 +231,7 @@ export default function MatchesPage() {
     setAwayScore(match.away_score || 0);
     setHomePenaltyScore(match.home_penalty_score);
     setAwayPenaltyScore(match.away_penalty_score);
+    setOnlyCountsAsPlayed(match.counts_for_standings === false);
 
     try {
       const playersData = await getPlayersByTeamIds([
@@ -337,6 +339,7 @@ export default function MatchesPage() {
         awayScore,
         homePenaltyScore: penaltiesRequired ? homePenaltyScore : null,
         awayPenaltyScore: penaltiesRequired ? awayPenaltyScore : null,
+        countsForStandings: !onlyCountsAsPlayed,
         events: payload,
       });
       // Após cada resultado da primeira fase, verifica se é o último jogo e,
@@ -684,6 +687,21 @@ export default function MatchesPage() {
               />
             </label>
           </div>
+
+          {!isKnockoutMatch(selectedMatch) ? (
+            <label className="mb-6 flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+              <input
+                checked={onlyCountsAsPlayed}
+                className="mt-0.5 h-4 w-4"
+                onChange={(event) => setOnlyCountsAsPlayed(event.target.checked)}
+                type="checkbox"
+              />
+              <span>
+                <strong className="block text-gray-800">Contar somente como jogo realizado</strong>
+                A partida será finalizada e aumentará o número de jogos, mas não dará pontos nem alterará vitórias, empates, derrotas, gols ou saldo.
+              </span>
+            </label>
+          ) : null}
 
           {isKnockoutMatch(selectedMatch) && homeScore === awayScore ? (
             <div className="mb-6 rounded-lg border border-[#d0bb94] bg-[#fffaf0] p-4">

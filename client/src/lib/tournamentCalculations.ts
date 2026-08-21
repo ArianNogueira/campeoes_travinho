@@ -49,6 +49,10 @@ export function buildStandings(teams: Team[], matches: Match[]): StandingRow[] {
     home.played += 1;
     away.played += 1;
 
+    // Uma partida excepcional pode contar apenas como jogo realizado, sem
+    // interferir nos demais números ou nos critérios de classificação.
+    if (match.counts_for_standings === false) continue;
+
     home.goalsFor += match.home_score;
     home.goalsAgainst += match.away_score;
     away.goalsFor += match.away_score;

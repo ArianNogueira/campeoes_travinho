@@ -110,6 +110,7 @@ export async function getMatches() {
       away_score,
       home_penalty_score,
       away_penalty_score,
+      counts_for_standings,
       home:home_team_id(id, name, group_name, emblem_url),
       away:away_team_id(id, name, group_name, emblem_url)
     `
@@ -296,24 +297,31 @@ export async function saveMatchResult(params: {
   awayScore: number;
   homePenaltyScore?: number | null;
   awayPenaltyScore?: number | null;
+  countsForStandings: boolean;
   events: PlayerResultInput[];
 }) {
   assertSupabaseConfig();
 
-  const { matchId, homeScore, awayScore, homePenaltyScore, awayPenaltyScore, events } = params;
+  const { matchId, homeScore, awayScore, homePenaltyScore, awayPenaltyScore, countsForStandings, events } = params;
 
-  const { error: matchError } = await supabase
+  const { data: updatedMatch, error: matchError } = await supabase
     .from("matches")
     .update({
       home_score: homeScore,
       away_score: awayScore,
       home_penalty_score: homePenaltyScore ?? null,
       away_penalty_score: awayPenaltyScore ?? null,
+      counts_for_standings: countsForStandings,
       status: "finished",
     })
-    .eq("id", matchId);
+    .eq("id", matchId)
+    .select("counts_for_standings")
+    .single();
 
   if (matchError) throw matchError;
+  if (updatedMatch.counts_for_standings !== countsForStandings) {
+    throw new Error("A configuração de pontuação da partida não foi salva. Verifique se a migração do banco foi aplicada.");
+  }
 
   const { error: deleteError } = await supabase
     .from("match_events")
