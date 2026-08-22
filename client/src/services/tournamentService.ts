@@ -354,6 +354,8 @@ const QUARTERFINALS = [
 ] as const;
 const SEMIFINALS = ["Semifinal 1", "Semifinal 2"] as const;
 const FINAL = "Final";
+const LEGACY_QUARTERFINAL = "Quartas de final";
+const LEGACY_SEMIFINAL = "Semifinal";
 
 export function isKnockoutMatch(match: Match) {
   return match.group_name === KNOCKOUT_GROUP;
@@ -362,7 +364,8 @@ export function isKnockoutMatch(match: Match) {
 /** Gera as quartas: A1×B4, A2×B3, A3×B2 e A4×B1. */
 export async function generateKnockoutMatches() {
   assertSupabaseConfig();
-  const [teams, matches] = await Promise.all([getTeams(), getMatches()]);
+  const [teams, loadedMatches] = await Promise.all([getTeams(), getMatches()]);
+  const matches = await normalizeLegacyKnockoutRounds(loadedMatches);
 
   const groupMatches = matches.filter(
     (match) =>
@@ -412,13 +415,54 @@ export async function generateKnockoutMatches() {
 /** Cria automaticamente a semifinal ou final assim que os dois vencedores são conhecidos. */
 export async function advanceKnockoutBracket() {
   assertSupabaseConfig();
-  const matches = (await getMatches()).filter(isKnockoutMatch);
+  const matches = (await normalizeLegacyKnockoutRounds(await getMatches())).filter(isKnockoutMatch);
   const created: string[] = [];
 
   await createNextMatch(matches, QUARTERFINALS.slice(0, 2), SEMIFINALS[0], created);
   await createNextMatch(matches, QUARTERFINALS.slice(2, 4), SEMIFINALS[1], created);
   await createNextMatch(matches, SEMIFINALS, FINAL, created);
   return created;
+}
+
+/** Converte títulos antigos sem criar novas partidas no banco. */
+async function normalizeLegacyKnockoutRounds(matches: Match[]) {
+  const knockoutMatches = matches.filter(isKnockoutMatch);
+  const renames: Array<{ id: number; round: string }> = [];
+
+  collectLegacyRoundRenames(knockoutMatches, LEGACY_QUARTERFINAL, QUARTERFINALS, renames);
+  collectLegacyRoundRenames(knockoutMatches, LEGACY_SEMIFINAL, SEMIFINALS, renames);
+  if (!renames.length) return matches;
+
+  await Promise.all(
+    renames.map(async ({ id, round }) => {
+      const { error } = await supabase.from("matches").update({ round }).eq("id", id);
+      if (error) throw error;
+    })
+  );
+
+  const roundsById = new Map(renames.map(({ id, round }) => [id, round]));
+  return matches.map((match) => {
+    const round = roundsById.get(match.id);
+    return round ? { ...match, round } : match;
+  });
+}
+
+function collectLegacyRoundRenames(
+  matches: Match[],
+  legacyRound: string,
+  numberedRounds: readonly string[],
+  renames: Array<{ id: number; round: string }>
+) {
+  const occupiedRounds = new Set(matches.map((match) => match.round));
+  const availableRounds = numberedRounds.filter((round) => !occupiedRounds.has(round));
+  const normalizedLegacyRound = legacyRound.toLocaleLowerCase("pt-BR");
+  const legacyMatches = matches
+    .filter((match) => match.round.trim().toLocaleLowerCase("pt-BR") === normalizedLegacyRound)
+    .sort((a, b) => `${a.date} ${a.time} ${a.id}`.localeCompare(`${b.date} ${b.time} ${b.id}`));
+
+  legacyMatches.slice(0, availableRounds.length).forEach((match, index) => {
+    renames.push({ id: match.id, round: availableRounds[index] });
+  });
 }
 
 function rankGroup(standings: StandingRow[], group: string) {

@@ -57,10 +57,12 @@ function restoreZeroOnBlur(event: FocusEvent<HTMLInputElement>) {
 
 function getRoundOrder(round: string) {
   const knockoutOrder: Record<string, number> = {
+    "Quartas de final": 1,
     "Quartas de final 1": 1,
     "Quartas de final 2": 2,
     "Quartas de final 3": 3,
     "Quartas de final 4": 4,
+    Semifinal: 5,
     "Semifinal 1": 5,
     "Semifinal 2": 6,
     Final: 7,
@@ -69,6 +71,12 @@ function getRoundOrder(round: string) {
   if (round in knockoutOrder) return knockoutOrder[round];
   const roundNumber = Number(round.replace(/\D/g, ""));
   return Number.isFinite(roundNumber) ? roundNumber : 99;
+}
+
+function getRoundStage(round: string) {
+  if (round.startsWith("Quartas de final")) return "Quartas de final";
+  if (round.startsWith("Semifinal")) return "Semifinal";
+  return round;
 }
 
 function getMatchOrder(match: Match) {
@@ -80,7 +88,7 @@ export default function MatchesPage() {
   const [events, setEvents] = useState<MatchEvent[]>([]);
   const [selectedTeam, setSelectedTeam] = useState("all");
   const [selectedRound, setSelectedRound] = useState("current");
-  const [selectedPhase, setSelectedPhase] = useState<"groups" | "knockout">("groups");
+  const [selectedPhase, setSelectedPhase] = useState<"groups" | "knockout">("knockout");
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [summaryMatch, setSummaryMatch] = useState<Match | null>(null);
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
@@ -180,7 +188,11 @@ export default function MatchesPage() {
             .filter((match) =>
               selectedPhase === "knockout" ? isKnockoutMatch(match) : !isKnockoutMatch(match)
             )
-            .map((match) => match.round)
+            .map((match) =>
+              selectedPhase === "knockout"
+                ? getRoundStage(match.round)
+                : match.round
+            )
         )
       ).sort((a, b) => getRoundOrder(a) - getRoundOrder(b)),
     [matches, selectedPhase]
@@ -194,7 +206,9 @@ export default function MatchesPage() {
     return (
       roundsList.find((round) =>
         phaseMatches.some(
-          (match) => match.round === round && match.status !== "finished"
+          (match) =>
+            getRoundStage(match.round) === round &&
+            match.status !== "finished"
         )
       ) || roundsList.at(-1) || null
     );
@@ -210,8 +224,10 @@ export default function MatchesPage() {
       const matchesRound =
         selectedRound === "all" ||
         (selectedRound === "current"
-          ? match.round === currentRound
-          : match.round === selectedRound);
+          ? getRoundStage(match.round) === currentRound
+          : selectedPhase === "knockout"
+            ? getRoundStage(match.round) === selectedRound
+            : match.round === selectedRound);
 
       return matchesPhase && matchesTeam && matchesRound;
     }).sort((a, b) => getMatchOrder(a) - getMatchOrder(b) || `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
